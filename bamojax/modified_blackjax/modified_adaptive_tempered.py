@@ -19,7 +19,7 @@ import jax.numpy as jnp
 import blackjax.smc.base as base
 import blackjax.smc.ess as ess
 import blackjax.smc.solver as solver
-import modified_tempered as tempered
+from bamojax.modified_blackjax import modified_tempered as tempered
 from blackjax.base import SamplingAlgorithm
 from blackjax.types import ArrayLikeTree, PRNGKey
 

@@ -182,6 +182,7 @@ def gibbs_sampler(model: Model,
         return state, info
     
     #
+    step_fn.__name__ = 'gibbs_step_fn'
     return SamplingAlgorithm(init_fn, step_fn)
 
 #
@@ -325,6 +326,8 @@ def smc_inference_loop(key,
     #        
     keys = jrnd.split(key, num_chains)
     final_state, lml, n_iter, final_info = jax.vmap(run_chain)(keys)
+
+    # squeeze the `chains` dim
     n_iter = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), n_iter)
     final_state = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), final_state)
     lml = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), lml)
