@@ -1,0 +1,16 @@
+
+functionality
+
+- Add prediction functionality to GP/GWP
+- Make info object optional, as it takes quite some memory
+- Investigate memory consumption more generally
+- make some observed nodes 'batchable', and derive loglikeihood_fn accordingly (for stochastic gradient methods)
+- Fix the temperature parameter addition for when using SMC with kernels other than Gibbs!
+
+examples
+
+- GWP
+- BNN
+- GMM, GrMM
+- EV
+- different regression priors (LN-CASS, horseshoe, spike-and-slab?)
