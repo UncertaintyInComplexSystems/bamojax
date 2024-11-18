@@ -144,6 +144,7 @@ def gibbs_sampler(model: Model,
                 co_parents.add(node)
                 conditionals.append(loglikelihood_fn_)
 
+            # [TODO] Can we avoid the list and use a vmap instead? Particularly relevant for hierarchical models.
             loglikelihood_fn = lambda val: jnp.sum(jnp.asarray([temperature*ll_fn(val).sum() for ll_fn in conditionals]))
 
             if 'implied_mvn_prior' in step_fn_params[node]:
