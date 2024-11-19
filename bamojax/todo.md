@@ -12,3 +12,7 @@
 
 - GMM, GrMM
 - EV
+
+# Fixes
+
+- Model size does not always consider shaped arrays correctly.
