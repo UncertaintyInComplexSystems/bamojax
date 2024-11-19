@@ -25,6 +25,11 @@ class GibbsState(NamedTuple):
     position: ArrayTree
 
 #
+class MCMCState(NamedTuple):
+
+    position: ArrayTree
+
+#
 
 def gibbs_sampler(model: Model, 
                   step_fns: dict = None, 
@@ -187,6 +192,44 @@ def gibbs_sampler(model: Model,
     return SamplingAlgorithm(init_fn, step_fn)
 
 #
+def mcmc_sampler(model: Model, mcmc_kernel, mcmc_parameters: dict = None):
+
+    def mcmc_fn(model: Model, 
+                key, 
+                state: dict, 
+                *args, 
+                **kwargs) -> dict:
+        
+        def apply_mcmc_kernel(key_, logdensity_fn, pos):
+            kernel_instance = mcmc_kernel(logdensity_fn=logdensity_fn, **mcmc_parameters)
+            state_ = kernel_instance.init(pos)
+            state_, info_ = kernel_instance.step(key_, state_)
+            return state_.position, info_
+        
+        #
+        temperature = kwargs.get('temperature', 1.0)
+        position = state.position.copy()
+
+        loglikelihood_fn_ = model.loglikelihood_fn()
+        logprior_fn_ = model.logprior_fn()
+        tempered_logdensity_fn = lambda state: jnp.squeeze(temperature * loglikelihood_fn_(state) + logprior_fn_(state))
+        new_position, mcmc_info = apply_mcmc_kernel(key, tempered_logdensity_fn, position)
+        return MCMCState(position=new_position), mcmc_info
+    
+    #
+    def init_fn(position, rng_key=None):
+        del rng_key
+        return MCMCState(position=position)
+    
+    #
+    def step_fn(key: PRNGKey, state, *args, **kwargs):
+        state, info = mcmc_fn(model, key, state, *args, **kwargs)
+        return state, info
+    
+    #
+    return SamplingAlgorithm(init_fn, step_fn)
+
+#
 def run_chain(rng_key, 
               step_fn: Callable, 
               initial_state, 
@@ -220,7 +263,7 @@ def run_chain(rng_key,
     return states, infos
 
 #
-def inference_loop(key: Array, 
+def mcmc_inference_loop(key: Array, 
                    model: Model, 
                    kernel: SamplingAlgorithm, 
                    num_samples: int, 

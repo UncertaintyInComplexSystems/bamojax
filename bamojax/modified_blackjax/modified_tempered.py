@@ -154,8 +154,7 @@ def build_kernel(
         delta = lmbda - state.lmbda
 
         # [MODIFICATION]
-        if mcmc_step_fn.__name__ == 'gibbs_step_fn':
-            mcmc_parameters['temperature'] = lmbda*jnp.eye(1)
+        mcmc_parameters['temperature'] = lmbda*jnp.eye(1)
         # [MODIFICATION]
 
         shared_mcmc_parameters = {}
