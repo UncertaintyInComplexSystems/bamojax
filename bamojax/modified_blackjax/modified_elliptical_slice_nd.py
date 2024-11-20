@@ -90,10 +90,17 @@ def build_kernel(cov_matrix: Array, mean: Array, nd: tuple = None):
 
     """
     ndim = jnp.ndim(cov_matrix)  # type: ignore[arg-type]
-
-    d, nu = nd
     n = cov_matrix.shape[0]
-    flat_shape = (d*nu*n, )
+
+    if len(nd) == 2:
+        d, nu = nd        
+        flat_shape = (d*nu*n, )
+    elif len(nd) == 1:
+        d = 1
+        nu = nd[0]
+        flat_shape = (nu*n, )
+    else:
+        raise NotImplementedError(f'Elliptical slice sampling is not implemented for nd = {nd}')
 
     if ndim == 1:  # diagonal covariance matrix
         cov_matrix_sqrt = jnp.sqrt(cov_matrix)
@@ -111,7 +118,7 @@ def build_kernel(cov_matrix: Array, mean: Array, nd: tuple = None):
         return jax.tree_util.tree_map(lambda l: jnp.reshape(l, shape=flat_shape), u)
         
     def to_nd(u):
-        return jax.tree_util.tree_map(lambda l: jnp.reshape(l, shape=nd + (n,)), u)
+        return jax.tree_util.tree_map(lambda l: jnp.reshape(l, shape=nd + (n, )), u)
 
     def momentum_generator(rng_key, position):
         generate_noise_fn = lambda k, p: generate_gaussian_noise(k, p, mean, cov_matrix_sqrt)
@@ -124,6 +131,9 @@ def build_kernel(cov_matrix: Array, mean: Array, nd: tuple = None):
         elif d>1 and nu==1:
             keys_d = jax.random.split(rng_key, d)
             z = jax.vmap(generate_noise_fn, in_axes=(0, 0))(keys_d, u)
+        elif d==1 and nu > 1:
+            keys_nu = jax.random.split(rng_key, nu)
+            z = jax.vmap(generate_noise_fn, in_axes=(0, 0))(keys_nu, u)
         elif d>1 and nu>1:
             keys_d = jax.random.split(rng_key, d)
             keys_dnu = jax.vmap(lambda k: jax.random.split(k, nu))(keys_d)
