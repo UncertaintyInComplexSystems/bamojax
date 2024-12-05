@@ -10,10 +10,10 @@ In the future, BaMoJax will be fully pip-installable. For now, we recommend clon
 
 BaMoJax has been developed with Jaxlib 0.4.34 and Jax 0.4.35. For installation of the correct dependencies, we recommend these steps:
 
-``
-    conda install jaxlib=*=*cuda* jax cuda-nvcc -c conda-forge -c nvidia
-    pip install -U "jax[cuda12]"
-``
+``` 
+conda install jaxlib=*=*cuda* jax cuda-nvcc -c conda-forge -c nvidia
+pip install -U "jax[cuda12]"
+``` 
 
 After that, the other dependencies can be installed straightforwardly with pip.
 
