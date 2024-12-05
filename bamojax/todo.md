@@ -9,6 +9,8 @@
 - Use forked `jaxkern` repository for GP kernels, and see if the random Fourier features approximation works out of the box.
 - Implement Variational Inference with a distrax distribution for $q$.
 - Try Variational Gibbs Inference: https://jmlr.org/papers/v24/21-1373.html.
+- Port marginal likelihood approximators from `uicsmodels`; add others such as path integration and AIS.
+- Automated tuning loop, also within SMC.
 
 # Examples
 

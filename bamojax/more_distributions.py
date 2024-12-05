@@ -5,6 +5,7 @@ import jax
 import jax.random as jrnd
 import jax.numpy as jnp
 import distrax as dx
+import jaxkern as jk
 
 from jax.scipy.special import multigammaln
 
@@ -40,27 +41,27 @@ class Zero(MeanFunction):
     #
 #
 
-class RBF():
-    r""" Implements the Radial Basis Function Gaussian process covariance function.
+# class RBF():
+#     r""" Implements the Radial Basis Function Gaussian process covariance function.
 
-    Its parameters are a lengthscale and output variance.
+#     Its parameters are a lengthscale and output variance.
     
-    """
+#     """
 
-    def __init__(self, active_dims: Optional[list[int]] = None, name: str = 'RBF'):
-        self.active_dims = active_dims
-        self.name = name
+#     def __init__(self, active_dims: Optional[list[int]] = None, name: str = 'RBF'):
+#         self.active_dims = active_dims
+#         self.name = name
 
-    #
-    def __call__(self, params: dict, x: Array, y: Array) -> Array:
+#     #
+#     def __call__(self, params: dict, x: Array, y: Array) -> Array:
 
-        D = pairwise_distances(dist=euclidean, xs=x, ys=y)
-        K = params['variance']*jnp.exp(-0.5*D**2 / params['lengthscale']**2)        
-        return K.squeeze().T
+#         D = pairwise_distances(dist=euclidean, xs=x, ys=y)
+#         K = params['variance']*jnp.exp(-0.5*D**2 / params['lengthscale']**2)        
+#         return K.squeeze().T
     
-    #
+#     #
 
-#
+# #
 
 def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = None,  nd: Tuple[int, ...] = None, jitter: float = 1e-6):
     r""" Returns an instantiated Gaussian process distribution object. 
@@ -190,8 +191,8 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = None,  nd: Tupl
 
             mean = mean_fn.mean(params=self.params, x=z)
             Kxx = self.get_cov()
-            Kzx = cov_fn(params=self.params, x=z, y=x)
-            Kzz = cov_fn(params=self.params, x=z, y=z)
+            Kzx = cov_fn.cross_covariance(params=self.params, x=z, y=x)
+            Kzz = cov_fn.cross_covariance(params=self.params, x=z, y=z)
 
             Kxx += jitter * jnp.eye(*Kxx.shape)
             Kzx += jitter * jnp.eye(*Kzx.shape)
@@ -234,7 +235,7 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = None,  nd: Tupl
         def _get_cov(self):
             x = self.input
             m = x.shape[0]
-            return cov_fn(params=self.params, x=x, y=x) + jitter * jnp.eye(m)
+            return cov_fn.cross_covariance(params=self.params, x=x, y=x) + jitter * jnp.eye(m)
         
         #
         def get_cov(self):
