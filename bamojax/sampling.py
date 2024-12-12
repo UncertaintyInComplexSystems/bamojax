@@ -329,9 +329,7 @@ def run_smc(rng_key: PRNGKey,
 
     #
     n_iter, final_state, _, lml, final_info = jax.lax.while_loop(cond, one_step, 
-                                                      (1, initial_state, rng_key, initial_log_likelihood, initial_info))
-    del initial_info
-    del initial_state
+                                                    (1, initial_state, rng_key, initial_log_likelihood, initial_info))
 
     return n_iter, final_state, lml, final_info
 

@@ -154,7 +154,7 @@ def build_kernel(
         delta = lmbda - state.lmbda
 
         # [MODIFICATION]
-        mcmc_parameters['temperature'] = lmbda*jnp.eye(1)
+        mcmc_parameters['temperature'] = state.lmbda*jnp.eye(1)
         # [MODIFICATION]
 
         shared_mcmc_parameters = {}
