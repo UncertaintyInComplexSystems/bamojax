@@ -17,7 +17,6 @@ tempered_smc = generate_top_level_api_from(modified_tempered)
 adaptive_tempered_smc = generate_top_level_api_from(modified_adaptive_tempered)
 elliptical_slice_nd = generate_top_level_api_from(modified_elliptical_slice_nd)
 
-
 from .base import Model
 
 class GibbsState(NamedTuple):
@@ -37,7 +36,7 @@ def gibbs_sampler(model: Model,
     r""" Constructs a Gibbs sampler as a Blackjax SamplingAlgorithm.
 
     Args:
-        model: The Bayesian model.
+        model: The bamojax definition of a Bayesian model.
         step_fns: (optional) a set of step functions to use for updating each variable in turn.
         step_fn_params: (optional) parameters of the step functions
 
@@ -113,6 +112,8 @@ def gibbs_sampler(model: Model,
         
         """
 
+        # [TODO]: make the Gibbs function more memory efficient & faster
+
         # In case we apply likelihood tempering
         temperature = kwargs.get('temperature', 1.0)
         position = state.position.copy()
@@ -121,21 +122,15 @@ def gibbs_sampler(model: Model,
         sorted_free_variables = [node for node in model.get_node_order() if node.is_stochastic() and not node.is_observed()]
 
         for node in sorted_free_variables:
-            # get conditional density
+            # Get conditional densities
             conditionals = []
             children = [c for c in model.get_children(node)]        
             for child in children:
-                co_parents = set()
-                for parent in model.get_parents(child):
-                    if not parent == node or parent in co_parents:
-                        co_parents.add(parent)  
+                # Co-parents are all parents of the child, except node
+                co_parents = {parent for parent in model.get_parents(child) if parent != node}
 
-                co_parent_arguments = {}
-                for co_parent in co_parents:
-                    if co_parent.name in position:
-                        co_parent_arguments[co_parent.name] = position[co_parent.name]
-                    else:
-                        co_parent_arguments[co_parent.name] = co_parent.observations
+                # Values for co-parents are either taken from the position (if latent), or from their respective observations (if observed)
+                co_parent_arguments = {k: (position[k] if k in position else k.observations) for k in co_parents}
 
                 def loglikelihood_fn_(substate):
                     dynamic_state = {**co_parent_arguments, node.name: substate[node]}
@@ -168,11 +163,12 @@ def gibbs_sampler(model: Model,
             step_substate, step_info = step_kernel.step(subkey, step_substate)
             info[node.name] = step_info
             
-            for k, v in step_substate.position.items():
-                position[k] = v
+            position = {**position, **step_substate.position}
                 
+            del step_kernel
             del step_substate
             del conditionals
+            del children
 
         del state
         return GibbsState(position=position), info
@@ -193,6 +189,19 @@ def gibbs_sampler(model: Model,
 
 #
 def mcmc_sampler(model: Model, mcmc_kernel, mcmc_parameters: dict = None):
+    """ Constructs an MCMC sampler from a given Blackjax algorithm.
+
+    This lightweight wrapper ensures the (optional) tempering parameter 'temperature',
+    as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
+
+    Args:
+        model: A bamojax model definition.
+        mcmc_kernel: A Blackjax MCMC algorithm.
+        mcmc_parameters: Optional Blackjax MCMC parameters, such as step sizes.
+    Returns:
+        A Blackjax SamplingAlgorithm object with methods `init_fn` and `step_fn`.
+    
+    """
 
     def mcmc_fn(model: Model, 
                 key, 
@@ -230,10 +239,10 @@ def mcmc_sampler(model: Model, mcmc_kernel, mcmc_parameters: dict = None):
     return SamplingAlgorithm(init_fn, step_fn)
 
 #
-def run_chain(rng_key, 
-              step_fn: Callable, 
-              initial_state, 
-              num_samples: int):
+def run_mcmc_chain(rng_key, 
+                   step_fn: Callable, 
+                   initial_state, 
+                   num_samples: int):
     """The MCMC inference loop.
 
     The inference loop takes an initial state, a step function, and the desired
@@ -274,7 +283,7 @@ def mcmc_inference_loop(key: Array,
     def chain_fun(key: Array):
         key, k_inference, k_init = jrnd.split(key, 3)
         initial_state = kernel.init(model.sample_prior(k_init))
-        states, info = run_chain(k_inference, step_fn=kernel.step, initial_state=initial_state, num_samples=num_burn+num_samples)
+        states, info = run_mcmc_chain(k_inference, step_fn=kernel.step, initial_state=initial_state, num_samples=num_burn+num_samples)
         states = jax.tree_util.tree_map(lambda x: jnp.squeeze(x[num_burn::num_thin, ...]), states)
         return states, info
     
@@ -288,7 +297,8 @@ def mcmc_inference_loop(key: Array,
 def run_smc(rng_key: PRNGKey, 
             smc_kernel: Callable, 
             initial_state):
-    """The sequential Monte Carlo loop.
+    """The sequential Monte Carlo loop, which also stores the MCMC info objects. 
+    These contain diagnostics such as acceptance rates, proposals, etc.
 
     Args:
         key: 
@@ -303,9 +313,10 @@ def run_smc(rng_key: PRNGKey,
             The number of tempering steps
         final_state: 
             The final state of each of the particles
-        info: SMCinfo
-            the SMC info object which contains the log marginal likelihood of 
-              the model (for model comparison)
+        lml:
+            The model log marginal likelihood
+        info: 
+            The diagnostic information
         
     """
 
@@ -314,7 +325,7 @@ def run_smc(rng_key: PRNGKey,
         return state.lmbda < 1
 
     #
-    # call once to determine the info pytree structure - start the loop at iteration 1 instead of 0!
+    # Call SMC once to determine the info pytree structure. Note that the jax.lax.while_loop therefore starts at 1.
     rng_key, key_init = jrnd.split(rng_key)
     initial_state, sample_info = smc_kernel(key_init, initial_state)
     initial_info = jax.tree_util.tree_map(lambda x: jax.numpy.zeros_like(x), sample_info)
@@ -334,6 +345,48 @@ def run_smc(rng_key: PRNGKey,
     return n_iter, final_state, lml, final_info
 
 #
+def run_smc_no_diagnostics(rng_key: PRNGKey, 
+            smc_kernel: Callable, 
+            initial_state):
+    """The sequential Monte Carlo loop.
+
+    Args:
+        key: 
+            The jax.random.PRNGKey
+        smc_kernel: 
+            The SMC kernel object (e.g. SMC, tempered SMC or 
+                    adaptive-tempered SMC)
+        initial_state: 
+            The initial state for each particle
+    Returns:
+        n_iter: int
+            The number of tempering steps
+        final_state: 
+            The final state of each of the particles
+        lml: The model log marginal likelihood
+        
+    """
+
+    def cond(carry):
+        _, state, *_k = carry
+        return state.lmbda < 1
+
+    #
+    
+    @jax.jit
+    def one_step(carry):                
+        i, state, k, curr_log_likelihood = carry
+        k, subk = jax.random.split(k)
+        state, info = smc_kernel(subk, state)        
+        return i + 1, state, k, curr_log_likelihood + info.log_likelihood_increment
+
+    #
+    n_iter, final_state, _, lml = jax.lax.while_loop(cond, one_step, 
+                                                    (0, initial_state, rng_key, 0))
+
+    return n_iter, final_state, lml
+
+#
 def smc_inference_loop(key, 
                        model, 
                        kernel: SamplingAlgorithm, 
@@ -342,7 +395,8 @@ def smc_inference_loop(key,
                        num_chains: int = 1, 
                        mcmc_parameters: dict = None, 
                        resampling_fn: Callable = systematic, 
-                       target_ess: float = 0.5):
+                       target_ess: float = 0.5,
+                       store_diagnostics = True):
 
     if mcmc_parameters is None:
         mcmc_parameters = {}
@@ -362,19 +416,29 @@ def smc_inference_loop(key,
         key_smc, key_init = jrnd.split(key_)
         keys = jrnd.split(key_init, num_particles)
         initial_particles = smc.init(jax.vmap(model.sample_prior)(keys))
-        n_iter, final_state, lml, final_info = run_smc(key_smc, smc.step, initial_particles)        
-        return final_state, lml, n_iter, final_info
+        if store_diagnostics:
+            n_iter, final_state, lml, final_info = run_smc(key_smc, smc.step, initial_particles)        
+            return final_state, lml, n_iter, final_info
+        else:
+            n_iter, final_state, lml = run_smc_no_diagnostics(key_smc, smc.step, initial_particles)    
+            return final_state, lml, n_iter            
     
     #        
     keys = jrnd.split(key, num_chains)
-    final_state, lml, n_iter, final_info = jax.vmap(run_chain)(keys)
+    if store_diagnostics:
+        final_state, lml, n_iter, final_info = jax.vmap(run_chain)(keys)
+        final_info = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), final_info)
+    else:
+        final_state, lml, n_iter = jax.vmap(run_chain)(keys)        
 
-    # squeeze the `chains` dim
     n_iter = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), n_iter)
     final_state = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), final_state)
     lml = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), lml)
-    final_info = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), final_info)
+    
+    if store_diagnostics:
+        return final_state, lml, n_iter, final_info
+    else:
+        return final_state, lml, n_iter
 
-    return final_state, lml, n_iter, final_info
 
 #
