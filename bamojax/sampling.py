@@ -325,7 +325,7 @@ def sgmcmc_inference_loop(key: Array,
         return states
     
     #    
-    grad_fn = grad_estimator(model.logprior_fn(), model.batched_loglikelihood_fn(), data_size)
+    grad_fn = grad_estimator(model.logprior_fn(), model.batched_loglikelihood_fn(), data_size, batch_size)
     sgmcmc_kernel = sgkernel(grad_fn, **sgparams)
     keys = jrnd.split(key, num_chains)
     states = jax.vmap(chain_fun, in_axes=0)(keys)

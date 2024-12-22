@@ -8,7 +8,7 @@ DISCLAIMER: this code is adapted from Blackjax.
 """
 
 def logdensity_estimator(
-    logprior_fn: Callable, loglikelihood_fn: Callable, data_size: int
+    logprior_fn: Callable, loglikelihood_fn: Callable, data_size: int, batch_size: int
 ) -> Callable:
     """Builds a simple estimator for the log-density.
 
@@ -51,17 +51,17 @@ def logdensity_estimator(
 
         """
         logprior = logprior_fn(position)
-        return logprior + loglikelihood_fn(position, minibatch)
+        return logprior + data_size / batch_size * loglikelihood_fn(position, minibatch)
 
     return logdensity_estimator_fn
 
 
 def grad_estimator(
-    logprior_fn: Callable, loglikelihood_fn: Callable, data_size: int
+    logprior_fn: Callable, loglikelihood_fn: Callable, data_size: int, batch_size
 ) -> Callable:
     """Build a simple estimator for the gradient of the log-density."""
 
     logdensity_estimator_fn = logdensity_estimator(
-        logprior_fn, loglikelihood_fn, data_size
+        logprior_fn, loglikelihood_fn, data_size, batch_size
     )
     return jax.grad(logdensity_estimator_fn)
