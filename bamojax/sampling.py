@@ -6,9 +6,12 @@ import jax.numpy as jnp
 from blackjax.base import SamplingAlgorithm
 from blackjax.types import ArrayTree, PRNGKey
 from blackjax.smc.resampling import systematic
+# from blackjax.sgmcmc.gradients import grad_estimator
+
 
 from blackjax import generate_top_level_api_from, normal_random_walk
 
+from bamojax.gradients import grad_estimator
 from bamojax.modified_blackjax import modified_adaptive_tempered
 from bamojax.modified_blackjax import modified_tempered
 from bamojax.modified_blackjax import modified_elliptical_slice_nd
@@ -239,6 +242,99 @@ def mcmc_sampler(model: Model, mcmc_kernel, mcmc_parameters: dict = None):
     return SamplingAlgorithm(init_fn, step_fn)
 
 #
+def run_sgmcmc_chain(rng_key, step_fn: Callable, initial_state, batch_nodes: list, data_size: int, batch_size: int, stepsize: float, num_samples: int):
+    """ The Stochastic-gradient MCMC inference loop.
+
+    Note that the Blackjax implementation of SGMCMC algorithms do not return an 'info' object with diagnostics.
+
+    Args:
+        rng_key:
+            The jax.random.PRNGKey
+        step_fn: 
+            A step function that takes a state and returns a new state
+        initial_state: 
+            The initial state of the sampler
+        batch_nodes:
+            A list of nodes for which to create a minibatch, e.g. inputs and outputs
+        data_size:
+            The total data set size
+        batch_size:
+            The size of a minibatch
+        stepsize:
+            The SGMCMC stepsize
+        num_samples: int
+            The number of samples to obtain
+    Returns:
+
+
+    """
+    # Note: this minibatch function returns shapes we expect, (N_sub, p) for p-dimensional input, and (N_sub, ) for 1-dimensional input
+
+    def get_minibatch(data, indices):
+        if jnp.ndim(data) == 1:
+            data = data[:, jnp.newaxis]    
+        slice_size = (1,) + data.shape[1:]  # For (N, p), this will be (1, p)    
+        return jnp.squeeze(jax.vmap(lambda i: jax.lax.dynamic_slice(data, (i,) + (0,) * (data.ndim - 1), slice_size))(indices))
+
+    #
+    @jax.jit
+    def one_step(state, key): 
+        key_sgld, key_batch = jrnd.split(key)
+        idx = jrnd.choice(key_batch, data_size, shape=(batch_size, ), replace=False)
+        minibatch = {node.name: get_minibatch(node.observations, idx) for node in batch_nodes}
+        state = step_fn(key_sgld, state, minibatch, stepsize)    
+        return state, state
+
+    #
+    keys = jrnd.split(rng_key, num_samples)
+    _, states = jax.lax.scan(one_step, initial_state, keys)
+
+    return states
+
+#
+def sgmcmc_inference_loop(key: Array, 
+                          model: Model, 
+                          sgkernel: SamplingAlgorithm,                           
+                          batch_nodes: list,
+                          data_size: int,
+                          batch_size: int,
+                          stepsize: float,
+                          num_samples: int, 
+                          sgparams: dict = None,
+                          num_burn: int = 0, 
+                          num_chains: int = 1, 
+                          num_thin: int = 1):
+    
+    if sgparams is None:
+        sgparams = {}
+
+    assert batch_size < data_size, f'Batch size must be smaller than data set size, but found batch size: {batch_size} and data size: {data_size}.'
+    
+    def chain_fun(key: Array):
+        key, k_inference, k_init = jrnd.split(key, 3)
+        initial_state = sgmcmc_kernel.init(model.sample_prior(k_init))
+        states = run_sgmcmc_chain(k_inference, 
+                                  step_fn=sgmcmc_kernel.step, 
+                                  initial_state=initial_state, 
+                                  batch_nodes=batch_nodes, 
+                                  data_size=data_size, 
+                                  batch_size=batch_size, 
+                                  stepsize=stepsize,
+                                  num_samples=num_burn+num_samples)
+        states = jax.tree_util.tree_map(lambda x: jnp.squeeze(x[num_burn::num_thin, ...]), states)
+        return states
+    
+    #    
+    grad_fn = grad_estimator(model.logprior_fn(), model.batched_loglikelihood_fn(), data_size)
+    sgmcmc_kernel = sgkernel(grad_fn, **sgparams)
+    keys = jrnd.split(key, num_chains)
+    states = jax.vmap(chain_fun, in_axes=0)(keys)
+    states = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), states)
+    return states
+
+#
+
+
 def run_mcmc_chain(rng_key, 
                    step_fn: Callable, 
                    initial_state, 
@@ -251,7 +347,7 @@ def run_mcmc_chain(rng_key,
     Args:
         rng_key: 
             The jax.random.PRNGKey
-        kernel: Callable
+        step_fn: Callable
             A step function that takes a state and returns a new state
         initial_state: 
             The initial state of the sampler
@@ -266,7 +362,7 @@ def run_mcmc_chain(rng_key,
         state, info = step_fn(rng_key, state)
         return state, (state, info)
 
-    keys = jax.random.split(rng_key, num_samples)
+    keys = jrnd.split(rng_key, num_samples)
     _, (states, infos) = jax.lax.scan(one_step, initial_state, keys)
 
     return states, infos
@@ -334,7 +430,7 @@ def run_smc(rng_key: PRNGKey,
     @jax.jit
     def one_step(carry):                
         i, state, k, curr_log_likelihood, _ = carry
-        k, subk = jax.random.split(k)
+        k, subk = jrnd.split(k)
         state, info = smc_kernel(subk, state)        
         return i + 1, state, k, curr_log_likelihood + info.log_likelihood_increment, info
 
@@ -376,7 +472,7 @@ def run_smc_no_diagnostics(rng_key: PRNGKey,
     @jax.jit
     def one_step(carry):                
         i, state, k, curr_log_likelihood = carry
-        k, subk = jax.random.split(k)
+        k, subk = jrnd.split(k)
         state, info = smc_kernel(subk, state)        
         return i + 1, state, k, curr_log_likelihood + info.log_likelihood_increment
 

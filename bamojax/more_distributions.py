@@ -39,30 +39,8 @@ class Zero(MeanFunction):
         return jnp.zeros((x.shape[0], ))
     
     #
+
 #
-
-# class RBF():
-#     r""" Implements the Radial Basis Function Gaussian process covariance function.
-
-#     Its parameters are a lengthscale and output variance.
-    
-#     """
-
-#     def __init__(self, active_dims: Optional[list[int]] = None, name: str = 'RBF'):
-#         self.active_dims = active_dims
-#         self.name = name
-
-#     #
-#     def __call__(self, params: dict, x: Array, y: Array) -> Array:
-
-#         D = pairwise_distances(dist=euclidean, xs=x, ys=y)
-#         K = params['variance']*jnp.exp(-0.5*D**2 / params['lengthscale']**2)        
-#         return K.squeeze().T
-    
-#     #
-
-# #
-
 def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = None,  nd: Tuple[int, ...] = None, jitter: float = 1e-6):
     r""" Returns an instantiated Gaussian process distribution object. 
     
@@ -82,7 +60,12 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = None,  nd: Tupl
 
         def __init__(self, input: Node, **params):
             self.input = input
-            self.params = params
+
+            # In case of composite covariance functions:
+            if 'params' in params:
+                self.params = params['params']
+            else:
+                self.params = params
 
         #
         def _sample_n(self, key, n):

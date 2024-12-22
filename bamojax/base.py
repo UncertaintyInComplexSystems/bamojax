@@ -63,7 +63,7 @@ class Node:
         return hasattr(self, 'parents') and self.is_observed()
     
     #    
-    def get_distribution(self, state: dict = None) -> Distribution:
+    def get_distribution(self, state: dict = None, minibatch: dict = None) -> Distribution:
         r""" Derives the parametrized distribution p(node | Parents=x), where x is derived from the state object.
 
         Args:
@@ -76,6 +76,9 @@ class Node:
         # Root-level nodes can be defined as instantiated distrax distributions.
         if isinstance(self.distribution, Distribution):
             return self.distribution
+        
+        if minibatch is None:
+            minibatch = {}
 
         # Otherwise the distribution is instantiated from the state.
         parent_values = {}
@@ -83,7 +86,10 @@ class Node:
             if parent_node in state:
                 parent_values[parent_name] = state[parent_node]
             else:
-                parent_values[parent_name] = self.parents[parent_name].observations
+                if parent_name in minibatch:
+                    parent_values[parent_name] = minibatch[parent_node]
+                else:
+                    parent_values[parent_name] = self.parents[parent_name].observations
 
         transformed_parents = self.link_fn(**parent_values)
         return self.distribution(**transformed_parents)
@@ -228,6 +234,23 @@ class Model:
         #
         return loglikelihood_fn_
     
+    #
+    def batched_loglikelihood_fn(self) -> Callable:
+        r""" Batched loglikelihood function for stochastic-gradient methods.
+
+        Assumes `minibatch` is a dictionary containing a minibatch for each observed leaf node.
+
+        """
+
+        def loglikelihood_fn_(state, minibatch) -> float:
+            logprob = 0.0
+            for node in self.get_leaf_nodes():
+                logprob += jnp.sum(node.get_distribution(state, minibatch=minibatch).log_prob(value=minibatch[node]))
+            return logprob
+        
+        #
+        return loglikelihood_fn_
+
     #
     def get_model_size(self) -> int:
         r""" Returns the total number of latent scalars.
