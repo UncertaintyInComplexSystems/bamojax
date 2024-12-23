@@ -6,12 +6,8 @@ import jax.numpy as jnp
 from blackjax.base import SamplingAlgorithm
 from blackjax.types import ArrayTree, PRNGKey
 from blackjax.smc.resampling import systematic
-# from blackjax.sgmcmc.gradients import grad_estimator
-
-
 from blackjax import generate_top_level_api_from, normal_random_walk
 
-from bamojax.gradients import grad_estimator
 from bamojax.modified_blackjax import modified_adaptive_tempered
 from bamojax.modified_blackjax import modified_tempered
 from bamojax.modified_blackjax import modified_elliptical_slice_nd
@@ -32,7 +28,16 @@ class MCMCState(NamedTuple):
     position: ArrayTree
 
 #
+def grad_estimator(logprior_fn: Callable, loglikelihood_fn: Callable, data_size: int, batch_size) -> Callable:
+    """Build a simple estimator for the gradient of the log-density."""
 
+    def logdensity_estimator_fn(position, minibatch):
+        return logprior_fn(position) + data_size / batch_size * loglikelihood_fn(position, minibatch)
+    
+    #
+    return jax.grad(logdensity_estimator_fn)
+
+#
 def gibbs_sampler(model: Model, 
                   step_fns: dict = None, 
                   step_fn_params: dict = None) -> SamplingAlgorithm:
