@@ -5,32 +5,44 @@ import jax.random as jrnd
 import jax.numpy as jnp
 from blackjax.types import ArrayTree, PRNGKey
 
-from blackjax import generate_top_level_api_from, normal_random_walk
-
+from blackjax import meanfield_vi
 
 
 from .base import Model
 
-# blackjax.vi implements an init (similar to MCMC), and a step fn
-# install optax
+def get_bijectors(model: Model, model_pytree):
+    bijectors = {}
+    for k in model_pytree.keys():
+        if hasattr(model.nodes[k].distribution, '_bijector'):                        
+            transform = lambda x: model.nodes[k].distribution._bijector.forward(x=x)
+        else:
+            transform = lambda x: x
+        bijectors[k] = transform
+    return bijectors
 
-# How does this deal with distrax transformations? Can we optimize in the untransformed space? 
-# In the case of full covariance, we might need the reparametrization trick
+#
 
-# generic:
-#  - define variational distribution using dx.Distribution (default: dx.MultivariateNormalFullCovariance / dx.MultivariateNormalDiag)
-#  - THE STEP FUNCTION
-#  - define ELBO(theta) := E_q(z|theta) [log p(y, z) - log q(z))] = E_q(z) [log p(y|z) + log p(z) - log q(z|theta)], implemented as:
-#     - elbo_fn(theta):
-#       - z ~ q(z|theta), M samples 
-#       - log p(z|theta) via dx.Dist(params=**theta).log_prob(value=z)  # in vmap over M
-#       - log p(y|z) + log p(z) via model.loglikelihood_fn()(z) and model.logprior_fn()(z)
-#       - return (logq - logp).mean()
-#    - elbo, elbo_grad = jax.value_and_grad(elbo_fn)(theta)
-#    - updates, new_opt_state = optimizer.update(elbo_grad, state.opt_state, theta)  # optimizer from optax
-#    - new_parameters = jax.tree.map(lambda p, u: p + u, parameters, updates)
-#    - new_state = VIState(new_parameters, new_opt_state)
-#    - return new_state, elbo
-#  - Gradient-based optimization using jax.grad / jax.value_and_grad
+def meanfield_variational_inference(key, model, num_steps, num_samples: int = 10, optimizer: Callable = None):
+    # get bijectors
+    bijectors = get_bijectors(model, model.sample_prior(jrnd.PRNGKey(0)))
 
-# tricks: see blackjax' implementation and use 'stick-the-landing' to end the gradient computation in the ELBO function; simply add theta' = jax.lax.stop_gradient(theta') for theta' \in theta
+    def logdensity_fn(z):
+        z = jax.tree.map(lambda f, v: f(v), bijectors, z)
+        return model.loglikelihood_fn()(z) + model.logprior_fn()(z)
+
+    #
+    mfvi = meanfield_vi(logdensity_fn, optimizer, num_samples)
+    initial_position = {'beta': jnp.array([1.0, 1.0]), 'sigma': -3.0}  # note: these values are overridden! by Blackjax!
+    initial_state = mfvi.init(initial_position)
+
+    @jax.jit
+    def one_step(state, rng_key):
+        state, info = mfvi.step(rng_key, state)
+        return state, (state, info)
+
+    #
+    keys = jrnd.split(key, num_steps)
+    _, (states, infos) = jax.lax.scan(one_step, initial_state, keys)
+    return states, infos
+
+#
