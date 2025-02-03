@@ -1,9 +1,13 @@
 from jaxtyping import Array, Union
 import jax.numpy as jnp
+import distrax as dx
 import jax.random as jrnd
 from typing import Tuple, Callable, NamedTuple
 from distrax._src.distributions.distribution import Distribution
 from distrax._src.bijectors.bijector import Bijector
+from tensorflow_probability.substrates import jax as tfp
+tfd = tfp.distributions
+tfb = tfp.bijectors
 from blackjax.types import ArrayTree, PRNGKey
 
 
@@ -14,11 +18,14 @@ class Node:
                  distribution: Union[Distribution, Bijector] = None, 
                  parents = None, 
                  link_fn: Callable = None,
-                 shape: Union[Tuple, int] = None):
+                 shape: Union[Tuple, int] = None,
+                 bijector: Bijector = None):
         self.name = name
         if shape is None:
             shape = ( )
         self.shape = shape
+        if bijector is not None:
+            self.bijector = bijector
         if observations is not None:
             self.observations = observations
         if distribution is not None:
@@ -92,7 +99,10 @@ class Node:
                     parent_values[parent_name] = self.parents[parent_name].observations
 
         transformed_parents = self.link_fn(**parent_values)
-        return self.distribution(**transformed_parents)
+        if hasattr(self, 'bijector'):
+            return dx.Transformed(self.distribution(**transformed_parents), self.bijector)
+        else:
+            return self.distribution(**transformed_parents)
 
     #
     def __repr__(self) -> str:
@@ -128,7 +138,8 @@ class Model:
                  observations: Array = None, 
                  parents: dict = None, 
                  link_fn: Callable = None,
-                 shape: Union[Tuple, int] = None) -> Node:
+                 shape: Union[Tuple, int] = None,
+                 bijector: Bijector = None) -> Node:
         r""" Adds a node to the Bayesian model DAG
 
         Args:
@@ -151,7 +162,7 @@ class Model:
                 else:
                     new_parents[parent_name] = parent
             parents = new_parents
-        new_node = Node(name=name, distribution=distribution, observations=observations, parents=parents, link_fn=link_fn, shape=shape)
+        new_node = Node(name=name, distribution=distribution, observations=observations, parents=parents, link_fn=link_fn, shape=shape, bijector=bijector)
         self.nodes[name] = new_node
         if self.verbose: print(f'Adding node ({name})')
         if parents is not None:

@@ -1,3 +1,5 @@
+import warnings
+
 from typing import NamedTuple, Callable
 from jaxtyping import Array
 import jax
@@ -315,6 +317,7 @@ def sgmcmc_inference_loop(key: Array,
 
     assert batch_size < data_size, f'Batch size must be smaller than data set size, but found batch size: {batch_size} and data size: {data_size}.'
     
+    @jax.jit
     def chain_fun(key: Array):
         key, k_inference, k_init = jrnd.split(key, 3)
         initial_state = sgmcmc_kernel.init(model.sample_prior(k_init))
@@ -373,26 +376,88 @@ def run_mcmc_chain(rng_key,
     return states, infos
 
 #
+def run_mcmc_chain_no_diagnostics(rng_key, 
+                   step_fn: Callable, 
+                   initial_state, 
+                   num_samples: int,
+                   num_thin: int = 1):
+    """The MCMC inference loop.
+
+    The inference loop takes an initial state, a step function, and the desired
+    number of samples. It returns a list of states.
+    
+    Args:
+        rng_key: 
+            The jax.random.PRNGKey
+        step_fn: Callable
+            A step function that takes a state and returns a new state
+        initial_state: 
+            The initial state of the sampler
+        num_samples: int
+            The number of samples to obtain
+    Returns: 
+        GibbsState [List, "num_samples"]
+
+    """
+
+    @jax.jit
+    def one_step(state, rng_key):
+        state, _ = step_fn(rng_key, state)
+        return state, state
+    
+    #    
+    @jax.jit
+    def dense_step(state, rng_key):
+        keys_ = jrnd.split(rng_key, num_thin)
+        _, states = jax.lax.scan(one_step, state, keys_)
+        final_state = jax.tree_util.tree_map(lambda x: x[-1, ...], states)
+        return final_state, final_state
+    
+    #    
+    if num_thin == 1:        
+        keys = jrnd.split(rng_key, num_samples)
+        _, states = jax.lax.scan(one_step, initial_state, keys)
+    else:
+        keys = jrnd.split(rng_key, int(num_samples / num_thin))
+        _, states = jax.lax.scan(dense_step, initial_state, keys)
+    return states
+
+#
 def mcmc_inference_loop(key: Array, 
                    model: Model, 
                    kernel: SamplingAlgorithm, 
                    num_samples: int, 
                    num_burn: int = 0, 
                    num_chains: int = 1, 
-                   num_thin: int = 1):
+                   num_thin: int = 1,
+                   store_diagnostics = True):
 
+    @jax.jit
     def chain_fun(key: Array):
         key, k_inference, k_init = jrnd.split(key, 3)
         initial_state = kernel.init(model.sample_prior(k_init))
-        states, info = run_mcmc_chain(k_inference, step_fn=kernel.step, initial_state=initial_state, num_samples=num_burn+num_samples)
-        states = jax.tree_util.tree_map(lambda x: jnp.squeeze(x[num_burn::num_thin, ...]), states)
-        return states, info
+
+        if store_diagnostics:
+            states, info = run_mcmc_chain(k_inference, step_fn=kernel.step, initial_state=initial_state, num_samples=num_burn+num_samples)
+            states = jax.tree_util.tree_map(lambda x: jnp.squeeze(x[num_burn::num_thin, ...]), states)
+            return states, info
+        else:
+            states = run_mcmc_chain_no_diagnostics(k_inference, step_fn=kernel.step, initial_state=initial_state, num_samples=num_burn+num_samples, num_thin=num_thin)
+            num_burn_remove = int(num_burn / num_thin)
+            states = jax.tree_util.tree_map(lambda x: jnp.squeeze(x[num_burn_remove:, ...]), states)
+            return states   
     
     #    
     keys = jrnd.split(key, num_chains)
-    states, info = jax.vmap(chain_fun, in_axes=0)(keys)
-    states = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), states)
-    return states, info
+
+    if store_diagnostics:
+        states, info = jax.vmap(chain_fun, in_axes=0)(keys)
+        states = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), states)
+        return states, info
+    else:
+        states = jax.vmap(chain_fun, in_axes=0)(keys)  
+        states = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), states)
+        return states    
 
 #
 def run_smc(rng_key: PRNGKey, 
@@ -499,9 +564,13 @@ def smc_inference_loop(key,
                        target_ess: float = 0.5,
                        store_diagnostics = True):
 
+    # if num_chains > 1:
+    #     warnings.warn(f'Number of chains set to {num_chains}, note that these are processed sequentially because AT-SMC uses a fori-loop construction.')
+
     if mcmc_parameters is None:
         mcmc_parameters = {}
 
+    @jax.jit
     def run_chain(key_):       
         smc = adaptive_tempered_smc(
                     logprior_fn=model.logprior_fn(),
