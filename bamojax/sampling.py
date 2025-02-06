@@ -460,6 +460,74 @@ def mcmc_inference_loop(key: Array,
         return states    
 
 #
+def run_smc_with_trace(rng_key: jax.random.PRNGKey, 
+                       smc_kernel: Callable, 
+                       initial_state, 
+                       max_iter: int):
+    """The sequential Monte Carlo loop with traced intermediate states.
+
+    Args:
+        rng_key: 
+            The jax.random.PRNGKey
+        smc_kernel: 
+            The SMC kernel object (e.g. SMC, tempered SMC, adaptive-tempered SMC)
+        initial_state: 
+            The initial state for each particle
+        max_iter:
+            An upper bound on the number of iterations
+
+    Returns:
+        n_iter: int
+            The number of tempering steps
+        final_state: 
+            The final state of each of the particles
+        lml:
+            The model log marginal likelihood
+        final_info: 
+            The diagnostic information
+        state_history:
+            A pytree of all intermediate states up to n_iter
+    """
+
+    def cond(carry):
+        i, state, *_ = carry
+        return jnp.logical_and(state.lmbda < 1, i < max_iter)
+
+    #
+    # Call SMC once to determine the info pytree structure.
+    rng_key, key_init = jrnd.split(rng_key)
+    initial_state, sample_info = smc_kernel(key_init, initial_state)
+    initial_log_likelihood = sample_info.log_likelihood_increment
+
+    # Preallocate arrays for state and info history
+    state_history = jax.tree_util.tree_map(
+        lambda x: jnp.zeros((max_iter,) + x.shape, dtype=x.dtype), initial_state
+    )
+
+    state_history = jax.tree_util.tree_map(lambda arr, val: arr.at[0].set(val), state_history, initial_state)
+
+    @jax.jit
+    def one_step(carry):
+        i, state, k, curr_log_likelihood, state_hist = carry
+        k, subk = jrnd.split(k)
+        state, info = smc_kernel(subk, state)
+
+        # Store intermediate results
+        state_hist = jax.tree_util.tree_map(lambda arr, val: arr.at[i].set(val), state_hist, state)
+
+        return i + 1, state, k, curr_log_likelihood + info.log_likelihood_increment, state_hist
+
+    #
+    n_iter, final_state, _, lml, state_history = jax.lax.while_loop(
+        cond, one_step, (1, initial_state, rng_key, initial_log_likelihood, state_history)
+    )
+
+    # Slice the recorded history to retain only the first `n_iter` steps
+    state_history = jax.tree_util.tree_map(lambda x: x[:n_iter], state_history)
+
+    return n_iter, final_state, lml, state_history
+
+#
 def run_smc(rng_key: PRNGKey, 
             smc_kernel: Callable, 
             initial_state):
@@ -553,7 +621,7 @@ def run_smc_no_diagnostics(rng_key: PRNGKey,
     return n_iter, final_state, lml
 
 #
-def smc_inference_loop(key, 
+def smc_inference_loop_with_diagnostics(key, 
                        model, 
                        kernel: SamplingAlgorithm, 
                        num_particles: int, 
@@ -561,11 +629,7 @@ def smc_inference_loop(key,
                        num_chains: int = 1, 
                        mcmc_parameters: dict = None, 
                        resampling_fn: Callable = systematic, 
-                       target_ess: float = 0.5,
-                       store_diagnostics = True):
-
-    # if num_chains > 1:
-    #     warnings.warn(f'Number of chains set to {num_chains}, note that these are processed sequentially because AT-SMC uses a fori-loop construction.')
+                       target_ess: float = 0.5):
 
     if mcmc_parameters is None:
         mcmc_parameters = {}
@@ -586,29 +650,118 @@ def smc_inference_loop(key,
         key_smc, key_init = jrnd.split(key_)
         keys = jrnd.split(key_init, num_particles)
         initial_particles = smc.init(jax.vmap(model.sample_prior)(keys))
-        if store_diagnostics:
-            n_iter, final_state, lml, final_info = run_smc(key_smc, smc.step, initial_particles)        
-            return final_state, lml, n_iter, final_info
-        else:
-            n_iter, final_state, lml = run_smc_no_diagnostics(key_smc, smc.step, initial_particles)    
-            return final_state, lml, n_iter            
+        
+        n_iter, final_state, lml, final_info = run_smc(key_smc, smc.step, initial_particles)        
+        return final_state, lml, n_iter, final_info
+         
     
     #        
     keys = jrnd.split(key, num_chains)
-    if store_diagnostics:
-        final_state, lml, n_iter, final_info = jax.vmap(run_chain)(keys)
-        final_info = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), final_info)
-    else:
-        final_state, lml, n_iter = jax.vmap(run_chain)(keys)        
-
+    final_state, lml, n_iter, final_info = jax.vmap(run_chain)(keys)
+    final_info = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), final_info)
     n_iter = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), n_iter)
     final_state = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), final_state)
     lml = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), lml)
     
-    if store_diagnostics:
-        return final_state, lml, n_iter, final_info
-    else:
-        return final_state, lml, n_iter
+    return final_state, lml, n_iter, final_info
 
+#
+
+def smc_inference_loop_no_diagnostics(key, 
+                       model, 
+                       kernel: SamplingAlgorithm, 
+                       num_particles: int, 
+                       num_mcmc_steps: int, 
+                       num_chains: int = 1, 
+                       mcmc_parameters: dict = None, 
+                       resampling_fn: Callable = systematic, 
+                       target_ess: float = 0.5):
+
+    if mcmc_parameters is None:
+        mcmc_parameters = {}
+
+    @jax.jit
+    def run_chain(key_):       
+        smc = adaptive_tempered_smc(
+                    logprior_fn=model.logprior_fn(),
+                    loglikelihood_fn=model.loglikelihood_fn(),
+                    mcmc_step_fn=kernel.step,
+                    mcmc_init_fn=kernel.init,
+                    mcmc_parameters=mcmc_parameters,
+                    resampling_fn=resampling_fn,
+                    target_ess=target_ess,
+                    num_mcmc_steps=num_mcmc_steps
+                )
+
+        key_smc, key_init = jrnd.split(key_)
+        keys = jrnd.split(key_init, num_particles)
+        initial_particles = smc.init(jax.vmap(model.sample_prior)(keys))
+        n_iter, final_state, lml = run_smc_no_diagnostics(key_smc, smc.step, initial_particles)    
+        return final_state, lml, n_iter            
+    
+    #        
+    keys = jrnd.split(key, num_chains)
+    final_state, lml, n_iter = jax.vmap(run_chain)(keys)        
+
+    n_iter = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), n_iter)
+    final_state = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), final_state)
+    lml = jax.tree_util.tree_map(lambda x: jnp.squeeze(x), lml)    
+   
+    return final_state, lml, n_iter
+
+#
+def smc_inference_loop(key, 
+                       model, 
+                       kernel: SamplingAlgorithm, 
+                       num_particles: int, 
+                       num_mcmc_steps: int, 
+                       num_chains: int = 1, 
+                       mcmc_parameters: dict = None, 
+                       resampling_fn: Callable = systematic, 
+                       target_ess: float = 0.5,
+                       store_diagnostics = True,
+                       store_trace = False,
+                       max_iter = 50):
+    
+    # TODO: move this to separate function so we can run it over multiple chains too
+    if store_trace:
+        if mcmc_parameters is None:
+            mcmc_parameters = {}
+        smc = adaptive_tempered_smc(
+                    logprior_fn=model.logprior_fn(),
+                    loglikelihood_fn=model.loglikelihood_fn(),
+                    mcmc_step_fn=kernel.step,
+                    mcmc_init_fn=kernel.init,
+                    mcmc_parameters=mcmc_parameters,
+                    resampling_fn=resampling_fn,
+                    target_ess=target_ess,
+                    num_mcmc_steps=num_mcmc_steps
+                )
+
+        key_smc, key_init = jrnd.split(key)
+        keys = jrnd.split(key_init, num_particles)
+        initial_particles = smc.init(jax.vmap(model.sample_prior)(keys))
+        return run_smc_with_trace(key_smc, initial_state=initial_particles, smc_kernel=smc.step, max_iter=max_iter)
+
+    if store_diagnostics:
+        return smc_inference_loop_with_diagnostics(key=key, 
+                                                   model=model, 
+                                                   kernel=kernel, 
+                                                   num_particles=num_particles, 
+                                                   num_mcmc_steps=num_mcmc_steps, 
+                                                   num_chains=num_chains, 
+                                                   mcmc_parameters=mcmc_parameters,
+                                                   resampling_fn=resampling_fn,
+                                                   target_ess=target_ess)
+    else:
+        return smc_inference_loop_no_diagnostics(key=key, 
+                                                 model=model, 
+                                                 kernel=kernel, 
+                                                 num_particles=num_particles,
+                                                 num_mcmc_steps=num_mcmc_steps, 
+                                                 num_chains=num_chains, 
+                                                 mcmc_parameters=mcmc_parameters,
+                                                 resampling_fn=resampling_fn,
+                                                 target_ess=target_ess)
 
 #
