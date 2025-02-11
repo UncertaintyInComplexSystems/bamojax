@@ -10,9 +10,9 @@ from blackjax.types import ArrayTree, PRNGKey
 from blackjax.smc.resampling import systematic
 from blackjax import generate_top_level_api_from, normal_random_walk
 
-from bamojax.modified_blackjax import modified_adaptive_tempered
-from bamojax.modified_blackjax import modified_tempered
-from bamojax.modified_blackjax import modified_elliptical_slice_nd
+from .modified_blackjax import modified_adaptive_tempered
+from .modified_blackjax import modified_tempered
+from .modified_blackjax import modified_elliptical_slice_nd
 
 tempered_smc = generate_top_level_api_from(modified_tempered)
 adaptive_tempered_smc = generate_top_level_api_from(modified_adaptive_tempered)
