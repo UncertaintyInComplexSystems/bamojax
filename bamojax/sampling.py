@@ -30,7 +30,10 @@ class MCMCState(NamedTuple):
     position: ArrayTree
 
 #
-def grad_estimator(logprior_fn: Callable, loglikelihood_fn: Callable, data_size: int, batch_size) -> Callable:
+def grad_estimator(logprior_fn: Callable, 
+                   loglikelihood_fn: Callable, 
+                   data_size: int, 
+                   batch_size) -> Callable:
     """Build a simple estimator for the gradient of the log-density."""
 
     def logdensity_estimator_fn(position, minibatch):
@@ -76,7 +79,11 @@ def gibbs_sampler(model: Model,
     #
     step_fns, step_fn_params = set_step_fns_defaults(step_fns=step_fns, step_fn_params=step_fn_params)
 
-    def get_nonstandard_gibbs_step(node, position, loglikelihood_fn, step_fns, step_fn_params):
+    def get_nonstandard_gibbs_step(node, 
+                                   position, 
+                                   loglikelihood_fn, 
+                                   step_fns, 
+                                   step_fn_params):
         r""" The Blackjax SamplingAlgorithm is not parametrized in entirely the same way for different algorithms. To not clutter the gibbs_fn, exception cases are handled here.
 
         """
@@ -122,8 +129,6 @@ def gibbs_sampler(model: Model,
         
         """
 
-        # [TODO]: make the Gibbs function more memory efficient & faster
-
         # In case we apply likelihood tempering
         temperature = kwargs.get('temperature', 1.0)
         position = state.position.copy()
@@ -154,7 +159,6 @@ def gibbs_sampler(model: Model,
                 co_parents.add(node)
                 conditionals.append(loglikelihood_fn_)
 
-            # [TODO] Can we avoid the list and use a vmap instead? Particularly relevant for hierarchical models.
             loglikelihood_fn = lambda val: jnp.sum(jnp.asarray([temperature*ll_fn(val).sum() for ll_fn in conditionals]))
 
             if 'implied_mvn_prior' in step_fn_params[node]:
@@ -198,7 +202,9 @@ def gibbs_sampler(model: Model,
     return SamplingAlgorithm(init_fn, step_fn)
 
 #
-def mcmc_sampler(model: Model, mcmc_kernel, mcmc_parameters: dict = None):
+def mcmc_sampler(model: Model, 
+                 mcmc_kernel, 
+                 mcmc_parameters: dict = None):
     """ Constructs an MCMC sampler from a given Blackjax algorithm.
 
     This lightweight wrapper ensures the (optional) tempering parameter 'temperature',
@@ -249,7 +255,14 @@ def mcmc_sampler(model: Model, mcmc_kernel, mcmc_parameters: dict = None):
     return SamplingAlgorithm(init_fn, step_fn)
 
 #
-def run_sgmcmc_chain(rng_key, step_fn: Callable, initial_state, batch_nodes: list, data_size: int, batch_size: int, stepsize: float, num_samples: int):
+def run_sgmcmc_chain(rng_key, 
+                     step_fn: Callable, 
+                     initial_state, 
+                     batch_nodes: list, 
+                     data_size: int, 
+                     batch_size: int, 
+                     stepsize: float, 
+                     num_samples: int):
     """ The Stochastic-gradient MCMC inference loop.
 
     Note that the Blackjax implementation of SGMCMC algorithms do not return an 'info' object with diagnostics.
@@ -377,10 +390,10 @@ def run_mcmc_chain(rng_key,
 
 #
 def run_mcmc_chain_no_diagnostics(rng_key, 
-                   step_fn: Callable, 
-                   initial_state, 
-                   num_samples: int,
-                   num_thin: int = 1):
+                                  step_fn: Callable, 
+                                  initial_state, 
+                                  num_samples: int,
+                                  num_thin: int = 1):
     """The MCMC inference loop.
 
     The inference loop takes an initial state, a step function, and the desired
@@ -424,13 +437,13 @@ def run_mcmc_chain_no_diagnostics(rng_key,
 
 #
 def mcmc_inference_loop(key: Array, 
-                   model: Model, 
-                   kernel: SamplingAlgorithm, 
-                   num_samples: int, 
-                   num_burn: int = 0, 
-                   num_chains: int = 1, 
-                   num_thin: int = 1,
-                   store_diagnostics = True):
+                        model: Model, 
+                        kernel: SamplingAlgorithm, 
+                        num_samples: int, 
+                        num_burn: int = 0, 
+                        num_chains: int = 1, 
+                        num_thin: int = 1,
+                        store_diagnostics = True):
 
     @jax.jit
     def chain_fun(key: Array):
@@ -483,8 +496,6 @@ def run_smc_with_trace(rng_key: jax.random.PRNGKey,
             The final state of each of the particles
         lml:
             The model log marginal likelihood
-        final_info: 
-            The diagnostic information
         state_history:
             A pytree of all intermediate states up to n_iter
     """
@@ -503,7 +514,6 @@ def run_smc_with_trace(rng_key: jax.random.PRNGKey,
     state_history = jax.tree_util.tree_map(
         lambda x: jnp.zeros((max_iter,) + x.shape, dtype=x.dtype), initial_state
     )
-
     state_history = jax.tree_util.tree_map(lambda arr, val: arr.at[0].set(val), state_history, initial_state)
 
     @jax.jit
@@ -511,10 +521,7 @@ def run_smc_with_trace(rng_key: jax.random.PRNGKey,
         i, state, k, curr_log_likelihood, state_hist = carry
         k, subk = jrnd.split(k)
         state, info = smc_kernel(subk, state)
-
-        # Store intermediate results
         state_hist = jax.tree_util.tree_map(lambda arr, val: arr.at[i].set(val), state_hist, state)
-
         return i + 1, state, k, curr_log_likelihood + info.log_likelihood_increment, state_hist
 
     #
@@ -580,8 +587,8 @@ def run_smc(rng_key: PRNGKey,
 
 #
 def run_smc_no_diagnostics(rng_key: PRNGKey, 
-            smc_kernel: Callable, 
-            initial_state):
+                           smc_kernel: Callable, 
+                           initial_state):
     """The sequential Monte Carlo loop.
 
     Args:
@@ -622,14 +629,14 @@ def run_smc_no_diagnostics(rng_key: PRNGKey,
 
 #
 def smc_inference_loop_with_diagnostics(key, 
-                       model, 
-                       kernel: SamplingAlgorithm, 
-                       num_particles: int, 
-                       num_mcmc_steps: int, 
-                       num_chains: int = 1, 
-                       mcmc_parameters: dict = None, 
-                       resampling_fn: Callable = systematic, 
-                       target_ess: float = 0.5):
+                                        model, 
+                                        kernel: SamplingAlgorithm, 
+                                        num_particles: int, 
+                                        num_mcmc_steps: int, 
+                                        num_chains: int = 1,
+                                        mcmc_parameters: dict = None, 
+                                        resampling_fn: Callable = systematic, 
+                                        target_ess: float = 0.5):
 
     if mcmc_parameters is None:
         mcmc_parameters = {}
@@ -668,14 +675,14 @@ def smc_inference_loop_with_diagnostics(key,
 #
 
 def smc_inference_loop_no_diagnostics(key, 
-                       model, 
-                       kernel: SamplingAlgorithm, 
-                       num_particles: int, 
-                       num_mcmc_steps: int, 
-                       num_chains: int = 1, 
-                       mcmc_parameters: dict = None, 
-                       resampling_fn: Callable = systematic, 
-                       target_ess: float = 0.5):
+                                      model, 
+                                      kernel: SamplingAlgorithm, 
+                                      num_particles: int, 
+                                      num_mcmc_steps: int, 
+                                      num_chains: int = 1, 
+                                      mcmc_parameters: dict = None, 
+                                      resampling_fn: Callable = systematic, 
+                                      target_ess: float = 0.5):
 
     if mcmc_parameters is None:
         mcmc_parameters = {}
@@ -744,24 +751,18 @@ def smc_inference_loop(key,
         return run_smc_with_trace(key_smc, initial_state=initial_particles, smc_kernel=smc.step, max_iter=max_iter)
 
     if store_diagnostics:
-        return smc_inference_loop_with_diagnostics(key=key, 
-                                                   model=model, 
-                                                   kernel=kernel, 
-                                                   num_particles=num_particles, 
-                                                   num_mcmc_steps=num_mcmc_steps, 
-                                                   num_chains=num_chains, 
-                                                   mcmc_parameters=mcmc_parameters,
-                                                   resampling_fn=resampling_fn,
-                                                   target_ess=target_ess)
+        smc_fun = smc_inference_loop_with_diagnostics
     else:
-        return smc_inference_loop_no_diagnostics(key=key, 
-                                                 model=model, 
-                                                 kernel=kernel, 
-                                                 num_particles=num_particles,
-                                                 num_mcmc_steps=num_mcmc_steps, 
-                                                 num_chains=num_chains, 
-                                                 mcmc_parameters=mcmc_parameters,
-                                                 resampling_fn=resampling_fn,
-                                                 target_ess=target_ess)
+        smc_fun = smc_inference_loop_no_diagnostics
+    
+    return smc_fun(key=key, 
+                   model=model, 
+                   kernel=kernel, 
+                   num_particles=num_particles, 
+                   num_mcmc_steps=num_mcmc_steps, 
+                   num_chains=num_chains, 
+                   mcmc_parameters=mcmc_parameters,
+                   resampling_fn=resampling_fn,
+                   target_ess=target_ess)
 
 #
