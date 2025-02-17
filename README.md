@@ -25,7 +25,7 @@ pip install jaxtyping==0.2.34 distrax==0.1.5 blackjax==1.2.4
 
 ## Quick tutorial
 
-For this simple tutorial we estimate the latent probability $\theta$ a coin lands up heads, given a set of observations $x_1, \ldots, x_n$:
+Let's estimate the latent probability $\theta=p(x_1=\text{heads} \mid \theta)$ that a coin lands up heads, given a set of observations $x_1, \ldots, x_n$:
 
 ### Generate data
 ``` 
