@@ -8,7 +8,6 @@ Clone the repository using
 
 ```
 git clone https://github.com/UncertaintyInComplexSystems/bamojax
-
 ```
 
 bamojax has been developed with `Jaxlib` 0.4.34, `Jax` 0.4.35, and Python 3.10.15. For installation of the correct dependencies, we recommend to first create a new Conda environment, and install `jax` and `jaxlib` using:
@@ -39,7 +38,6 @@ key, key_data = jrnd.split(key)
 true_theta = 0.3
 n = 100
 x = jrnd.bernoulli(key_data, p=true_theta, shape=(n, ))
-
 ```
 
 ### Define Bayesian generative model
@@ -48,22 +46,18 @@ Bayesian models in bamojax can be instantiated as:
 
 ```
 from bamojax.base import Model
-
 my_model = Model('The name of the model')
-
 ``` 
 
 Subsequently, variables can be added to this model using for example:
 
 ```
-
 def link_fn(probs):
     return {'probs': probs}
 
 #
 latent_theta = my_model.add_node('theta', distribution=dx.Beta(alpha=1, beta=1))
 observations = my_model.add_node('x', distributions=dx.Bernoulli, parents=dict(probs=latent_theta), link_fn, observations=x)
-
 ```
 
 The `link_fn` shows how link functions can be defined and used within `bamojax`. Here, since `Distrax` supports either probabilities or logits as input for the Bernoulli distribution, we use the link function to call the `dx.Bernoulli` with the correct variable names.
@@ -86,7 +80,6 @@ key, key_inference = jrnd.split(key)
 n_iter, final_state, lml = smc_inference_loop(key_inference, model=my_model, kernel=rmh, num_particles=num_particles, num_mcmc_steps=num_mcmc_steps, num_chains=1)
 
 print(jnp.mean(final_state.particles['theta']))
-
 ```
 
 
