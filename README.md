@@ -57,7 +57,7 @@ def link_fn(probs):
 
 #
 latent_theta = my_model.add_node('theta', distribution=dx.Beta(alpha=1, beta=1))
-observations = my_model.add_node('x', distributions=dx.Bernoulli, parents=dict(probs=latent_theta), link_fn, observations=x)
+observations = my_model.add_node('x', distribution=dx.Bernoulli, parents=dict(probs=latent_theta), link_fn, observations=x)
 ```
 
 The `link_fn` shows how link functions can be defined and used within `bamojax`. Here, since `Distrax` supports either probabilities or logits as input for the Bernoulli distribution, we use the link function to call the `dx.Bernoulli` with the correct variable names.
@@ -67,8 +67,8 @@ The `link_fn` shows how link functions can be defined and used within `bamojax`.
 The next step is to perform inference. Here, we use Adaptive-Tempered Sequential Monte Carlo, as implemented by `Blackjax`:
 
 ```
-num_particles = 100_000
-num_mcmc_steps = 1_000
+num_particles = 1_000
+num_mcmc_steps = 100
 num_chains = 1
 
 stepsize = 0.01
@@ -77,11 +77,11 @@ mcmc_params = dict(sigma=stepsize*jnp.eye(my_model.get_model_size()))
 rmh = mcmc_sampler(my_model, mcmc_kernel=blackjax.normal_random_walk, mcmc_parameters=mcmc_params)
 
 key, key_inference = jrnd.split(key)
-n_iter, final_state, lml = smc_inference_loop(key_inference, model=my_model, kernel=rmh, num_particles=num_particles, num_mcmc_steps=num_mcmc_steps, num_chains=1)
+final_state, lml, n_iter, final_info = smc_inference_loop(key_inference, model=my_model, kernel=rmh, num_particles=num_particles, num_mcmc_steps=num_mcmc_steps, num_chains=1)
 
 print(jnp.mean(final_state.particles['theta']))
+>>> 0.2254779304949821
 ```
-
 
 ## Citing bamojax
 
