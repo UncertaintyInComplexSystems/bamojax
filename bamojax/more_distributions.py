@@ -248,14 +248,27 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = None,  nd: Tupl
 
 #
 def AutoRegressionFactory(order: int = 1, include_intercept=True):
+    r""" Generates an autoregressive distribution with Gaussian emissions.
+
+    This is a generator function that constructs a distrax Distribution object, which can then be queried for its log probability for inference.
+ 
+    
+    Args:
+        order: The order p of the AR(p) process, i.e., the number of lags on which observation y_t depends.
+        include_intercept: To add an intercept term.
+        n_future: 
+    
+    
+    """
 
     class ARInstance(Distribution):
 
-        def __init__(self, coefficients, scale, y_init):
+        def __init__(self, coefficients, scale, y_init, T=None):
             self.coefficients = coefficients
             self.scale = scale
             self.y_init = y_init
-        
+            self.T = T
+                    
         #
         def construct_lag_matrix(self, y, y_init, order):
             r""" Construct y, and up to order shifts of it.
@@ -277,17 +290,19 @@ def AutoRegressionFactory(order: int = 1, include_intercept=True):
                return columns.T
         
         #
-        def _sample_n(self, key, n):
-            raise NotImplementedError
-
-        #
         def log_prob(self, value):
             y_lagged = self.construct_lag_matrix(y=value, y_init=self.y_init, order=order)            
             mu = jnp.dot(self.coefficients, y_lagged.T)
             return dx.Normal(loc=mu, scale=self.scale).log_prob(value)
 
         #
-        def sample_predictive(self, key, T):
+        def _sample_n(self, key, n):
+            keys = jrnd.split(key, n)
+            samples = jax.vmap(self._sample_predictive)(keys)  
+            return samples
+
+        #        
+        def _sample_predictive(self, key):
             r""" Sample from the AR(p) model.
 
             Let:
@@ -298,6 +313,7 @@ def AutoRegressionFactory(order: int = 1, include_intercept=True):
             for t = M+1, ..., T
             
             """
+            
             @jax.jit
             def ar_step(carry, epsilon_t):
                 y_prev = carry
@@ -309,19 +325,19 @@ def AutoRegressionFactory(order: int = 1, include_intercept=True):
                 return jnp.concatenate([y_prev[1:], y_t[None]]), y_t
             
             #
-            innovations = self.scale * jrnd.normal(key, shape=(T - order, ))
+            innovations = self.scale * jrnd.normal(key, shape=(self.T - order, ))
             _, ys = jax.lax.scan(ar_step, self.y_init, innovations)
             return jnp.concatenate([self.y_init, ys])
         
         #            
         @property
         def batch_shape(self):
-            pass
+            return ()
 
         #
         @property
         def event_shape(self):
-            pass
+            return (self.T, )
 
         #
 

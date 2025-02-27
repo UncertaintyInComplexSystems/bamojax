@@ -2,13 +2,15 @@ from jaxtyping import Array, Union
 import jax.numpy as jnp
 import distrax as dx
 import jax.random as jrnd
-from typing import Tuple, Callable, NamedTuple
+from typing import Tuple, Callable, Literal
 from distrax._src.distributions.distribution import Distribution
 from distrax._src.bijectors.bijector import Bijector
 from tensorflow_probability.substrates import jax as tfp
 tfd = tfp.distributions
 tfb = tfp.bijectors
 from blackjax.types import ArrayTree, PRNGKey
+from blackjax import SamplingAlgorithm
+from blackjax.smc.resampling import systematic
 
 
 class Node:
@@ -284,6 +286,12 @@ class Model:
     
     #
     def __get_topological_order(self) -> list:
+        r""" Traverses the directed acyclic graph that defines the Bayesian model and returns its nodes in topological order
+
+        Returns:
+            A list of sorted nodes.
+        
+        """
         def traverse_dag_backwards(node: Node, visited_: dict, order: list):
             if node in visited_:
                 return
@@ -319,16 +327,48 @@ class Model:
         return state
 
     #
-    def sample_prior_predictive(self, key) -> dict:
-        r""" Sample from the (hierarchical) prior distribution of the model, and sample values from the likelihood given the latent variables.
+    def sample_predictive(self, key, state: dict, input_variables: dict = None) -> dict:
+        r""" Sample stochastic observed nodes
+
+        Args:
+            key: PRNGKey
+            state: a draw from either p(x) or p(x|.)
+            input_variables: a dictionary with values for observed non-stochastic nodes
+        
+        Returns:
+            A dictionary which is the same as 'state' but appended with sampled values.
+        
+        """
+        
+        for node in self.get_leaf_nodes():
+            key, key_obs = jrnd.split(key)
+            state[node.name] = node.get_distribution(state, minibatch=input_variables).sample(seed=key_obs, sample_shape=node.shape)
+        return state
+
+
+    def sample_prior_predictive(self, key, **prediction_options) -> dict:
+        r""" Sample from the (hierarchical) prior distribution of the model.
         
         """
         key, key_latent = jrnd.split(key)
         state = self.sample_prior(key_latent)
-        for node in self.get_leaf_nodes():
-            key, key_obs = jrnd.split(key)
-            state[node.name] = node.get_distribution(state).sample(seed=key_obs, sample_shape=node.shape)
-        return state
+        return self.sample_predictive(key, state, prediction_options)
+
+    #
+    def sample_posterior_predictive(self, key, state: dict, input_variables: dict = None) -> dict:
+        r""" Sample from the posterior predictive
+
+        Args:
+            key: Random key
+            state: A draw from the posterior
+            batchables: Potential predictors and other non-stochastic observations
+
+        Returns:
+            A dictionary containing values for all stochastic observed nodes.
+        
+        """
+
+        return self.sample_predictive(key, state, input_variables)
 
     #
     def print_gibbs(self):
