@@ -247,6 +247,88 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = None,  nd: Tupl
     return GaussianProcessInstance
 
 #
+def AutoRegressionFactory(order: int = 1, include_intercept=True):
+
+    class ARInstance(Distribution):
+
+        def __init__(self, coefficients, scale, y_init):
+            self.coefficients = coefficients
+            self.scale = scale
+            self.y_init = y_init
+        
+        #
+        def construct_lag_matrix(self, y, y_init, order):
+            r""" Construct y, and up to order shifts of it.
+            
+            """
+            n = len(y)
+
+            @jax.jit
+            def update_fn(carry, i):
+                y_shifted = jnp.roll(carry, shift=1)  
+                y_shifted = y_shifted.at[0].set(y_init[i])  
+                return y_shifted, y_shifted  
+            
+            #
+            _, columns = jax.lax.scan(update_fn, y, jnp.arange(order))
+            if include_intercept:
+                return jnp.column_stack((jnp.ones((n, )).T, columns.T))
+            else:
+               return columns.T
+        
+        #
+        def _sample_n(self, key, n):
+            raise NotImplementedError
+
+        #
+        def log_prob(self, value):
+            y_lagged = self.construct_lag_matrix(y=value, y_init=self.y_init, order=order)            
+            mu = jnp.dot(self.coefficients, y_lagged.T)
+            return dx.Normal(loc=mu, scale=self.scale).log_prob(value)
+
+        #
+        def sample_predictive(self, key, T):
+            r""" Sample from the AR(p) model.
+
+            Let:
+
+            \epsilon_t \sim N(0, \sigma_y)
+            y_t = b_0 + \sum_{i=1}^p b_1 y_{t-i} + epsilon_t
+
+            for t = M+1, ..., T
+            
+            """
+            @jax.jit
+            def ar_step(carry, epsilon_t):
+                y_prev = carry
+                if include_intercept:
+                    y_t = self.coefficients[0] + jnp.sum(self.coefficients[1:] * y_prev[::-1])
+                else:
+                    y_t = jnp.sum(self.coefficients * y_prev[::-1])
+                y_t += epsilon_t
+                return jnp.concatenate([y_prev[1:], y_t[None]]), y_t
+            
+            #
+            innovations = self.scale * jrnd.normal(key, shape=(T - order, ))
+            _, ys = jax.lax.scan(ar_step, self.y_init, innovations)
+            return jnp.concatenate([self.y_init, ys])
+        
+        #            
+        @property
+        def batch_shape(self):
+            pass
+
+        #
+        @property
+        def event_shape(self):
+            pass
+
+        #
+
+    #
+    return ARInstance
+
+#
 def AscendingDistribution(min_u, max_u, num_el):
     r""" Creates a distribution of a sorted array of continuous values in [min_u, max_u].
 
