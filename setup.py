@@ -7,8 +7,8 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),  # Automatically discover all packages
     install_requires=[ 
-        'jax>=0.4.35', 
-        'jaxlib>=0.4.34',
+        'jax>=0.4.35<0.5.0', 
+        'jaxlib>=0.4.34<0.5.0',
         'blackjax==1.2.4',
         'distrax==0.1.5',
         'jaxtyping==0.2.34'
