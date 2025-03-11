@@ -4,7 +4,7 @@ Welcome to bamojax, the Bayesian modelling toolbox implemented using the Jax cod
 
 ## Installation
 
-Clone the repository using 
+Install bamojax using 
 
 ```
 pip install git+https://github.com/UncertaintyInComplexSystems/bamojax#egg=bamojax
