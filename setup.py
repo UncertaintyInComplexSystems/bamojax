@@ -11,7 +11,7 @@ setup(
         'jaxlib>=0.4.34<0.5.0',
         'blackjax==1.2.4',
         'distrax==0.1.5',
-        'jaxtyping==0.2.34'
+        'jaxtyping>=0.2.34'
     ],
     classifiers=[
         'Programming Language :: Python :: 3',
