@@ -1,11 +1,9 @@
-from typing import NamedTuple, Callable
-import jax
+from typing import NamedTuple
 import jax.random as jrnd
 import jax.numpy as jnp
 from blackjax.base import SamplingAlgorithm
 from blackjax.types import ArrayTree, PRNGKey
 from blackjax import normal_random_walk
-
 
 from .base import Model
 
@@ -17,19 +15,6 @@ class GibbsState(NamedTuple):
 class MCMCState(NamedTuple):
 
     position: ArrayTree
-
-#
-def grad_estimator(logprior_fn: Callable, 
-                   loglikelihood_fn: Callable, 
-                   data_size: int, 
-                   batch_size) -> Callable:
-    """Build a simple estimator for the gradient of the log-density."""
-
-    def logdensity_estimator_fn(position, minibatch):
-        return logprior_fn(position) + data_size / batch_size * loglikelihood_fn(position, minibatch)
-    
-    #
-    return jax.grad(logdensity_estimator_fn)
 
 #
 def gibbs_sampler(model: Model, 
@@ -86,7 +71,7 @@ def gibbs_sampler(model: Model,
             step_kernel = step_fns[node](loglikelihood_fn, mean=mean, cov=cov, nd=nd)
             step_substate = step_kernel.init({node.name: position[node]})  
         elif step_fn_params[node]['name'] == 'mgrad_gaussian':
-            # see issue https://github.com/blackjax-devs/blackjax/issues/237,mgrad does not seem robust
+            # see issue https://github.com/blackjax-devs/blackjax/issues/237,mgrad does not seem robust yet
             loglikelihood_fn_mgrad = lambda state: loglikelihood_fn(state[node])
             step_kernel = step_fns[node](logdensity_fn=loglikelihood_fn_mgrad, mean=mean, covariance=cov, **step_fn_params[node]['params'])
             step_substate = step_kernel.init({node.name: position[node.name]}) 

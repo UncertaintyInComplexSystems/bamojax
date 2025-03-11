@@ -7,21 +7,10 @@ Welcome to bamojax, the Bayesian modelling toolbox implemented using the Jax cod
 Clone the repository using 
 
 ```
-git clone https://github.com/UncertaintyInComplexSystems/bamojax
+pip install git+https://github.com/UncertaintyInComplexSystems/bamojax#egg=bamojax
 ```
 
-bamojax has been developed with `Jaxlib` 0.4.34, `Jax` 0.4.35, and Python 3.10.15. For installation of the correct dependencies, we recommend to first create a new Conda environment, and install `jax` and `jaxlib` using:
-
-``` 
-conda install jaxlib=*=*cuda* jax cuda-nvcc -c conda-forge -c nvidia
-pip install -U "jax[cuda12]"
-``` 
-
-After that, the other dependencies can be installed straightforwardly with pip:
-
-```
-pip install jaxtyping==0.2.34 distrax==0.1.5 blackjax==1.2.4
-```
+bamojax has been developed and tested with `Jaxlib` 0.4.34, `Jax` 0.4.35, and Python 3.10.15. 
 
 ## Quick tutorial
 
