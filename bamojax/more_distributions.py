@@ -251,14 +251,12 @@ def AutoRegressionFactory(order: int = 1, include_intercept=True):
     r""" Generates an autoregressive distribution with Gaussian emissions.
 
     This is a generator function that constructs a distrax Distribution object, which can then be queried for its log probability for inference.
- 
     
     Args:
         order: The order p of the AR(p) process, i.e., the number of lags on which observation y_t depends.
         include_intercept: To add an intercept term.
         n_future: 
-    
-    
+        
     """
 
     class ARInstance(Distribution):
@@ -270,7 +268,7 @@ def AutoRegressionFactory(order: int = 1, include_intercept=True):
             self.T = T
                     
         #
-        def construct_lag_matrix(self, y, y_init, order):
+        def _construct_lag_matrix(self, y, y_init, order):
             r""" Construct y, and up to order shifts of it.
             
             """
@@ -291,12 +289,18 @@ def AutoRegressionFactory(order: int = 1, include_intercept=True):
         
         #
         def log_prob(self, value):
-            y_lagged = self.construct_lag_matrix(y=value, y_init=self.y_init, order=order)            
+            r""" Returns the log-density of the complete AR distribution
+            
+            """
+            y_lagged = self._construct_lag_matrix(y=value, y_init=self.y_init, order=order)            
             mu = jnp.dot(self.coefficients, y_lagged.T)
             return dx.Normal(loc=mu, scale=self.scale).log_prob(value)
 
         #
         def _sample_n(self, key, n):
+            r""" Sample from the AR distribution
+            
+            """
             keys = jrnd.split(key, n)
             samples = jax.vmap(self._sample_predictive)(keys)  
             return samples

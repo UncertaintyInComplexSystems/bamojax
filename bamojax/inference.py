@@ -21,6 +21,20 @@ import jax.numpy as jnp
 from jax.tree_util import tree_map, tree_flatten, tree_unflatten
 
 def run_window_adaptation(model, key: PRNGKey, num_warmup_steps):
+    r""" Find optimized parameters for HMC-based inference.
+
+    A wrapper for blackjax HMC window adaptation.
+
+    Args:
+        Model: A bamojax model (DAG)
+        key: Random seed
+        num_warmum_steps: int, number of warmup steps to take
+
+    Returns:
+        - A dictionary of the state after performing the warmup steps
+        - A set of HMC kernel parameters that result in optimal acceptance rates
+    
+    """
     logdensity_fn = lambda state: model.loglikelihood_fn()(state) + model.logprior_fn()(state)
     warmup = window_adaptation(nuts, logdensity_fn)
     key_init, key_warmup = jrnd.split(key)
@@ -31,6 +45,13 @@ def run_window_adaptation(model, key: PRNGKey, num_warmup_steps):
 #
 
 class InferenceEngine(ABC):
+    r""" The abstract class for inference engines
+
+    Attributes:
+        model: the Bayesian model for which to run the approximate inference
+        num_chains: the number of parallel, independent chains
+    
+    """
 
     def __init__(self, model: Model, num_chains: int = 1):
         self.model = model
@@ -43,6 +64,9 @@ class InferenceEngine(ABC):
 
     #
     def run(self, key):
+        r""" Runs the inference algorithm, optionally vmapped over mutiple chains
+        
+        """
         if self.num_chains > 1:
             keys = jrnd.split(key, self.num_chains)
             return jax.vmap(self.run_single_chain)(keys)
@@ -52,6 +76,9 @@ class InferenceEngine(ABC):
 
 #
 class MCMCInference(InferenceEngine):
+    r""" The MCMC approximate inference class
+    
+    """
 
     def __init__(self, 
                  model: Model, 
@@ -72,9 +99,18 @@ class MCMCInference(InferenceEngine):
 
     #    
     def dense_step(self, key, state):
-        """ Take an MCMC step.
+        """ Take a MCMC step.
 
-        Can be a composite step to reduce autocorrelation and memory consumption (thinning).
+        Can be a composite step to reduce autocorrelation and memory consumption (thinning). Rather than
+        post-hoc removing samples, a dense step can take N steps, then return only the final state, so 
+        that we effective thin by a factor N.
+
+        Args:
+            key: Random seed
+            state: The current state
+        Returns:
+            A new state
+            (optional) Diagnostic information, depending on the `return_diagnostics` attribute
         
         """
         @jax.jit
@@ -101,6 +137,20 @@ class MCMCInference(InferenceEngine):
     
     #
     def run_single_chain(self, key: PRNGKey) -> dict:
+        r""" Run one MCMC chain
+
+        Depending on different preferences, this 
+            - optimizes the MCMC kernel hyperparameters
+            - runs `num_burn` burn-in samples, that are discarded
+            - performs the actual sampling for `num_samples` / `num_thin` dense steps
+
+        Args:
+            key: Random seed
+        
+        Returns:
+            A dictionary containing the resulting collection of states, and optional diagnostic information
+        
+        """
         def mcmc_body_fn(state, key):
             state, info = self.dense_step(key, state)
             return state, (state, info) 
@@ -109,8 +159,9 @@ class MCMCInference(InferenceEngine):
         key, key_init = jrnd.split(key)        
 
         if self.num_warmup > 0:
-            print('Adapting NUTS HMC parameters')
+            print('Adapting NUTS HMC parameters...', end=" ")
             warm_state, adapted_parameters = run_window_adaptation(self.model, key_init, self.num_warmup) 
+            print('done.')
             adapted_kernel = mcmc_sampler(model=self.model, mcmc_kernel=nuts, mcmc_parameters=adapted_parameters)
             self.mcmc_kernel = adapted_kernel
             initial_state = self.mcmc_kernel.init(warm_state.position)
@@ -134,6 +185,9 @@ class MCMCInference(InferenceEngine):
 
 #
 class SGMCMCInference(InferenceEngine):
+    r""" The Stochastic Gradient MCMC approximate inference class
+    
+    """
     
     def __init__(self, 
                  model: Model,                   
@@ -167,7 +221,14 @@ class SGMCMCInference(InferenceEngine):
 
     #
     def grad_estimator(self) -> Callable:
-        """Build a simple estimator for the gradient of the log-density."""
+        """ The stochastic gradient estimator
+        
+        Build a simple estimator for the gradient of the log-density, assuming data is mini-batched.
+
+        Returns:
+            The gradient of the batched log-density        
+        
+        """
 
         logprior_fn = self.model.logprior_fn()
         loglikelihood_fn = self.model.batched_loglikelihood_fn()
@@ -181,6 +242,13 @@ class SGMCMCInference(InferenceEngine):
     #
     def get_minibatch(self, data, indices):
         r""" Slice a minibatch of data
+
+        Args:
+            data: the data array
+            indices: a set of indices into `data` 
+
+        Returns:
+            Dynamic slicing of data[indices, ...]
         
         """
         if jnp.ndim(data) == 1:
@@ -191,6 +259,13 @@ class SGMCMCInference(InferenceEngine):
     #
     def one_step(self, state, key):
         r""" Take one step of stochastic gradient MCMC
+
+        Args:
+            state: Current state
+            key: Random seed
+        
+        Returns:
+            The updated state
         
         """
         key_sgmcmc, key_batch = jrnd.split(key)
@@ -228,6 +303,9 @@ class SGMCMCInference(InferenceEngine):
 
 #
 class SMCInference(InferenceEngine):
+    r""" The SMC approximate inference class
+    
+    """
 
     def __init__(self, 
                  model: Model,                   
@@ -259,6 +337,14 @@ class SMCInference(InferenceEngine):
 
     #
     def create_smc_kernel(self) -> SamplingAlgorithm:
+        r""" Creates an SMC kernel
+
+        Currently a lightweight wrapper around the blackjax adaptive-tempered SMC object.
+
+        Returns:
+            A blackjax SMC `SamplingAlgorithm`
+        
+        """
         return adaptive_tempered_smc(logprior_fn=self.model.logprior_fn(),
                                      loglikelihood_fn=self.model.loglikelihood_fn(),
                                      mcmc_step_fn=self.mcmc_kernel.step,
@@ -271,6 +357,9 @@ class SMCInference(InferenceEngine):
     #    
     def tempering_condition(self):
         r""" Checks whether the SMC procedure terminates.
+
+        Returns:
+            A boolean deciding on whether the SMC tempering procedure is finished
         
         """
         def cond(carry):
@@ -318,17 +407,21 @@ class SMCInference(InferenceEngine):
     def run_single_chain(self, key: PRNGKey) -> dict:
         r""" Run one chain of Sequential Monte Carlo.
 
+        This returns SMC particles in different ways, depending on user provided settings.
+
         Args:
             key: PRNGKey
         Returns:
-            A dictionary with the final SMC state, the number of iterations, the log marginal likelihood, and optional diagnostics.
+            A dictionary with the final SMC state, the number of iterations, the log marginal likelihood
+            (Optional) diagnostics and the trace of particles over each tempering step
         
         """
 
         if self.num_warmup > 0:
             key, key_init = jrnd.split(key)
-            print('Adapting NUTS HMC parameters')
+            print('Adapting NUTS HMC parameters...', end=" ")
             _, adapted_parameters = run_window_adaptation(self.model, key_init, self.num_warmup)
+            print('done.')
             adapted_kernel = mcmc_sampler(model=self.model, mcmc_kernel=nuts, mcmc_parameters=adapted_parameters)
             self.mcmc_kernel = adapted_kernel
         
@@ -365,6 +458,9 @@ class SMCInference(InferenceEngine):
 
 #
 class VIInference(InferenceEngine):
+    r""" The VI approximate inference class
+    
+    """
 
     def __init__(self, 
                  model: Model,                  
@@ -392,7 +488,9 @@ class VIInference(InferenceEngine):
 
     #
     def get_model_bijectors(self) -> dict:
-        r""" Meanfield VI imposes a Gaussian variational distribution. In order to use the correct parameter constraints this function determines all relevant bijectors.
+        r""" Meanfield VI imposes a Gaussian variational distribution. 
+        
+        In order to use the correct parameter constraints this function determines all relevant bijectors.
 
         Returns:
             A dictionary with bijectors for the variables that use it, and an identity bijector otherwise.

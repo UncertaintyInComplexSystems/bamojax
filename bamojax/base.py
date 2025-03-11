@@ -14,6 +14,13 @@ from blackjax.smc.resampling import systematic
 
 
 class Node:
+    r""" The essential element of any Bayesian model is the variable, represented by a node in a DAG. 
+
+    Nodes can consist of stochastic or deterministic variables, and can be observed or latent.
+
+    Hyperparameters of a model are implicitly observed, deterministic nodes.
+    
+    """
     
     def __init__(self, name: str = 'root', 
                  observations: Array = None, 
@@ -124,6 +131,14 @@ class Node:
 
 #
 class Model:
+    r""" A Bayesian model is represented as a directed acyclic graph, in which nodes are associated with random variables.
+
+    Typical use:
+
+        model = Model('model name')
+        _ = model.add_node('x', observations=...)
+    
+    """
 
     def __init__(self, name='Bayesian model', verbose=False):
         self.name = name
@@ -146,10 +161,12 @@ class Model:
 
         Args:
           name: The name of the variable.
-          distribution: The distribution of the variable given its (transformed) parents.
+          distribution: The distrax distribution of the variable given its (transformed) parents.
           observations: If the node is observed; the actual observations.
           parents: The nodes that this node depends on.
+          link_fn: A link function combining the inputs to form the input to the corresponding distrax distribution.
           shape: The dimensions of the variable.
+          bijector: A bijector can be passed to transform variables.
         Returns:
           New node
         
@@ -179,6 +196,10 @@ class Model:
     #    
     def add_edge(self, from_node, to_node):
         r""" Store the dependence between two nodes.
+
+        Args:
+            from_node: source node
+            to_node: target node
         
         """
         if self.verbose: print(f'Add edge ({from_node}) -> ({to_node})')
@@ -251,7 +272,7 @@ class Model:
     def batched_loglikelihood_fn(self) -> Callable:
         r""" Batched loglikelihood function for stochastic-gradient methods.
 
-        Assumes `minibatch` is a dictionary containing a minibatch for each observed leaf node.
+        Assumes `minibatch` is a dictionary containing a subset of observations for each observed leaf node.
 
         """
 
@@ -314,6 +335,11 @@ class Model:
     #
     def sample_prior(self, key) -> dict:
         r""" Samples from the (hierarchical) prior distribution of the model.
+
+        Args:
+            key: Random seed
+        Returns:
+            A state dictionary with one random value for each node.
         
         """
         state = dict()
@@ -347,7 +373,14 @@ class Model:
 
 
     def sample_prior_predictive(self, key, **prediction_options) -> dict:
-        r""" Sample from the (hierarchical) prior distribution of the model.
+        r""" Sample from the (hierarchical) prior predictive distribution of the model.
+
+        Args:
+            key: Random seed
+            prediction_options: A dictionary of options which can include minibatched input variables
+        
+        Returns:
+            A dictionary with a random value for all stochastic observed nodes.
         
         """
         key, key_latent = jrnd.split(key)
@@ -361,10 +394,10 @@ class Model:
         Args:
             key: Random key
             state: A draw from the posterior
-            batchables: Potential predictors and other non-stochastic observations
+            input_variables: Potential predictors and other non-stochastic observations
 
         Returns:
-            A dictionary containing values for all stochastic observed nodes.
+            A dictionary containing values for all stochastic observed nodes, conditioned on the observations.
         
         """
 
@@ -372,7 +405,7 @@ class Model:
 
     #
     def print_gibbs(self):
-        r""" Print the structure of conditional distributions. Should be expanded to write Tikz code for graphical models.
+        r""" Print the structure of conditional distributions. 
 
         
         """
