@@ -74,4 +74,13 @@ print(jnp.mean(final_state.particles['theta']))
 
 ## Citing bamojax
 
-TODO.
+To cite bamojax, please use
+
+```
+@software{bamojax2025,
+  author = {Max Hinne},
+  year = {2025},
+  title = {{Bamojax: Bayesian modelling in JAX}}
+  doi = {https://doi.org/10.5281/zenodo.15038847},
+}
+```
