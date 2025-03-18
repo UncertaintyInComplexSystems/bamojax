@@ -3,9 +3,12 @@ import jax.random as jrnd
 import jax.numpy as jnp
 from blackjax.base import SamplingAlgorithm
 from blackjax.types import ArrayTree, PRNGKey
-from blackjax import normal_random_walk
-
+from blackjax import normal_random_walk, generate_top_level_api_from
 from .base import Model
+from .modified_blackjax import modified_elliptical_slice_nd
+
+elliptical_slice_nd = generate_top_level_api_from(modified_elliptical_slice_nd)
+
 
 class GibbsState(NamedTuple):
 

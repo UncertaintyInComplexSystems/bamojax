@@ -3,3 +3,9 @@ bamojax/modified_blackjax/__pycache__
 bamojax/examples/cognitive_models/DataSteingroever.rdata
 bamojax/examples/cognitive_models/ind_LogMargLik.txt
 bamojax/examples/cognitive_models/DataBusemeyerNoNA.rdata
+# Ignore build artifacts
+build/
+dist/
+*.egg-info/
+__pycache__/
+*.egg
