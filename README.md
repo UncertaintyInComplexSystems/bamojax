@@ -1,16 +1,16 @@
 # bamojax
 
-Welcome to bamojax, the Bayesian modelling toolbox implemented using the Jax coding universe. bamojax is a probabilistic programming language, similar to Numpyro, PyMC, Stan, JAGS, and BUGS. It relies on [Blackjax](https://blackjax-devs.github.io/blackjax/) for approximate inference, on [Distrax](https://github.com/google-deepmind/distrax) for probability distributions and their essential operations. It adds to this the Directed Acyclic Graph (DAG) structure of a Bayesian model, and automatically derives model priors, likelihoods, and Gibbs inference schemes. This combines the speed from (Black)Jax with a convenient modelling environment.
+Welcome to **bamojax**, the Bayesian modelling toolbox implemented using the Jax coding universe. **bamojax** is a probabilistic programming language, similar to Numpyro, PyMC, Stan, JAGS, and BUGS. It relies on [Blackjax](https://blackjax-devs.github.io/blackjax/) for approximate inference, on [Distrax](https://github.com/google-deepmind/distrax) for probability distributions and their essential operations. It adds to this the Directed Acyclic Graph (DAG) structure of a Bayesian model, and automatically derives model priors, likelihoods, and Gibbs inference schemes. This combines the speed from (Black)Jax with a convenient modelling environment.
 
 ## Installation
 
-Install bamojax using 
+Install **bamojax** using 
 
 ```
 pip install git+https://github.com/UncertaintyInComplexSystems/bamojax#egg=bamojax
 ```
 
-bamojax has been developed and tested with `Jaxlib` 0.4.34, `Jax` 0.4.35, and Python 3.10.15. 
+**bamojax** has been developed and tested with `Jaxlib` 0.4.34, `Jax` 0.4.35, and Python 3.10.15. 
 
 ## Quick tutorial
 
@@ -31,7 +31,7 @@ x = jrnd.bernoulli(key_data, p=true_theta, shape=(n, ))
 
 ### Define Bayesian generative model
 
-Bayesian models in bamojax can be instantiated as:
+Bayesian models in **bamojax** can be instantiated as:
 
 ```
 from bamojax.base import Model
@@ -49,7 +49,7 @@ latent_theta = my_model.add_node('theta', distribution=dx.Beta(alpha=1, beta=1))
 observations = my_model.add_node('x', distribution=dx.Bernoulli, parents=dict(probs=latent_theta), link_fn, observations=x)
 ```
 
-The `link_fn` shows how link functions can be defined and used within `bamojax`. Here, since `Distrax` supports either probabilities or logits as input for the Bernoulli distribution, we use the link function to call the `dx.Bernoulli` with the correct variable names.
+The `link_fn` shows how link functions can be defined and used within **bamojax**. Here, since `Distrax` supports either probabilities or logits as input for the Bernoulli distribution, we use the link function to call the `dx.Bernoulli` with the correct variable names.
 
 ### Do inference
 
@@ -72,9 +72,65 @@ print(jnp.mean(final_state.particles['theta']))
 >>> 0.2254779304949821
 ```
 
+## Modelling in bamojax
+
+**bamojax** aims to make Bayesian modelling and inference with JAX and the Blackjax library more user-friendly, while retaining the speed and flexibility of the latter. To use the framework, a user is required to specify the directed acyclic graph that defines a Bayesian probabilistic model, as well as 
+* Distributions,
+* Transformations,
+* Link functions, and
+* Observations.
+
+### The model
+
+To perform these steps, one first initializes the `Model`:
+
+```
+my_model = Model('The name of my model')
+```
+
+This effectively creates an empty DAG. 
+
+### The variables
+
+Next, one adds nodes to the DAG one by one, or multiple at once in the case of iteration / plate notation: For instance, the following adds a latent random variable with a Gaussian distribution assigned to it, $x\sim \mathcal{N}(0,1)$:
+
+```
+a_new_node = my_model.add_node('variable name', distribution=dx.Normal, parents=dict(loc=0.0, scale=1.0))
+```
+
+Depending on whether a user provides values for the `distribution=`, and/or `observations=` arguments in the `add_node()` method, **bamojax** derives whether the variable is:
+1. Stochastic and latent,
+2. Stochastic and observed,
+3. Deterministic and observed.
+
+The `parents` argument expects a dictionary, in which the keys must correspond to either the arguments of a `dx.Distribution` object or the arguments of a link function.
+
+### Link functions
+
+An important 'feature' of **bamojax** is that it is straightforward to add any deterministic transformation from the values of a parent variable to the inputs of a child variable. For example, imagine a variable $\theta$ representing a coin flip probability. A typical prior would be the beta distribution, typically parametrized with pseudo-counts $\alpha$ and $\beta$
+$$
+  \theta \sim \text{Beta}(\alpha,\beta) \enspace.
+$$ However, we may want to specify a hierarchical prior on the _mode_ and _precision_ of this distribution, rather than on the pseudo-counts. With a link function we can express this:
+
+```
+def beta_link_fn(mode, conc):
+  a = mode*(conc-2) + 1
+  b = (1 - mode)*(conc-2) + 1
+  return {'alpha': a, 'beta': b}
+
+omega = HierarchicalCoinflips.add_node('omega', distribution=dx.Beta, parents=dict(alpha=1.0, beta=1.0))
+theta = HierarchicalCoinflips.add_node('theta', distribution=dx.Beta, parents=dict(mode=omega, conc=15), link_fn=beta_link_fn)
+
+```
+
+The link function `beta_link_fn` takes the mode (given by another node `omega`) and the concentration (given by a scalar, which is implicitly converted to a deterministic and observed node), and returns the standard arguments $\alpha$ and $\beta$ which the `dx.Beta` distribution object recognizes as valid parameters.
+
+
+More elaborate examples can be found in the `examples/` folder, as well as on the [Uncertainty in Complex Systems website](https://mhinne.github.io/uncertainty-in-complex-systems).
+
 ## Citing bamojax
 
-To cite bamojax, please use
+To cite **bamojax**, please use
 
 ```
 @misc{bamojax2025,
