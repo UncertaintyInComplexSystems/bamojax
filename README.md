@@ -107,10 +107,7 @@ The `parents` argument expects a dictionary, in which the keys must correspond t
 
 ### Link functions
 
-An important 'feature' of **bamojax** is that it is straightforward to add any deterministic transformation from the values of a parent variable to the inputs of a child variable. For example, imagine a variable $\theta$ representing a coin flip probability. A typical prior would be the beta distribution, typically parametrized with pseudo-counts $\alpha$ and $\beta$
-$$
-  \theta \sim \text{Beta}(\alpha,\beta) \enspace.
-$$ However, we may want to specify a hierarchical prior on the _mode_ and _precision_ of this distribution, rather than on the pseudo-counts. With a link function we can express this:
+An important 'feature' of **bamojax** is that it is straightforward to add any deterministic transformation from the values of a parent variable to the inputs of a child variable. For example, imagine a variable $\theta$ representing a coin flip probability. A typical prior would be the beta distribution, typically parametrized with pseudo-counts $\alpha$ and $\beta$, so that $\theta \sim \text{Beta}(\alpha,\beta)$.  However, we may want to specify a hierarchical prior on the _mode_ and _precision_ of this distribution, rather than on the pseudo-counts. With a link function we can express this:
 
 ```
 def beta_link_fn(mode, conc):
@@ -120,7 +117,6 @@ def beta_link_fn(mode, conc):
 
 omega = HierarchicalCoinflips.add_node('omega', distribution=dx.Beta, parents=dict(alpha=1.0, beta=1.0))
 theta = HierarchicalCoinflips.add_node('theta', distribution=dx.Beta, parents=dict(mode=omega, conc=15), link_fn=beta_link_fn)
-
 ```
 
 The link function `beta_link_fn` takes the mode (given by another node `omega`) and the concentration (given by a scalar, which is implicitly converted to a deterministic and observed node), and returns the standard arguments $\alpha$ and $\beta$ which the `dx.Beta` distribution object recognizes as valid parameters.
