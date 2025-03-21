@@ -103,6 +103,8 @@ Depending on whether a user provides values for the `distribution=`, and/or `obs
 
 The `parents` argument expects a dictionary, in which the keys must correspond to either the arguments of a `dx.Distribution` object or the arguments of a link function.
 
+Nodes can furthermore take any Distrax bijector using the `bijector=` argument, for example to transform a real variable to a bounded domain or vice versa. In many cases, the same goal can be achieved by the link function, but sometimes a bijector is simpler to use.
+
 ### Link functions
 
 An important 'feature' of **bamojax** is that it is straightforward to add any deterministic transformation from the values of a parent variable to the inputs of a child variable. For example, imagine a variable $\theta$ representing a coin flip probability. A typical prior would be the beta distribution, typically parametrized with pseudo-counts $\alpha$ and $\beta$, so that $\theta \sim \text{Beta}(\alpha,\beta)$.  However, we may want to specify a hierarchical prior on the _mode_ and _precision_ of this distribution, rather than on the pseudo-counts. With a link function we can express this:
