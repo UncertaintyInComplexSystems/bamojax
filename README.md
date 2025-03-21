@@ -49,8 +49,6 @@ latent_theta = my_model.add_node('theta', distribution=dx.Beta(alpha=1, beta=1))
 observations = my_model.add_node('x', distribution=dx.Bernoulli, parents=dict(probs=latent_theta), link_fn, observations=x)
 ```
 
-The `link_fn` shows how link functions can be defined and used within **bamojax**. Here, since `Distrax` supports either probabilities or logits as input for the Bernoulli distribution, we use the link function to call the `dx.Bernoulli` with the correct variable names.
-
 ### Do inference
 
 The next step is to perform inference. Here, we use Adaptive-Tempered Sequential Monte Carlo, as implemented by `Blackjax`:
