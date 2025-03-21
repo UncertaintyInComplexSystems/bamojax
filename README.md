@@ -113,8 +113,8 @@ def beta_link_fn(mode, conc):
   b = (1 - mode)*(conc-2) + 1
   return {'alpha': a, 'beta': b}
 
-omega = HierarchicalCoinflips.add_node('omega', distribution=dx.Beta, parents=dict(alpha=1.0, beta=1.0))
-theta = HierarchicalCoinflips.add_node('theta', distribution=dx.Beta, parents=dict(mode=omega, conc=15), link_fn=beta_link_fn)
+omega = my_model.add_node('omega', distribution=dx.Beta, parents=dict(alpha=1.0, beta=1.0))
+theta = my_model.add_node('theta', distribution=dx.Beta, parents=dict(mode=omega, conc=15), link_fn=beta_link_fn)
 ```
 
 The link function `beta_link_fn` takes the mode (given by another node `omega`) and the concentration (given by a scalar, which is implicitly converted to a deterministic and observed node), and returns the standard arguments $\alpha$ and $\beta$ which the `dx.Beta` distribution object recognizes as valid parameters.
