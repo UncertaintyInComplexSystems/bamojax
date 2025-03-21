@@ -148,10 +148,10 @@ Alternative inference engines include Sequential Monte Carlo, Variational Infere
 
 **bamojax** supports each combination of sampling from the prior or posterior, and the latent variables or the predictive distribution, using any of the following:
 
-                 |Prior                                         |Posterior                                                                         |
------------------|----------------------------------------------|----------------------------------------------------------------------------------|
-Latent variables |`my_model.sample_prior(key)`                  |Using `InferenceEngine`                                                           |
-Predictive       |`my_model.sample_prior_predictive(key)`       |`my_model.sample_posterior_predictive(key, posterior_samples, input_variables)`   |
+|                     |Prior                                         |Posterior                                                                         |
+|---------------------|----------------------------------------------|----------------------------------------------------------------------------------|
+|**Latent variables** |`my_model.sample_prior(key)`                  |Using `InferenceEngine`                                                           |
+|**Predictive**       |`my_model.sample_prior_predictive(key)`       |`my_model.sample_posterior_predictive(key, posterior_samples, input_variables)`   |
 
 When sampling from the posterior predictive, the parameter `input_variables=` can be used to provide for example predictor values, such as when sampling from a regression model or a neural network; $p(y^* \mid X, Y, x^*)$.
 
