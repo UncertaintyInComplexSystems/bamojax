@@ -121,8 +121,30 @@ theta = HierarchicalCoinflips.add_node('theta', distribution=dx.Beta, parents=di
 
 The link function `beta_link_fn` takes the mode (given by another node `omega`) and the concentration (given by a scalar, which is implicitly converted to a deterministic and observed node), and returns the standard arguments $\alpha$ and $\beta$ which the `dx.Beta` distribution object recognizes as valid parameters.
 
+Because link functions are written in play Python, they can be of arbitrary complexity. For example, in bamojax/examples/bnn/bnn_mpl.ipynb, we use [Flax Linen](https://flax.readthedocs.io/en/latest/) to set up a multilayer perceptron as a link function.
 
-More elaborate examples can be found in the `examples/` folder, as well as on the [Uncertainty in Complex Systems website](https://mhinne.github.io/uncertainty-in-complex-systems).
+### Inference
+
+**bamojax** does not have its own inference engine, but provides an interface to [Blackjax](https://blackjax-devs.github.io/blackjax/), in addition to some quality-of-life features. Ultimately, control is left entirely to the user. Here is an example where we use Gibbs MCMC:
+
+```
+step_fns = dict(beta=normal_random_walk, sigma=normal_random_walk)
+step_fn_params = dict(omega=dict(sigma=0.05), theta=dict(sigma=0.5))
+gibbs_kernel = gibbs_sampler(my_model, step_fns=step_fns, step_fn_params=step_fn_params)
+```
+
+In Gibbs sampling, we specify a kernel for each variable. In this case, we use Gaussian proposal distributions for both $\omega$ and $\theta$.
+
+Now we can set up our inference engine:
+
+```
+engine = MCMCInference(model=my_model, num_chains=4, num_samples=100_000, num_burn=100_000, num_thin=50, mcmc_kernel=gibbs_kernel, return_diagnostics=True)
+result = engine.run(jrnd.PRNGKey(0))
+```
+
+This returns a dictionary with a `states` value containing a dictionary samples for each variable, for the requested number of chains and samples, discarding the specified number of burn-in samples, and storing only every 50th sample. By setting `return_diagnostics=True`, information such as acceptance rates are provided as well. For large models, turning this off can conserve memory consumption.
+
+Alternative inference engines include Sequential Monte Carlo, Variational Inference, and Stochastic-Gradient MCMC methods. Examples on how to use these can be found in the `examples/` folder, as well as on the [Uncertainty in Complex Systems website](https://mhinne.github.io/uncertainty-in-complex-systems).
 
 ## Citing bamojax
 
