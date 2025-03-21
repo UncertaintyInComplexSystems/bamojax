@@ -16,7 +16,7 @@ pip install git+https://github.com/UncertaintyInComplexSystems/bamojax#egg=bamoj
 
 Let's estimate the latent probability $\theta=p(x_1=\text{heads} \mid \theta)$ that a coin lands up heads, given a set of observations $x_1, \ldots, x_n$:
 
-### Generate data
+#### Generate data
 ``` 
 import jax.numpy as jnp
 import jax.random as jrnd
@@ -29,7 +29,7 @@ n = 100
 x = jrnd.bernoulli(key_data, p=true_theta, shape=(n, ))
 ```
 
-### Define Bayesian generative model
+#### Define Bayesian generative model
 
 Bayesian models in **bamojax** can be instantiated as:
 
@@ -49,7 +49,7 @@ latent_theta = my_model.add_node('theta', distribution=dx.Beta(alpha=1, beta=1))
 observations = my_model.add_node('x', distribution=dx.Bernoulli, parents=dict(probs=latent_theta), link_fn, observations=x)
 ```
 
-### Do inference
+#### Perform approximate inference
 
 The next step is to perform inference. Here, we use Adaptive-Tempered Sequential Monte Carlo, as implemented by `Blackjax`:
 
@@ -143,6 +143,18 @@ result = engine.run(jrnd.PRNGKey(0))
 This returns a dictionary with a `states` value containing a dictionary samples for each variable, for the requested number of chains and samples, discarding the specified number of burn-in samples, and storing only every 50th sample. By setting `return_diagnostics=True`, information such as acceptance rates are provided as well. For large models, turning this off can conserve memory consumption.
 
 Alternative inference engines include Sequential Monte Carlo, Variational Inference, and Stochastic-Gradient MCMC methods. Examples on how to use these can be found in the `examples/` folder, as well as on the [Uncertainty in Complex Systems website](https://mhinne.github.io/uncertainty-in-complex-systems).
+
+### Predictions
+
+**bamojax** supports each combination of sampling from the prior or posterior, and the latent variables or the predictive distribution, using any of the following:
+
+                 |Prior                                         |Posterior                                                                         |
+-----------------|----------------------------------------------|----------------------------------------------------------------------------------|
+Latent variables |`my_model.sample_prior(key)`                  |Using `InferenceEngine`                                                           |
+Predictive       |`my_model.sample_prior_predictive(key)`       |`my_model.sample_posterior_predictive(key, posterior_samples, input_variables)`   |
+
+When sampling from the posterior predictive, the parameter `input_variables=` can be used to provide for example predictor values, such as when sampling from a regression model or a neural network; $p(y^* \mid X, Y, x^*)$.
+
 
 ## Citing bamojax
 
