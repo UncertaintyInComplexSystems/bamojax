@@ -119,7 +119,7 @@ theta = HierarchicalCoinflips.add_node('theta', distribution=dx.Beta, parents=di
 
 The link function `beta_link_fn` takes the mode (given by another node `omega`) and the concentration (given by a scalar, which is implicitly converted to a deterministic and observed node), and returns the standard arguments $\alpha$ and $\beta$ which the `dx.Beta` distribution object recognizes as valid parameters.
 
-Because link functions are written in play Python, they can be of arbitrary complexity. For example, in bamojax/examples/bnn/bnn_mpl.ipynb, we use [Flax Linen](https://flax.readthedocs.io/en/latest/) to set up a multilayer perceptron as a link function.
+Because link functions are written in play Python, they can be of arbitrary complexity. For example, in [bamojax/examples/bnn/bnn_mpl.ipynb](https://github.com/UncertaintyInComplexSystems/bamojax/blob/main/bamojax/examples/bnn/bnn_mpl.ipynb), we use [Flax Linen](https://flax.readthedocs.io/en/latest/) to set up a multilayer perceptron as a link function.
 
 ### Inference
 
