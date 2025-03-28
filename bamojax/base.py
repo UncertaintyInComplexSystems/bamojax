@@ -36,6 +36,7 @@ class Node:
         if bijector is not None:
             self.bijector = bijector
         if observations is not None:
+            observations = jnp.asarray(observations) if jnp.isscalar(observations) else observations
             self.observations = observations
         if distribution is not None:
             self.distribution = distribution
