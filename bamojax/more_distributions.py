@@ -247,32 +247,27 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = None,  nd: Tupl
     return GaussianProcessInstance
 
 #
-def AutoRegressionFactory(order: int = 1, include_intercept=True):
+def AutoRegressionFactory(ar_fn: Callable):
     r""" Generates an autoregressive distribution with Gaussian emissions.
 
     This is a generator function that constructs a distrax Distribution object, which can then be queried for its log probability for inference.
     
     Args:
-        order: The order p of the AR(p) process, i.e., the number of lags on which observation y_t depends.
-        include_intercept: To add an intercept term.
-        n_future: 
+        ar_fn: A Callable function that takes innovations epsilon \sim N(0, sd**2), and the previous instances x(t-1), ..., x(t-p), and performs whatever computatin the user requires.
         
     """
 
     class ARInstance(Distribution):
 
-        def __init__(self, coefficients, scale, y_init, T=None):
-            self.coefficients = coefficients
-            self.scale = scale
-            self.y_init = y_init
-            self.T = T
+        def __init__(self, **kwargs):
+            self.parameters = kwargs
                     
         #
-        def _construct_lag_matrix(self, y, y_init, order):
+        def _construct_lag_matrix(self, y, y_init):
             r""" Construct y, and up to order shifts of it.
             
             """
-            n = len(y)
+            order = 1 if jnp.isscalar(y_init) else y_init.shape[0]
 
             @jax.jit
             def update_fn(carry, i):
@@ -282,19 +277,16 @@ def AutoRegressionFactory(order: int = 1, include_intercept=True):
             
             #
             _, columns = jax.lax.scan(update_fn, y, jnp.arange(order))
-            if include_intercept:
-                return jnp.column_stack((jnp.ones((n, )).T, columns.T))
-            else:
-               return columns.T
+            return columns
         
         #
         def log_prob(self, value):
             r""" Returns the log-density of the complete AR distribution
             
             """
-            y_lagged = self._construct_lag_matrix(y=value, y_init=self.y_init, order=order)            
-            mu = jnp.dot(self.coefficients, y_lagged.T)
-            return dx.Normal(loc=mu, scale=self.scale).log_prob(value)
+            y_lagged = self._construct_lag_matrix(y=value, y_init=self.parameters['y0'])   
+            mu = ar_fn(y_prev=y_lagged, **self.parameters) 
+            return dx.Normal(loc=mu, scale=self.parameters['scale']).log_prob(value)
 
         #
         def _sample_n(self, key, n):
@@ -312,28 +304,26 @@ def AutoRegressionFactory(order: int = 1, include_intercept=True):
             Let:
 
             \epsilon_t \sim N(0, \sigma_y)
-            y_t = b_0 + \sum_{i=1}^p b_1 y_{t-i} + epsilon_t
+            y_t = f(y_t-1, theta) + epsilon_t
 
             for t = M+1, ..., T
             
             """
-            
             @jax.jit
             def ar_step(carry, epsilon_t):
-                y_prev = carry
-                if include_intercept:
-                    y_t = self.coefficients[0] + jnp.sum(self.coefficients[1:] * y_prev[::-1])
-                else:
-                    y_t = jnp.sum(self.coefficients * y_prev[::-1])
-                y_t += epsilon_t
-                return jnp.concatenate([y_prev[1:], y_t[None]]), y_t
-            
-            #
-            innovations = self.scale * jrnd.normal(key, shape=(self.T - order, ))
-            _, ys = jax.lax.scan(ar_step, self.y_init, innovations)
-            return jnp.concatenate([self.y_init, ys])
+                y_t = ar_fn(y_prev=carry, **self.parameters) + epsilon_t
+                new_carry = jnp.concatenate([carry[1:], jnp.array([y_t])])
+                return new_carry, y_t
+
+            # 
+            y_init = self.parameters['y0']
+            order = 1 if jnp.isscalar(y_init) else y_init.shape[0]
+            innovations = self.parameters['scale'] * jrnd.normal(key, shape=(self.parameters['T'] - order, ))
+            _, ys = jax.lax.scan(ar_step, y_init, innovations)
+            y = jnp.concatenate([y_init, ys])
+            return y
         
-        #            
+        #                        
         @property
         def batch_shape(self):
             return ()
