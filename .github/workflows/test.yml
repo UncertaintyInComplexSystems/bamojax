@@ -15,6 +15,10 @@ jobs:
         environment-file: environment.yml
         activate-environment: bamojax-env
 
+    - name: Install bamojax in editable mode
+      run: pip install -e .
+      shell: bash -l {0}
+
     - name: Run tests
       run: |
         pytest tests/
