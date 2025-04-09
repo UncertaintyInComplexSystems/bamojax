@@ -9,16 +9,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Miniconda
+    - name: Set up Conda
       uses: conda-incubator/setup-miniconda@v2
       with:
-        auto-update-conda: true
         environment-file: environment.yml
         activate-environment: bamojax-env
-        miniforge-variant: Mambaforge  # Faster installs (optional but recommended)
-        use-mamba: true                # Optional: use mamba instead of conda
 
     - name: Run tests
       run: |
         pytest tests/
-      shell: bash -l {0}  # ? this is the correct way to use bash with login shell
+      shell: bash -l {0}  # Correct login shell so conda env is activated
