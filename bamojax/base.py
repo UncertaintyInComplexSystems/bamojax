@@ -30,7 +30,9 @@ class Node:
                  shape: Union[Tuple, int] = None,
                  bijector: Bijector = None):
         self.name = name
-        if shape is None:
+        if shape is None and distribution is not None:
+            shape = distribution.batch_shape
+        elif shape is None and distribution is None:
             shape = ( )
         self.shape = shape
         if bijector is not None:
@@ -100,6 +102,7 @@ class Node:
 
         Args:
             state: Current assignment of (parent) values.
+            minibatch: A additional set of assigned variables, useful for out-of-sample predictions.
         Returns:
             An instantiated distrax distribution object.
         
