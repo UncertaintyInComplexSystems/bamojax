@@ -1,0 +1,28 @@
+name: Run tests (CPU)
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Conda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        environment-file: environment.yml
+        activate-environment: bamojax-env
+
+    - name: Install pytest
+      shell: bash -l
+      run: |
+        conda activate bamojax-env
+        pip install pytest
+
+    - name: Run tests
+      shell: bash -l
+      run: |
+        pytest tests/
