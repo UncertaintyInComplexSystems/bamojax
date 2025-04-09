@@ -9,7 +9,7 @@ dependencies:
   jaxlib=0.4.34
   numpy
   pip
-  pip:
+  - pip:
     - pytest
     - blackjax
     - distrax
