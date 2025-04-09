@@ -1,3 +1,5 @@
+[![Tests](https://github.com/uncertaintyincomplexsystems/bamojax/actions/workflows/test.yml/badge.svg)](https://github.com/uncertaintyincomplexsystems/bamojax/actions/workflows/test.yml)
+
 # bamojax
 
 Welcome to **bamojax**, the Bayesian modelling toolbox implemented using the Jax coding universe. **bamojax** is a probabilistic programming language, similar to Numpyro, PyMC, Stan, JAGS, and BUGS. It relies on [Blackjax](https://blackjax-devs.github.io/blackjax/) for approximate inference, on [Distrax](https://github.com/google-deepmind/distrax) for probability distributions and their essential operations. It adds to this the Directed Acyclic Graph (DAG) structure of a Bayesian model, and automatically derives model priors, likelihoods, and Gibbs inference schemes. This combines the speed from (Black)Jax with a convenient modelling environment.
