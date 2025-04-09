@@ -46,7 +46,8 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = None,  nd: Tupl
     This is essentially a dx.MultivariateNormalFullCovariance object, with its mean and covariance determined by the mean and covariance functions of the GP.
     
     Args: 
-        cov_fn: The GP covariance function.
+        cov_fn: The GP covariance function. It assumes a signature of cov_fn(parameters: dict, x: Array, y: Array). 
+                This is provided by the `jaxkern` library, but others can be used as well.
         mean_fn: The GP mean function.
         nd: A tuple of integers indicating optional additional output dimensions (for multi-task GPs).
         jitter: A small value for numerical stability.
@@ -68,7 +69,7 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = None,  nd: Tupl
 
         #
         def _sample_n(self, key, n):
-            r"""
+            r""" Sample from the instantiated Gaussian process (i.e. multivariate Gaussian)
             
             """
             x = self.input
