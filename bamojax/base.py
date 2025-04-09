@@ -52,18 +52,30 @@ class Node:
 
     #
     def is_observed(self) -> bool:
+        """ Check if a node is an observed variable.
+        
+        """
         return hasattr(self, 'observations')
 
     #
     def is_stochastic(self) -> bool:
+        """ Check whether a node is stochastic or deterministic.
+
+        """
         return hasattr(self, 'distribution')
     
     #
     def is_root(self) -> bool:
+        """ Check whether a node is a root node.
+            
+        """
         return not hasattr(self, 'parents') or len(self.parents) == 0
     
     #
     def add_parent(self, param, node):
+        """ Add a parent node.
+
+        """
         assert isinstance(node, Node)
         self.parents[param] = node
 
@@ -77,6 +89,9 @@ class Node:
 
     #
     def is_leaf(self):
+        """ Check whether a node is observed and has parents.
+        
+        """
         return hasattr(self, 'parents') and self.is_observed()
     
     #    
@@ -151,7 +166,8 @@ class Model:
         self.verbose = verbose
 
     #
-    def add_node(self, name: str = 'root', 
+    def add_node(self, 
+                 name: str = 'root', 
                  distribution: Union[Distribution, Bijector] = None, 
                  observations: Array = None, 
                  parents: dict = None, 
@@ -213,26 +229,41 @@ class Model:
 
     #
     def get_children(self, node):
+        """ Returns the children of a node.
+
+        """
         if node in self.children:
             return self.children[node]
         return []
     
     #
     def get_parents(self, node):
+        """ Returns the parents of a node.
+        
+        """
         if node in self.parents:
             return self.parents[node]
         return []
     
     #
     def get_root_nodes(self):
+        """ Return all nodes that are roots.
+        
+        """
         return self.root_nodes
     
     #
     def get_leaf_nodes(self):
+        """ Returns all nodes that are leaves.
+        
+        """
         return {self.nodes[k]: self.nodes[k] for k in self.nodes.keys() - self.children.keys()}
     
     #
     def get_stochastic_nodes(self):
+        """ Returns all stochastic nodes.
+        
+        """
         return {k: v for k, v in self.nodes.items() if v.is_stochastic()}
     
     #
@@ -288,7 +319,7 @@ class Model:
 
     #
     def get_model_size(self) -> int:
-        r""" Returns the total number of latent scalars.
+        r""" Returns the total dimensions of the model.
         
         """
         size = 0

@@ -5,7 +5,6 @@ import jax
 import jax.random as jrnd
 import jax.numpy as jnp
 import distrax as dx
-import jaxkern as jk
 
 from jax.scipy.special import multigammaln
 
@@ -174,8 +173,8 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = None,  nd: Tupl
 
             mean = mean_fn.mean(params=self.params, x=z)
             Kxx = self.get_cov()
-            Kzx = cov_fn.cross_covariance(params=self.params, x=z, y=x)
-            Kzz = cov_fn.cross_covariance(params=self.params, x=z, y=z)
+            Kzx = cov_fn(params=self.params, x=z, y=x)
+            Kzz = cov_fn(params=self.params, x=z, y=z)
 
             Kxx += jitter * jnp.eye(*Kxx.shape)
             Kzx += jitter * jnp.eye(*Kzx.shape)
@@ -218,7 +217,7 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = None,  nd: Tupl
         def _get_cov(self):
             x = self.input
             m = x.shape[0]
-            return cov_fn.cross_covariance(params=self.params, x=x, y=x) + jitter * jnp.eye(m)
+            return cov_fn(params=self.params, x=x, y=x) + jitter * jnp.eye(m)
         
         #
         def get_cov(self):
