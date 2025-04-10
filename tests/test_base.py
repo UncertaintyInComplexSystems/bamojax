@@ -45,8 +45,10 @@ def test_derived_densities():
     prior_density = norm.logpdf(jnp.log(A_value), loc=0.0, scale=1.0) - jnp.log(A_value) + jnp.sum(norm.logpdf(B_values, loc=jnp.zeros((n, )), scale=jnp.ones((n, ))))
     state = dict(A=A_value, B=B_values)
     likelihood = jnp.sum(norm.logpdf(y, loc=B_values, scale=A_value))
-    assert likelihood == model1.loglikelihood_fn()(state)
-    assert prior_density == model1.logprior_fn()(state)
+
+    # depending on hardware these might be different in the final decimal
+    assert jnp.isclose(likelihood, model1.loglikelihood_fn()(state))
+    assert jnp.isclose(prior_density, model1.logprior_fn()(state))
     
 #
 
