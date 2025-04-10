@@ -16,14 +16,6 @@ tfb = tfp.bijectors
 from .base import Node
 
 
-def euclidean(x, y):
-    return jnp.linalg.norm(x - y)
-
-#
-def pairwise_distances(dist: Callable, xs, ys):
-  return jax.vmap(lambda x: jax.vmap(lambda y: dist(x, y))(xs))(ys)
-
-#
 class MeanFunction(ABC):
 
     @abstractmethod
@@ -391,7 +383,7 @@ class Wishart(Distribution):
     @property
     def event_shape(self) -> Tuple[int, ...]:
         """Shape of event of distribution samples."""
-        return ()
+        return (self._p, self._p)
     
     #
     @property
