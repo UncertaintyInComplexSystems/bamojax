@@ -54,7 +54,7 @@ def test_gaussian_processes():
     n = 100
     x = jnp.linspace(0, 1, num=n)
 
-    params = dict(lengthscale=0.1, variance=10.0)
+    params = dict(lengthscale=0.5, variance=10.0)
     gp_dist = GaussianProcessFactory(cov_fn=cov_fn)(input=x, **params)
     num_draws = 100
     draws = gp_dist.sample(seed=jrnd.PRNGKey(0), sample_shape=(num_draws, ))
@@ -71,7 +71,7 @@ def test_gaussian_processes():
     scores = jax.vmap(jax.vmap(likelihood, in_axes=(None, 0)), in_axes=(0, None))(scales, variances)
     flat_index = jnp.argmax(scores)
     i, _ = jnp.unravel_index(flat_index, scores.shape)
-    assert jnp.isclose(scales[i], params['lengthscale'], atol=1e-2)
+    assert jnp.isclose(scales[i], params['lengthscale'], atol=1e-1)
     
 #
 

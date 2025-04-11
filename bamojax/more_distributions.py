@@ -32,7 +32,7 @@ class Zero(MeanFunction):
     #
 
 #
-def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = None,  nd: Tuple[int, ...] = None, jitter: float = 1e-6):
+def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = Zero(),  nd: Tuple[int, ...] = None, jitter: float = 1e-6):
     r""" Returns an instantiated Gaussian process distribution object. 
     
     This is essentially a dx.MultivariateNormalFullCovariance object, with its mean and covariance determined by the mean and covariance functions of the GP.
