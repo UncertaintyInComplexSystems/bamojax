@@ -8,7 +8,7 @@ from bamojax.base import Model
 from bamojax.inference import mcmc_sampler, SMCInference, MCMCInference
 import blackjax
 
-
+ 
 def guk_lml(y, sd, mu0, tau):
     # See https://www.cs.ubc.ca/~murphyk/Papers/bayesGauss.pdf
     y_bar = jnp.mean(y)
