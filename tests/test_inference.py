@@ -5,7 +5,7 @@ import jax.random as jrnd
 
 import distrax as dx
 from bamojax.base import Model
-from bamojax.inference import mcmc_sampler, SMCInference
+from bamojax.inference import mcmc_sampler, SMCInference, MCMCInference
 import blackjax
 
 
@@ -48,6 +48,26 @@ def test_smc_inference():
     assert jnp.isclose(jnp.mean(final_state.particles['mu']), exact_posterior_dist.mean(), atol=0.05)
     assert jnp.isclose(jnp.var(final_state.particles['mu']), exact_posterior_dist.variance(), atol=0.05)
 
+
+#
+def test_nuts_inference():
+
+    num_warmup = 500
+    num_samples = 1_000
+    num_chains = 4
+
+    cold_nuts_parameters = dict(step_size=0.5, inverse_mass_matrix=0.0001*jnp.eye(gukmodel.get_model_size()))  # these will be overriden by the window adaptation
+    nuts_kernel = mcmc_sampler(model=gukmodel, mcmc_kernel=blackjax.nuts, mcmc_parameters=cold_nuts_parameters)
+
+    engine = MCMCInference(model=gukmodel, num_chains=num_chains, num_samples=num_samples, num_warmup=num_warmup, num_burn=500, mcmc_kernel=nuts_kernel)
+    result = engine.run(jrnd.PRNGKey(0))
+
+    states = result['states']
+
+    exact_posterior_dist = exact_posterior(y, true_sd, mu0, sd0)
+
+    assert jnp.isclose(jnp.mean(states['mu']), exact_posterior_dist.mean(), atol=0.05)
+    assert jnp.isclose(jnp.var(states['mu']), exact_posterior_dist.variance(), atol=0.05)
 
 #
 
