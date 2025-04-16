@@ -1,6 +1,6 @@
 [![Tests](https://github.com/uncertaintyincomplexsystems/bamojax/actions/workflows/test.yml/badge.svg)](https://github.com/uncertaintyincomplexsystems/bamojax/actions/workflows/test.yml)
 
-![bamojax logo](https://github.com/uncertaintyincomplexsystems/bamojax/figures/bamojax_logo_2x.jpg "bamojax")
+![bamojax logo](https://github.com/uncertaintyincomplexsystems/bamojax/blob/main/figures/bamojax_logo_2x.jpg "bamojax")
 
 # Welcome to bamojax!
 
