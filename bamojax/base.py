@@ -30,9 +30,10 @@ class Node:
                  shape: Union[Tuple, int] = None,
                  bijector: Bijector = None):
         self.name = name
-        if shape is None and distribution is not None:
-            shape = distribution.batch_shape
-        elif shape is None and distribution is None:
+        
+        # if shape is None and distribution is not None:
+        #     shape = distribution.batch_shape
+        if shape is None: #and distribution is None:
             shape = ( )
         self.shape = shape
         if bijector is not None:
@@ -328,7 +329,8 @@ class Model:
         size = 0
         for node in self.nodes.values():
             if node.is_stochastic() and not node.is_observed():
-                size += 1 if node.shape == () else jnp.prod(jnp.asarray(node.shape))
+                total_shape = node.shape + node.distribution.event_shape + node.distribution.batch_shape
+                size += 1 if total_shape == () else jnp.prod(jnp.asarray(total_shape))
         return size
     
     #  
@@ -381,10 +383,11 @@ class Model:
         sorted_free_variables = [node for node in self.get_node_order() if node.is_stochastic() and not node.is_observed()]
         for node in sorted_free_variables:
             key, subkey = jrnd.split(key)
-            if node.is_root():                
-                state[node.name] = node.get_distribution().sample(seed=subkey, sample_shape=node.shape)
+            if node.is_root(): 
+                dist = node.get_distribution()               
             else:
-                state[node.name] = node.get_distribution(state).sample(seed=subkey, sample_shape=node.shape)   
+                dist = node.get_distribution(state)
+            state[node.name] = dist.sample(seed=subkey, sample_shape=node.shape)   
         return state
 
     #

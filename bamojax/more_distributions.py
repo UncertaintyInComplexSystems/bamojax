@@ -231,7 +231,8 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = Zero(),  nd: Tu
         #
         @property
         def batch_shape(self):
-            return self.input.shape[0]
+            # return self.input.shape[0]
+            return ()
         
         #
 
@@ -318,7 +319,7 @@ def AutoRegressionFactory(ar_fn: Callable):
         #                        
         @property
         def batch_shape(self):
-            return ()
+            return ( )
 
         #
         @property
@@ -362,7 +363,11 @@ def AscendingDistribution(min_u, max_u, num_el):
 
 #
 class Wishart(Distribution):
-    """Wishart distribution with parameters `dof` and `scale`."""
+    """ Wishart distribution with parameters `dof` and `scale`.
+    
+    TODO: make batchable
+    
+    """
 
 
     def __init__(self, dof: int, scale: Optional[Array]):

@@ -126,10 +126,7 @@ def gibbs_sampler(model: Model,
 
                 def loglikelihood_fn_(substate):
                     dynamic_state = {**co_parent_arguments, node.name: substate[node]}
-                    if child.is_leaf():
-                        child_value = child.observations
-                    else:
-                        child_value = position[child]
+                    child_value = child.observations if child.is_leaf() else position[child]
                     return child.get_distribution(dynamic_state).log_prob(value=child_value)
                 
                 #            
