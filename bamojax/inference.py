@@ -542,6 +542,11 @@ class VIInference(InferenceEngine):
         vi_samples = tree_map(sample_fn, keys_pytree, vi_mu, vi_rho)
         if self.num_chains > 1:
             vi_samples = tree_map(lambda x: jnp.swapaxes(x, 0, 1), vi_samples)
+
+        # apply bijectors
+        for k, v in vi_samples.items():
+            bijector = self.bijectors[k]
+            vi_samples[k] = bijector(v)
         return vi_samples
 
     #
