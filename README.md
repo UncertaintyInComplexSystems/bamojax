@@ -10,12 +10,10 @@ Welcome to **bamojax**, the Bayesian modelling toolbox implemented using the Jax
 
 Existing PPLs, such as PyMC, can export their logdensity function so it can be sampled using Blackjax. However, this has two downsides:
 
-1. It does not allow you update different variables in your model using different MCMC algorithms. For example, if one wants to approximate the posterior over a latent Gaussian process and its hyperparameters, it is much more efficient to use elliptical slice sampling for the GP, than to apply NUTS to all variables at one.
+1. It does not allow you update variables in your model using Gibbs MCMC algorithms. For example, if one wants to approximate the posterior over a latent Gaussian process and its hyperparameters, it is much more efficient to use elliptical slice sampling for the GP, than to apply NUTS to all variables at once. This effect is even more pronounced when embedding MCMC sampling within Sequential Monte Carlo (see [Hinne, 2025](https://link.springer.com/article/10.3758/s13428-025-02642-1) for more details).
 2. It is harder to embed this logdensity into tempered Sequential Monte Carlo algorithms, as for this one needs access to the prior and likelihood separately. 
 
-My implementing your own models and samplers using Blackjax, these problems can be circumvented. However, that is a labour-intensive and error-prone process. Therefore, **bamojax** provides a user-friendly interface for model construction and Gibbs sampling. 
-
-Under the good, **bamojax** reprsents the Directed Acyclic Graph (DAG) structure of a Bayesian model, and automatically derives model priors, likelihoods, and Gibbs inference schemes. These are then combined with the fast inference algorithms implemented in Blackjax.
+By implementing your own models and samplers using Blackjax, these problems can be circumvented. However, this is a labour-intensive and error-prone process. Therefore, **bamojax** provides a user-friendly interface around Blackjax, that allows for easy model construction and Gibbs sampling. 
 
 ## Installation
 
@@ -46,7 +44,7 @@ x = jrnd.bernoulli(key_data, p=true_theta, shape=(n, ))
 
 #### Define Bayesian generative model
 
-Bayesian models in **bamojax** can be instantiated as:
+Under the good, **bamojax** reprsents the a Bayesian model using a Directed Acyclic Graph (DAG) structure, and automatically derives model priors, likelihoods, and Gibbs inference schemes. These are then combined with the fast inference algorithms implemented in Blackjax. Bayesian models can be instantiated in **bamojax** using:
 
 ```
 from bamojax.base import Model
@@ -66,7 +64,7 @@ observations = my_model.add_node('x', distribution=dx.Bernoulli, parents=dict(pr
 
 #### Perform approximate inference
 
-The next step is to perform inference. Here, we use Adaptive-Tempered Sequential Monte Carlo, as implemented by `Blackjax`:
+The next step is to perform inference. Here, we use Adaptive-Tempered Sequential Monte Carlo, as implemented by Blackjax:
 
 ```
 num_particles = 1_000
@@ -116,7 +114,7 @@ Depending on whether a user provides values for the `distribution=`, and/or `obs
 2. Stochastic and observed,
 3. Deterministic and observed.
 
-The `parents` argument expects a dictionary, in which the keys must correspond to either the arguments of a `dx.Distribution` object or the arguments of a link function.
+The `parents` argument expects a dictionary, in which the keys must correspond to either the arguments of a Distrax `dx.Distribution` object or the arguments of a link function.
 
 Nodes can furthermore take any Distrax bijector using the `bijector=` argument, for example to transform a real variable to a bounded domain or vice versa. In many cases, the same goal can be achieved by the link function, but sometimes a bijector is simpler to use.
 
@@ -175,7 +173,7 @@ When sampling from the posterior predictive, the parameter `input_variables=` ca
 
 ## Citing bamojax
 
-To cite **bamojax**, please use
+The following information can be used to cite **bamojax**:
 
 ```
 @misc{bamojax2025,
