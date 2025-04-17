@@ -25,6 +25,11 @@ G = model3.add_node('G', distribution=dx.Transformed(dx.Normal(loc=0.0, scale=1.
 H = model3.add_node('H', distribution=dx.Normal(loc=0.0, scale=1.0))
 _ = model3.add_node('I', distribution=dx.Normal, observations=y, parents=dict(loc=H, scale=G))
 
+model4 = Model('test_model 4 - uninstantiated parent')
+J = model4.add_node('J', distribution=dx.Transformed(dx.Normal(loc=0.0, scale=1.0), tfb.Exp()))
+K = model4.add_node('K', distribution=dx.Normal, parents=dict(loc=0.0, scale=1.0), shape=(n, ))
+_ = model4.add_node('L', distribution=dx.Normal, observations=y, parents=dict(loc=K, scale=J))
+
 def test_node_shapes():    
 
     m1 = model1.get_model_size()
@@ -35,6 +40,9 @@ def test_node_shapes():
 
     m3 = model3.get_model_size()
     assert m3 == 2
+
+    m4 = model4.get_model_size()
+    assert m4 == n + 1
 
 #
 def test_derived_densities():

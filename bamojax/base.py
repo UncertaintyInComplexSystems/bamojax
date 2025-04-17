@@ -323,15 +323,22 @@ class Model:
 
     #
     def get_model_size(self) -> int:
-        r""" Returns the total dimensions of the model.
+        r""" Returns the total dimensions of the model. 
+        
+        As node.distribution can be abstract, we create a concrete instantiation by drawing a sample from the prior and deriving the shape from this sample.
         
         """
-        size = 0
-        for node in self.nodes.values():
-            if node.is_stochastic() and not node.is_observed():
-                total_shape = node.shape + node.distribution.event_shape + node.distribution.batch_shape
-                size += 1 if total_shape == () else jnp.prod(jnp.asarray(total_shape))
+
+        draw = self.sample_prior(key=jrnd.PRNGKey(0)) 
+        size = jnp.sum(jnp.array([jnp.size(v) for v in draw.values()]))
         return size
+
+        # size = 0
+        # for node in self.nodes.values():
+        #     if node.is_stochastic() and not node.is_observed():
+        #         total_shape = node.shape + node.distribution.event_shape + node.distribution.batch_shape
+        #         size += 1 if total_shape == () else jnp.prod(jnp.asarray(total_shape))
+        # return size
     
     #  
     def get_node_order(self):
