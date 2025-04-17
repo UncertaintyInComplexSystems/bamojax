@@ -4,7 +4,18 @@
 
 # Welcome to bamojax!
 
-Welcome to **bamojax**, the Bayesian modelling toolbox implemented using the Jax coding universe. **bamojax** is a probabilistic programming language, similar to Numpyro, PyMC, Stan, JAGS, and BUGS. It relies on [Blackjax](https://blackjax-devs.github.io/blackjax/) for approximate inference, on [Distrax](https://github.com/google-deepmind/distrax) for probability distributions and their essential operations. It adds to this the Directed Acyclic Graph (DAG) structure of a Bayesian model, and automatically derives model priors, likelihoods, and Gibbs inference schemes. This combines the speed from (Black)Jax with a convenient modelling environment.
+Welcome to **bamojax**, the Bayesian modelling toolbox implemented using the Jax coding universe. **bamojax** is a probabilistic programming language, similar to Numpyro, PyMC, Stan, JAGS, and BUGS. It relies on [Blackjax](https://blackjax-devs.github.io/blackjax/) for approximate inference, on [Distrax](https://github.com/google-deepmind/distrax) for probability distributions and their essential operations. 
+
+## What sets bamojax apart?
+
+Existing PPLs, such as PyMC, can export their logdensity function so it can be sampled using Blackjax. However, this has two downsides:
+
+1. It does not allow you update different variables in your model using different MCMC algorithms. For example, if one wants to approximate the posterior over a latent Gaussian process and its hyperparameters, it is much more efficient to use elliptical slice sampling for the GP, than to apply NUTS to all variables at one.
+2. It is harder to embed this logdensity into tempered Sequential Monte Carlo algorithms, as for this one needs access to the prior and likelihood separately. 
+
+My implementing your own models and samplers using Blackjax, these problems can be circumvented. However, that is a labour-intensive and error-prone process. Therefore, **bamojax** provides a user-friendly interface for model construction and Gibbs sampling. 
+
+Under the good, **bamojax** reprsents the Directed Acyclic Graph (DAG) structure of a Bayesian model, and automatically derives model priors, likelihoods, and Gibbs inference schemes. These are then combined with the fast inference algorithms implemented in Blackjax.
 
 ## Installation
 
