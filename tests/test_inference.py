@@ -5,7 +5,8 @@ import jax.random as jrnd
 
 import distrax as dx
 from bamojax.base import Model
-from bamojax.inference import gibbs_sampler, mcmc_sampler, SMCInference, MCMCInference
+from bamojax.inference import SMCInference, MCMCInference
+from bamojax.samplers import gibbs_sampler, mcmc_sampler
 import blackjax
 
  
