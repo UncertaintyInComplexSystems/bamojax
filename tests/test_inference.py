@@ -5,7 +5,7 @@ import jax.random as jrnd
 
 import distrax as dx
 from bamojax.base import Model
-from bamojax.inference import mcmc_sampler, SMCInference, MCMCInference
+from bamojax.inference import gibbs_sampler, mcmc_sampler, SMCInference, MCMCInference
 import blackjax
 
  
@@ -24,6 +24,33 @@ def exact_posterior(y, sd, mu0, sd0) -> dx.Distribution:
     sd_post = 1.0 / (1/sd0**2 + n  / sd**2)
     mu_post = sd_post*(mu0 / sd0**2 + jnp.sum(y) / sd**2)
     return dx.Normal(loc=mu_post, scale=jnp.sqrt(sd_post))
+
+#
+def test_gibbs_inference():
+    means = jnp.array([28, 8, -3, 7, -1, 1, 18, 12])
+    stddevs = jnp.array([15, 10, 16, 11, 9, 11, 10, 18])
+
+    J = len(means)
+    ES = Model('eight schools')
+    mu = ES.add_node('mu', distribution=dx.Normal(loc=0, scale=10))
+    tau = ES.add_node('tau', distribution=dx.Transformed(dx.Normal(loc=5, scale=1), tfb.Exp()))
+    theta = ES.add_node('theta', distribution=dx.Normal, parents=dict(loc=mu, scale=tau), shape=(J, ))
+    _ = ES.add_node('y', distribution=dx.Normal, parents=dict(loc=theta, scale=stddevs), observations=means)
+
+    step_fns = dict(mu=blackjax.normal_random_walk,
+                    tau=blackjax.normal_random_walk,
+                    theta=blackjax.normal_random_walk)
+    step_fn_params = dict(mu=dict(sigma=10.0),
+                            tau=dict(sigma=5.0),
+                            theta=dict(sigma=10.0*jnp.eye(J)))
+    gibbs_kernel = gibbs_sampler(model=ES, step_fns=step_fns, step_fn_params=step_fn_params)
+
+    num_samples = 50000
+    num_burn = 10000
+    num_chains = 4
+    engine = MCMCInference(model=ES, mcmc_kernel=gibbs_kernel, num_chains=num_chains, num_samples=num_samples, num_burn=num_burn)
+    result = engine.run(jrnd.PRNGKey(0))
+    assert jnp.isclose(result['states']['theta'].mean(), 7.1, atol=0.05)
 
 #
 def test_smc_inference():
