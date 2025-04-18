@@ -9,6 +9,10 @@ from bamojax.inference import SMCInference, MCMCInference
 from bamojax.samplers import gibbs_sampler, mcmc_sampler
 import blackjax
 
+from tensorflow_probability.substrates import jax as tfp
+tfd = tfp.distributions
+tfb = tfp.bijectors
+
  
 def guk_lml(y, sd, mu0, tau):
     # See https://www.cs.ubc.ca/~murphyk/Papers/bayesGauss.pdf
