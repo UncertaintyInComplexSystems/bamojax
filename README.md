@@ -173,13 +173,20 @@ When sampling from the posterior predictive, the parameter `input_variables=` ca
 
 ## Citing bamojax
 
-The following information can be used to cite **bamojax**:
+If you use Bamojax in your work, please cite the following:
+
+    Max Hinne. (2025). Bamojax: Bayesian Modelling with JAX (Version 0.1.0) [Computer software]. https://doi.org/10.5281/zenodo.15038847
+
+BibTeX:
 
 ```
-@misc{bamojax2025,
-  author = {Max Hinne},
-  year = {2025},
-  title = {{Bamojax: Bayesian modelling in JAX}}
-  howpublished  = {\url{https://doi.org/10.5281/zenodo.15038847}}
+@software{hinne2025bamojax,
+  author       = {Hinne, Max},
+  title        = {Bamojax: Bayesian Modelling with JAX},
+  year         = 2025,
+  publisher    = {Zenodo},
+  version      = {0.1.0},
+  doi          = {10.5281/zenodo.15038847},
+  url          = {https://github.com/maxhinne/bamojax}
 }
 ```
