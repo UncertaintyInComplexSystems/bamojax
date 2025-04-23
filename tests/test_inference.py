@@ -2,11 +2,13 @@ import jax
 jax.config.update("jax_enable_x64", True)
 import jax.numpy as jnp
 import jax.random as jrnd
+import jaxkern as jk
 
 import distrax as dx
 from bamojax.base import Model
-from bamojax.inference import SMCInference, MCMCInference, VIInference
+from bamojax.inference import SMCInference, MCMCInference, VIInference, SGMCMCInference
 from bamojax.samplers import gibbs_sampler, mcmc_sampler
+from bamojax.more_distributions import GaussianProcessFactory
 import blackjax
 
 from tensorflow_probability.substrates import jax as tfp
@@ -129,8 +131,6 @@ def test_vi():
     assert jnp.min(vi_samples['tau'].flatten()) > 0.0
     assert vi_samples['theta'].shape == (num_chains, num_draws, J)
 
-#
-
     num_chains = 4
     num_steps = 100_000
     num_gradient_samples = 10
@@ -149,6 +149,70 @@ def test_vi():
     vi_samples = engine.sample_from_variational(jrnd.PRNGKey(1), vi_result=result, num_draws=num_draws)
     assert jnp.min(vi_samples['tau'].flatten()) > 0.0
     assert vi_samples['theta'].shape == (num_chains, num_draws, J)
+
+#
+def test_sginference():
+    n = 500
+    x = jnp.linspace(-1, 1, n)
+    true_lengthscale = 0.15
+    true_variance = 3.0
+    true_noise = 0.1
+
+    cov_fn = jk.RBF().cross_covariance
+
+    f = GaussianProcessFactory(cov_fn=cov_fn)(input=x, lengthscale=true_lengthscale, variance=true_variance).sample(seed=jrnd.PRNGKey(0))
+    y = f + 0.1 * jax.random.normal(jrnd.PRNGKey(0), shape=(n, ))
+
+    def marginal_gp_fn(x, lengthscale, variance, obs_noise):
+        n = x.shape[0]
+        params = dict(lengthscale=lengthscale, variance=variance)
+        K = cov_fn(params, x, x)
+        Sigma = K + obs_noise**2 * jnp.eye(n)
+        return dict(loc=jnp.zeros(n), covariance_matrix=Sigma)
+
+    #
+
+    cov_fn = jk.RBF().cross_covariance
+
+    mgpmodel = Model('Marginal GP')
+    lengthscale = mgpmodel.add_node('lengthscale', distribution=dx.Transformed(dx.Normal(loc=0., scale=1.), tfb.Exp()))
+    variance = mgpmodel.add_node('variance', distribution=dx.Transformed(dx.Normal(loc=0., scale=1.), tfb.Exp()))
+    obs_noise = mgpmodel.add_node('obs_noise', distribution=dx.Transformed(dx.Normal(loc=0., scale=1.), tfb.Exp()))
+    x_node = mgpmodel.add_node(name='x', observations=x)
+    y_node = mgpmodel.add_node(name='y', 
+                            distribution=dx.MultivariateNormalFullCovariance, 
+                            observations=y, 
+                            parents=dict(x=x_node, 
+                                            lengthscale=lengthscale, 
+                                            variance=variance, 
+                                            obs_noise=obs_noise), 
+                            link_fn=marginal_gp_fn)
+    
+    batch_size = 25
+    num_samples = 200_000
+    num_burn = 200_000
+    num_thin = 20
+    num_chains = 1
+    stepsize = 1e-5  # with larger learning rates we encounter nans
+
+    engine = SGMCMCInference(model=mgpmodel, 
+                            num_chains=num_chains, 
+                            sgmcmc_kernel=blackjax.sgld, 
+                            data_size=n, 
+                            batch_size=batch_size, 
+                            batch_nodes=[x_node, y_node], 
+                            stepsize=stepsize, 
+                            num_samples=num_samples, 
+                            num_burn=num_burn, 
+                            num_thin=num_thin)
+
+
+    result = engine.run(jrnd.PRNGKey(0))
+
+    assert jnp.isclose(jnp.mean(result['states']['lengthscale']), true_lengthscale, atol=0.01)
+    assert jnp.isclose(jnp.mean(result['states']['obs_noise']), true_noise, atol=0.01)  
+    # Note that we do not check the variance, as it is not identifiable in the model.
+#
 
 true_mean = 5.0
 true_sd = 3.0
