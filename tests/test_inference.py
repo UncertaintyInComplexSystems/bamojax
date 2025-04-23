@@ -5,7 +5,7 @@ import jax.random as jrnd
 
 import distrax as dx
 from bamojax.base import Model
-from bamojax.inference import SMCInference, MCMCInference
+from bamojax.inference import SMCInference, MCMCInference, VIInference
 from bamojax.samplers import gibbs_sampler, mcmc_sampler
 import blackjax
 
@@ -32,15 +32,9 @@ def exact_posterior(y, sd, mu0, sd0) -> dx.Distribution:
 
 #
 def test_gibbs_inference():
-    means = jnp.array([28, 8, -3, 7, -1, 1, 18, 12])
-    stddevs = jnp.array([15, 10, 16, 11, 9, 11, 10, 18])
+    """ Replication of tensorflow probability's example at https://www.tensorflow.org/probability/examples/Eight_Schools
 
-    J = len(means)
-    ES = Model('eight schools')
-    mu = ES.add_node('mu', distribution=dx.Normal(loc=0, scale=10))
-    tau = ES.add_node('tau', distribution=dx.Transformed(dx.Normal(loc=5, scale=1), tfb.Exp()))
-    theta = ES.add_node('theta', distribution=dx.Normal, parents=dict(loc=mu, scale=tau), shape=(J, ))
-    y = ES.add_node('y', distribution=dx.Normal, parents=dict(loc=theta, scale=stddevs), observations=means)
+    """
 
     step_fns = dict(mu=blackjax.normal_random_walk,
                     tau=blackjax.normal_random_walk,
@@ -50,12 +44,22 @@ def test_gibbs_inference():
                             theta=dict(sigma=5.0*jnp.eye(J)))
     gibbs_kernel = gibbs_sampler(model=ES, step_fns=step_fns, step_fn_params=step_fn_params)
 
-    num_samples = 100000
-    num_burn = 10000
     num_chains = 4
+    num_samples = 100000
+    num_burn = 100000
+
+    step_fns = dict(mu=blackjax.normal_random_walk,
+                    tau=blackjax.normal_random_walk,
+                    theta=blackjax.normal_random_walk)
+    step_fn_params = dict(mu=dict(sigma=10.0),
+                            tau=dict(sigma=10.0),
+                            theta=dict(sigma=5.0*jnp.eye(J)))
+    gibbs_kernel = gibbs_sampler(model=ES, step_fns=step_fns, step_fn_params=step_fn_params)
+
     engine = MCMCInference(model=ES, mcmc_kernel=gibbs_kernel, num_chains=num_chains, num_samples=num_samples, num_burn=num_burn)
     result = engine.run(jrnd.PRNGKey(0))
-    assert jnp.isclose(result['states']['theta'].mean(), 7.1, atol=0.5)
+
+    assert jnp.allclose(jnp.mean(result['states']['mu'], axis=1), 5.8, atol=0.2)
 
 #
 def test_smc_inference():
@@ -102,6 +106,49 @@ def test_nuts_inference():
     assert jnp.isclose(jnp.var(states['mu']), exact_posterior_dist.variance(), atol=0.05)
 
 #
+def test_vi():
+    import optax
+    import optax
+
+    num_chains = 4
+    num_steps = 100_000
+    num_gradient_samples = 10
+    num_draws = 1_000
+
+    engine = VIInference(ES, 
+                        num_chains=num_chains, 
+                        num_steps=num_steps, 
+                        num_gradient_samples=num_gradient_samples, 
+                        optimizer=optax.sgd(learning_rate=1e-1), 
+                        optimizer_chain_args=optax.clip_by_global_norm(1.0))
+
+    result = engine.run(key=jrnd.PRNGKey(0))
+    assert jnp.allclose(result['states'].mu['mu'][:,-1], 6.1, atol=0.1)
+
+    vi_samples = engine.sample_from_variational(jrnd.PRNGKey(1), vi_result=result, num_draws=num_draws)
+    assert jnp.min(vi_samples['tau'].flatten()) > 0.0
+    assert vi_samples['theta'].shape == (num_chains, num_draws, J)
+
+#
+
+    num_chains = 4
+    num_steps = 100_000
+    num_gradient_samples = 10
+    num_draws = 1_000
+
+    engine = VIInference(ES, 
+                        num_chains=num_chains, 
+                        num_steps=num_steps, 
+                        num_gradient_samples=num_gradient_samples, 
+                        optimizer=optax.sgd(learning_rate=1e-1), 
+                        optimizer_chain_args=optax.clip_by_global_norm(1.0))
+
+    result = engine.run(key=jrnd.PRNGKey(0))
+    assert jnp.allclose(result['states'].mu['mu'][:,-1], 6.1, atol=0.1)
+
+    vi_samples = engine.sample_from_variational(jrnd.PRNGKey(1), vi_result=result, num_draws=num_draws)
+    assert jnp.min(vi_samples['tau'].flatten()) > 0.0
+    assert vi_samples['theta'].shape == (num_chains, num_draws, J)
 
 true_mean = 5.0
 true_sd = 3.0
@@ -113,4 +160,14 @@ sd0 = 2.0
 gukmodel = Model('Gaussian with unknown mean')
 unknown_mean = gukmodel.add_node('mu', distribution=dx.Normal(loc=mu0, scale=sd0))
 _ = gukmodel.add_node('y', distribution=dx.Normal, observations=y, parents=dict(loc=unknown_mean, scale=true_sd))
+
+means = jnp.array([28, 8, -3, 7, -1, 1, 18, 12])
+stddevs = jnp.array([15, 10, 16, 11, 9, 11, 10, 18])
+
+J = len(means)
+ES = Model('eight schools')
+mu = ES.add_node('mu', distribution=dx.Normal(loc=0, scale=10))
+tau = ES.add_node('tau', distribution=dx.Transformed(dx.Normal(loc=5, scale=1), tfb.Exp()))
+theta = ES.add_node('theta', distribution=dx.Normal, parents=dict(loc=mu, scale=tau), shape=(J, ))
+_ = ES.add_node('y', distribution=dx.Normal, parents=dict(loc=theta, scale=stddevs), observations=means)
 

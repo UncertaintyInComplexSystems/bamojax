@@ -132,7 +132,7 @@ def gibbs_sampler(model: Model,
                 
                 #            
                 co_parents.add(node)
-                conditionals.append(jax.jit(loglikelihood_fn_))
+                conditionals.append(loglikelihood_fn_)
 
             loglikelihood_fn = lambda val: jnp.sum(jnp.asarray([temperature*ll_fn(val).sum() for ll_fn in conditionals]))
 
