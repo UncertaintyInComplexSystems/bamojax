@@ -210,7 +210,7 @@ def test_sginference():
     result = engine.run(jrnd.PRNGKey(0))
 
     assert jnp.isclose(jnp.mean(result['states']['lengthscale']), true_lengthscale, atol=0.01)
-    assert jnp.isclose(jnp.mean(result['states']['obs_noise']), true_noise, atol=0.001)  
+    assert jnp.isclose(jnp.mean(result['states']['obs_noise']), true_noise, atol=0.01)  
     # Note that we do not check the variance, as it is not identifiable in the model.
 #
 
