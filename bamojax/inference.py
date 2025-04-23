@@ -496,16 +496,16 @@ class VIInference(InferenceEngine):
             A dictionary with bijectors for the variables that use it, and an identity bijector otherwise.
         
         """
-        model_pytree = self.model.sample_prior(jrnd.PRNGKey(0))
+        latent_nodes = self.model.get_latent_nodes()
 
-        model_pytree
         bijectors = {}
-        for k in model_pytree.keys():
-            if hasattr(self.model.nodes[k].distribution, '_bijector'):                        
-                transform = lambda x: self.model.nodes[k].distribution._bijector.forward(x=x)
+        for node_name, node in latent_nodes.items():
+            if hasattr(node.distribution, '_bijector'):
+                bij = node.distribution._bijector
+                transform = lambda x, bij=bij: bij.forward(x)
             else:
                 transform = lambda x: x
-            bijectors[k] = transform
+            bijectors[node_name] = transform
         return bijectors
 
     #    

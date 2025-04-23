@@ -271,6 +271,13 @@ class Model:
         return {k: v for k, v in self.nodes.items() if v.is_stochastic()}
     
     #
+    def get_latent_nodes(self):
+        """ Returns all latent nodes.
+        
+        """
+        return {k: v for k, v in self.nodes.items() if v.is_stochastic() and not v.is_observed()}
+
+    #
     def logprior_fn(self) -> Callable:
         r""" Returns a callable function that provides the log prior of the model given the current state of assigned variables.
         
@@ -332,13 +339,6 @@ class Model:
         draw = self.sample_prior(key=jrnd.PRNGKey(0)) 
         size = jnp.sum(jnp.array([jnp.size(v) for v in draw.values()]))
         return size
-
-        # size = 0
-        # for node in self.nodes.values():
-        #     if node.is_stochastic() and not node.is_observed():
-        #         total_shape = node.shape + node.distribution.event_shape + node.distribution.batch_shape
-        #         size += 1 if total_shape == () else jnp.prod(jnp.asarray(total_shape))
-        # return size
     
     #  
     def get_node_order(self):
