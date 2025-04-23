@@ -271,7 +271,7 @@ class SGMCMCInference(InferenceEngine):
         key_sgmcmc, key_batch = jrnd.split(key)
         idx = jrnd.choice(key_batch, self.data_size, shape=(self.batch_size, ), replace=False)
         minibatch = {node.name: self.get_minibatch(node.observations, idx) for node in self.batch_nodes}
-        state = self.sgmcmc_kernel.step(key_sgmcmc, state, minibatch, self.stepsize)    
+        state = self.sgmcmc_kernel.step(key_sgmcmc, state, minibatch, self.stepsize)   
         return state, state
     
     #
@@ -491,6 +491,8 @@ class VIInference(InferenceEngine):
         r""" Meanfield VI imposes a Gaussian variational distribution. 
         
         In order to use the correct parameter constraints this function determines all relevant bijectors.
+
+        It's a bijector detector! :-)
 
         Returns:
             A dictionary with bijectors for the variables that use it, and an identity bijector otherwise.
