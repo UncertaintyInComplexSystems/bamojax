@@ -12,7 +12,7 @@ from .modified_blackjax import modified_adaptive_tempered, modified_tempered
 tempered_smc = generate_top_level_api_from(modified_tempered)
 adaptive_tempered_smc = generate_top_level_api_from(modified_adaptive_tempered)
 
-from typing import Tuple, Callable
+from typing import Callable
 import optax
 
 import jax

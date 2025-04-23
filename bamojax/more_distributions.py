@@ -49,6 +49,9 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = Zero(),  nd: Tu
     """
 
     class GaussianProcessInstance(Distribution):
+        """ An instantiated Gaussian process distribution object, i.e. a multivariate Gaussian.
+        
+        """
 
         def __init__(self, input: Node, **params):
             self.input = input
@@ -200,6 +203,9 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = Zero(),  nd: Tu
             
         #
         def _get_mean(self):
+            """ Returns the mean of the GP at the input locations.
+            
+            """
             return mean_fn.mean(params=self.params, x=self.input)
         
         #
@@ -208,6 +214,9 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = Zero(),  nd: Tu
         
         #
         def _get_cov(self):
+            """ Returns the covariance of the GP at the input locations.
+            
+            """
             x = self.input
             m = x.shape[0]
             return cov_fn(params=self.params, x=x, y=x) + jitter * jnp.eye(m)
@@ -231,7 +240,6 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = Zero(),  nd: Tu
         #
         @property
         def batch_shape(self):
-            # return self.input.shape[0]
             return ()
         
         #
@@ -251,6 +259,9 @@ def AutoRegressionFactory(ar_fn: Callable):
     """
 
     class ARInstance(Distribution):
+        """ An instantiated autoregressive distribution object.
+        
+        """
 
         def __init__(self, **kwargs):
             self.parameters = kwargs
@@ -371,7 +382,7 @@ class Wishart(Distribution):
 
 
     def __init__(self, dof: int, scale: Optional[Array]):
-        """Initializes a Wishart distribution.
+        """ Initializes a Wishart distribution.
 
         Args:
           dof: degrees of freedom
@@ -387,26 +398,34 @@ class Wishart(Distribution):
     #
     @property
     def event_shape(self) -> Tuple[int, ...]:
-        """Shape of event of distribution samples."""
+        """ Shape of event of distribution samples.
+        
+        """
         return (self._p, self._p)
     
     #
     @property
     def batch_shape(self) -> Tuple[int, ...]:
-        """Shape of batch of distribution samples."""
+        """ Shape of batch of distribution samples.
+        
+        """
         return jax.lax.broadcast_shapes(self._dof.shape, self._scale.shape)
     
     #
 
     def _sample_n(self, key: Array, n: int) -> Array:
-        """See `Distribution._sample_n`."""
-
+        """ See `Distribution._sample_n`.
+        
+        """
         X = jrnd.multivariate_normal(key, mean=jnp.zeros((self._p, )), cov=self._scale, shape=(n, self._dof))
         wishart_matrices = jnp.einsum('ndp,ndq->npq', X, X)
         return wishart_matrices
     
     #
     def log_prob(self, value: Array) -> Array:
+        """ Computes the log probability of the Wishart distribution.
+        
+        """
         _, logdetV = jnp.linalg.slogdet(self._scale)
         _, logdetK = jnp.linalg.slogdet(value)
 
