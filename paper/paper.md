@@ -7,7 +7,7 @@ tags:
   - Bayesian modelling
 authors:
   - name: Max Hinne
-    orcid: https://orcid.org/0000-0002-9279-6725
+    orcid: 0000-0002-9279-6725
     equal-contrib: true
     affiliation: 1
 affiliations:
