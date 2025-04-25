@@ -45,7 +45,7 @@ Blackjax package [@blackjax].
 
 Existing probabilistic programming languages, such as PyMC [@pymc], can export a logdensity function that enables Blackjax-based inference. However, this has two limitations:
 
-1. It does support Gibbs sampling, where variables are updated individually using their own MCMC kernels. For example, when approximating the posterior over a latent Gaussian process and its hyperparameters, elliptical slice sampling for the GP is often more efficient than applying NUTS to all variables jointly. This becomes even more important when embedding MCMC sampling in Sequential Monte Carlo [@Hinne2025].
+1. It does not support Gibbs sampling, where variables are updated individually using their own MCMC kernels. For example, when approximating the posterior over a latent Gaussian process and its hyperparameters, elliptical slice sampling for the GP is often more efficient than applying NUTS to all variables jointly. This becomes even more important when embedding MCMC sampling in Sequential Monte Carlo [@Hinne2025].
 2. It makes it harder to apply tempered Sequential Monte Carlo methods that need separate prior and likelihood densities.
 
 While users can circumvent these issues by manually implementing their models using Blackjax,  this is a labor-intensive and error-prone process. **Bamojax** addresses this gap by providing a user-friendly interface for model construction and Gibbs sampling on top of Blackjax.
