@@ -1,4 +1,5 @@
 from jaxtyping import Array, Union
+import jax
 import jax.numpy as jnp
 import distrax as dx
 import jax.random as jrnd
@@ -476,4 +477,119 @@ class Model:
 
     #
 
+#
+class MetaModel():
+
+    def __init__(self, 
+                 model_list):
+        self.model_list = model_list
+        self.M = len(model_list)
+        self.model_sizes = [model.get_model_size() for model in model_list]        
+        self.indiv_latent_nodes = [set(model.get_latent_nodes().keys()) for model in model_list]
+
+        # find the number of auxiliary variables needed, as the largest difference in latent node sets between any two models
+        self.num_auxiliary = 0
+        for i in range(self.M):
+            for j in range(i+1, self.M):
+                diff_left = set.difference(self.indiv_latent_nodes[i], self.indiv_latent_nodes[j])
+                diff_right = set.difference(self.indiv_latent_nodes[j], self.indiv_latent_nodes[i])
+                max_diff = jnp.max(jnp.array([len(diff_left), len(diff_right)]))
+                if max_diff > self.num_auxiliary:
+                    self.num_auxiliary = max_diff
+        
+        self.latent_variables = set.union(*self.indiv_latent_nodes)
+        self.auxiliary_variables = [f'u_{i}' for i in range(self.num_auxiliary)]
+        self.meta_state = self.latent_variables.union(set(self.auxiliary_variables))
+
+        def make_model_sample_prior_fn(model_index):
+            """Creates a function that samples from the prior of the specified model index."""
+            def fn(key):
+                sample = self.model_list[model_index].sample_prior(key)
+                all_latents = {k: jnp.nan for k in self.latent_variables}
+                return {**all_latents, **sample}  
+            
+            #   
+            return fn
+        #
+        self.model_sample_prior_fns = [make_model_sample_prior_fn(i) for i in range(self.M)]
+
+        def make_model_sample_predictive_fn(model_index):
+            """Creates a function that samples from the predictive distribution of the specified model index."""
+            def fn(input):
+                key, state, input_variables = input
+                return self.model_list[model_index].sample_predictive(key, state, input_variables)
+            
+            #   
+            return fn
+        
+        #
+        self.model_sample_predictive_fns = [make_model_sample_predictive_fn(i) for i in range(self.M)]
+
+        def make_logprior_fn(model_index):
+            """Creates a function that computes the log prior of the specified model index."""
+            def fn(state):
+                return self.model_list[model_index].logprior_fn()(state)
+            
+            #   
+            return fn
+        
+        #
+        self.model_logprior_fns = [make_logprior_fn(i) for i in range(self.M)]
+
+        def make_loglikelihood_fn(model_index):
+            """Creates a function that computes the log likelihood of the specified model index."""
+            def fn(state):
+                return self.model_list[model_index].loglikelihood_fn()(state)
+            
+            #   
+            return fn
+        
+        #
+        self.model_loglikelihood_fns = [make_loglikelihood_fn(i) for i in range(self.M)]
+
+    #
+    def sample_prior(self, key) -> dict:
+        key_model, key_sample = jrnd.split(key)
+        model_index = jrnd.randint(key_model, shape=(), minval=0, maxval=self.M)
+        sample = jax.lax.switch(model_index, self.model_sample_prior_fns, operand=key_sample)
+        auxiliary_values = {f'u_{i}': jnp.nan for i in range(self.num_auxiliary)}  # to keep the same pytree structure across models in reversible jump MCMC
+        return {'model_index': model_index, **sample, **auxiliary_values}
+
+    #
+    def sample_predictive(self, key, state: dict, input_variables: dict = None) -> dict:
+        return jax.lax.switch(state['model_index'], self.model_sample_predictive_fns, 
+                              operand=[key, state, input_variables])
+
+    #
+    def sample_prior_predictive(self, key, **input_variables) -> dict:
+        key_prior, key_predictive = jrnd.split(key)
+        prior_sample = self.sample_prior(key_prior)
+        return self.sample_predictive(key_predictive, prior_sample, input_variables=input_variables)
+
+    #
+    def sample_posterior_predictive(self, key, state: dict, input_variables: dict = None) -> dict:
+        return self.sample_predictive(key, state, input_variables=input_variables)
+
+    #
+    def logprior_fn(self) -> Callable:
+
+        def fn(state: dict) -> float:
+            """Computes the log prior of the state."""
+            model_index = state['model_index']
+            return jax.lax.switch(model_index, self.model_logprior_fns, operand=state)
+        
+        #
+        return fn
+
+    #
+    def loglikelihood_fn(self) -> Callable:
+
+        def fn(state: dict) -> float:   
+            """Computes the log likelihood of the state."""
+            model_index = state['model_index']
+            return jax.lax.switch(model_index, self.model_loglikelihood_fns, operand=state)
+        #
+        return fn   
+
+    #
 #

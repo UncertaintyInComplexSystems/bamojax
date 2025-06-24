@@ -12,13 +12,17 @@ from .modified_blackjax import modified_adaptive_tempered, modified_tempered
 tempered_smc = generate_top_level_api_from(modified_tempered)
 adaptive_tempered_smc = generate_top_level_api_from(modified_adaptive_tempered)
 
-from typing import Callable
+import distrax as dx
+
+from typing import Tuple, Callable
 import optax
+import jaxopt
 
 import jax
 import jax.random as jrnd
 import jax.numpy as jnp
 from jax.tree_util import tree_map, tree_flatten, tree_unflatten
+from jax.flatten_util import ravel_pytree
 
 def run_window_adaptation(model, key: PRNGKey, num_warmup_steps):
     r""" Find optimized parameters for HMC-based inference.
@@ -88,14 +92,14 @@ class MCMCInference(InferenceEngine):
                  num_burn: int = 10_000, 
                  num_warmup: int = 0,
                  num_thin: int = 1, 
-                 return_diagostics: bool = True):
+                 return_diagnostics: bool = True):
         super().__init__(model, num_chains)
         self.mcmc_kernel = mcmc_kernel
         self.num_samples = num_samples
         self.num_burn = num_burn
         self.num_warmup = num_warmup
         self.num_thin = num_thin
-        self.return_diagnostics = return_diagostics
+        self.return_diagnostics = return_diagnostics
 
     #    
     def dense_step(self, key, state):
@@ -446,13 +450,27 @@ class SMCInference(InferenceEngine):
             trace = jax.tree_util.tree_map(lambda arr, val: arr.at[0].set(val), trace, initial_particles)
             n_iter, final_state, _, lml, trace = jax.lax.while_loop(cond, smc_cycle, (1, initial_particles, key_smc, initial_log_likelihood, trace))
             trace = tree_map(lambda x: x[:n_iter], trace)
-            return dict(n_iter=n_iter, final_state=final_state, lml=lml, trace=trace)
+            return dict(
+                n_iter=n_iter, 
+                final_state=final_state, 
+                lml=lml, 
+                trace=trace
+            )
         if self.return_diagnostics:            
             n_iter, final_state, _, lml, final_info = jax.lax.while_loop(cond, smc_cycle, (1, initial_particles, key_smc, initial_log_likelihood, initial_info))
-            return dict(n_iter=n_iter, final_state=final_state, lml=lml, final_info=final_info)            
+            return dict(
+                n_iter=n_iter, 
+                final_state=final_state, 
+                lml=lml, 
+                final_info=final_info
+            )            
         else:
             n_iter, final_state, _, lml, = jax.lax.while_loop(cond, smc_cycle, (0, initial_particles, key, 0))
-            return dict(n_iter=n_iter, final_state=final_state, lml=lml)  
+            return dict(
+                n_iter=n_iter, 
+                final_state=final_state, 
+                lml=lml
+            )  
         
     #
 
@@ -573,9 +591,88 @@ class VIInference(InferenceEngine):
         #
         keys = jrnd.split(key, self.num_steps)
         _, (states, infos) = jax.lax.scan(one_step, initial_state, keys)
-        return dict(states=states, info=infos)
+        return dict(
+            states=states, 
+            info=infos
+        )
 
     #
 
 #
+class LaplaceInference(InferenceEngine):
+    r""" The Laplace approximate inference class
+    
+    """
 
+    def __init__(self, 
+                 model: Model,   
+                 num_chains: int = 1,
+                 optimizer: Callable = jaxopt.ScipyMinimize,
+                 optimizer_args: dict = None,
+                 bounds: dict = None):
+        super().__init__(model, num_chains)
+        if optimizer_args is None:
+            optimizer_args = {}
+        self.bounds = bounds
+
+        @jax.jit
+        def fun(x):
+            return -1.0 * (model.loglikelihood_fn()(x) + model.logprior_fn()(x))
+
+        #
+        self.obj_fun = fun
+        if self.bounds is not None:
+            optimizer = jaxopt.ScipyBoundedMinimize(fun=fun, **optimizer_args)
+        else:
+            optimizer = optimizer(fun=self.obj_fun, **optimizer_args)
+        self.optimizer = optimizer
+        self.optimizer_args = optimizer_args if optimizer_args is not None else {}        
+        self.D = model.get_model_size()
+
+    #
+    def run_single_chain(self, key):
+        init_params = tree_map(jnp.asarray, self.model.sample_prior(key))
+
+        if self.bounds is not None:
+            sol = self.optimizer.run(init_params, bounds=self.bounds)   
+        else:
+            sol = self.optimizer.run(init_params)   
+
+        # We fit a Gaussian(\hat{\theta}, \Sigma) with 
+        # \hat{\theta} = \argmax_\theta p(\theta \mid y)
+        # \Sigma^-1 is the Hessian of -\log p(\theta \mid y) at \theta=\hat{\theta}
+
+        mode = sol.params
+        H = jax.hessian(self.obj_fun)(mode)
+        theta_hat_flat, unravel_fn = ravel_pytree(mode)
+
+        def flat_obj_fn(flat_params):
+            params = unravel_fn(flat_params)
+            return self.obj_fun(params)
+
+        H = jax.hessian(flat_obj_fn)(theta_hat_flat)
+
+        Sigma = jnp.linalg.inv(H)
+
+        if theta_hat_flat.shape == () or theta_hat_flat.shape == (1,):  # Univariate case
+            dist = dx.Normal(loc=theta_hat_flat, scale=jnp.sqrt(Sigma))
+        else:
+            dist = dx.MultivariateNormalFullCovariance(loc=theta_hat_flat, covariance_matrix=Sigma)
+
+        _, logdet = jnp.linalg.slogdet(Sigma)
+
+        log_posterior = -1.0 * self.obj_fun(mode)
+        lml = log_posterior + 1/2*logdet + self.D/2 * jnp.log(2*jnp.pi)
+
+        return dict(
+            distribution=dist,
+            mode=mode,
+            flat_mode=theta_hat_flat,
+            covariance=Sigma,
+            hessian=H,
+            unravel_fn=unravel_fn,
+            lml=lml
+        )
+    
+    #
+#
