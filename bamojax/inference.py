@@ -24,6 +24,10 @@ import jax.numpy as jnp
 from jax.tree_util import tree_map, tree_flatten, tree_unflatten
 from jax.flatten_util import ravel_pytree
 
+from tensorflow_probability.substrates import jax as tfp
+tfd = tfp.distributions
+tfb = tfp.bijectors
+
 def run_window_adaptation(model, key: PRNGKey, num_warmup_steps):
     r""" Find optimized parameters for HMC-based inference.
 
@@ -47,6 +51,45 @@ def run_window_adaptation(model, key: PRNGKey, num_warmup_steps):
     return warm_state, warm_parameters
 
 #
+def get_model_bijectors(model) -> dict:
+    r""" Meanfield VI imposes a Gaussian variational distribution. 
+    
+    In order to use the correct parameter constraints this function determines all relevant bijectors.
+
+    It's a bijector detector! :-)
+
+    Returns:
+        A dictionary with bijectors for the variables that use it, and an identity bijector otherwise.
+    
+    """
+    latent_nodes = model.get_latent_nodes()
+
+    # forward_transforms = {}
+    # backward_transforms = {}
+    # for node_name, node in latent_nodes.items():
+    #     if hasattr(node.distribution, '_bijector'):
+    #         bij = node.distribution._bijector
+    #         forward_transform = lambda x, bij=bij: bij.forward(x)
+    #         backward_transform = lambda x, bij=bij: bij.inverse(x)
+    #     else:
+    #         forward_transform = lambda x: x
+    #         backward_transform = lambda x: x
+    #     forward_transforms[node_name] = forward_transform
+    #     backward_transforms[node_name] = backward_transform
+    # return forward_transforms, backward_transforms
+    bijectors = {}
+    for node_name, node in latent_nodes.items():
+        if hasattr(node.distribution, '_bijector'):
+            bij = node.distribution._bijector
+            transform = bij
+        else:
+            # transform = dx.Independent(tfb.Identity(), reinterpreted_batch_ndims=1)
+            transform = tfb.Identity()  # Use TensorFlow Probability's Identity bijector
+            # transform = dx.Lambda(forward = lambda x: x, inverse = lambda x: x)  # Use Distrax's Lambda bijector
+        bijectors[node_name] = transform
+    return bijectors
+
+# 
 
 class InferenceEngine(ABC):
     r""" The abstract class for inference engines
@@ -496,39 +539,19 @@ class VIInference(InferenceEngine):
             if not isinstance(optimizer_chain_args, list):
                 optimizer_chain_args = [optimizer_chain_args]
             self.optimizer = optax.chain(*optimizer_chain_args, optimizer)
-        self.bijectors = self.get_model_bijectors()
+        self.bijectors = get_model_bijectors(self.model)
+        self.is_leaf_fn = lambda x: hasattr(x, 'forward') and hasattr(x, 'inverse')
+        self.forward_bijectors = lambda x: jax.tree.map(lambda b, v: b.forward(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
+        self.backward_bijectors = lambda x: jax.tree.map(lambda b, v: b.inverse(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
+
         def logdensity_fn(z):
-            z = jax.tree.map(lambda f, v: f(v), self.bijectors, z)
+            z = self.forward_bijectors(z)
             return model.loglikelihood_fn()(z) + model.logprior_fn()(z)
 
         #
         self.logdensity_fn = logdensity_fn
 
-    #
-    def get_model_bijectors(self) -> dict:
-        r""" Meanfield VI imposes a Gaussian variational distribution. 
-        
-        In order to use the correct parameter constraints this function determines all relevant bijectors.
-
-        It's a bijector detector! :-)
-
-        Returns:
-            A dictionary with bijectors for the variables that use it, and an identity bijector otherwise.
-        
-        """
-        latent_nodes = self.model.get_latent_nodes()
-
-        bijectors = {}
-        for node_name, node in latent_nodes.items():
-            if hasattr(node.distribution, '_bijector'):
-                bij = node.distribution._bijector
-                transform = lambda x, bij=bij: bij.forward(x)
-            else:
-                transform = lambda x: x
-            bijectors[node_name] = transform
-        return bijectors
-
-    #    
+    #   
     def sample_from_variational(self, key: PRNGKey, vi_result: dict, num_draws: int) -> dict:
         r""" Draw samples x ~ q(x | mu, rho)
 
@@ -564,9 +587,7 @@ class VIInference(InferenceEngine):
             vi_samples = tree_map(lambda x: jnp.swapaxes(x, 0, 1), vi_samples)
 
         # apply bijectors
-        for k, v in vi_samples.items():
-            bijector = self.bijectors[k]
-            vi_samples[k] = bijector(v)
+        vi_samples = self.forward_bijectors(vi_samples)
         return vi_samples
 
     #
@@ -615,14 +636,21 @@ class LaplaceInference(InferenceEngine):
             optimizer_args = {}
         self.bounds = bounds
 
+        self.bijectors = get_model_bijectors(model)
+        self.is_leaf_fn = lambda x: hasattr(x, 'forward') and hasattr(x, 'inverse')
+        self.forward_bijectors = lambda x: jax.tree.map(lambda b, v: b.forward(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
+        self.backward_bijectors = lambda x: jax.tree.map(lambda b, v: b.inverse(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
+
         @jax.jit
-        def fun(x):
-            return -1.0 * (model.loglikelihood_fn()(x) + model.logprior_fn()(x))
+        def logdensity_fn(z):
+            z = self.forward_bijectors(z)
+            return -1.0 * (model.loglikelihood_fn()(z) + model.logprior_fn()(z))
 
         #
-        self.obj_fun = fun
+        self.obj_fun = logdensity_fn
+
         if self.bounds is not None:
-            optimizer = jaxopt.ScipyBoundedMinimize(fun=fun, **optimizer_args)
+            optimizer = jaxopt.ScipyBoundedMinimize(fun=self.obj_fun, **optimizer_args)
         else:
             optimizer = optimizer(fun=self.obj_fun, **optimizer_args)
         self.optimizer = optimizer
@@ -631,7 +659,13 @@ class LaplaceInference(InferenceEngine):
 
     #
     def run_single_chain(self, key):
-        init_params = tree_map(jnp.asarray, self.model.sample_prior(key))
+        def get_unconstrained_init(model, key):
+            constrained = tree_map(jnp.asarray, model.sample_prior(key))
+            unconstrained = self.backward_bijectors(constrained)
+            return unconstrained
+        
+        #
+        init_params = get_unconstrained_init(self.model, key)
 
         if self.bounds is not None:
             sol = self.optimizer.run(init_params, bounds=self.bounds)   
@@ -642,7 +676,7 @@ class LaplaceInference(InferenceEngine):
         # \hat{\theta} = \argmax_\theta p(\theta \mid y)
         # \Sigma^-1 is the Hessian of -\log p(\theta \mid y) at \theta=\hat{\theta}
 
-        mode = sol.params
+        mode = self.forward_bijectors(sol.params)
         H = jax.hessian(self.obj_fun)(mode)
         theta_hat_flat, unravel_fn = ravel_pytree(mode)
 
