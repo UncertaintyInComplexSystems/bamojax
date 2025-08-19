@@ -4,13 +4,13 @@
 
 # Welcome to bamojax!
 
-Welcome to **bamojax**, the Bayesian modelling toolbox implemented using the Jax coding universe. **bamojax** is a probabilistic programming language, similar to Numpyro, PyMC, Stan, JAGS, and BUGS. It relies on [Blackjax](https://blackjax-devs.github.io/blackjax/) for approximate inference, on [Distrax](https://github.com/google-deepmind/distrax) for probability distributions and their essential operations. 
+Welcome to **bamojax**, the Bayesian modelling toolbox implemented using the Jax coding universe. **bamojax** is a probabilistic programming language (PPL), similar to Numpyro, PyMC, Stan, JAGS, and BUGS. It relies on [Blackjax](https://blackjax-devs.github.io/blackjax/) for approximate inference, on [Distrax](https://github.com/google-deepmind/distrax) for probability distributions and their essential operations. 
 
 ## What sets bamojax apart?
 
-Existing PPLs, such as PyMC, can export their logdensity function so it can be sampled using Blackjax. However, this has two downsides:
+Existing PPLs, such as PyMC, can export their log density function so it can be sampled using Blackjax. However, this has two downsides:
 
-1. It does not allow you update variables in your model using Gibbs MCMC algorithms. For example, if one wants to approximate the posterior over a latent Gaussian process and its hyperparameters, it is much more efficient to use elliptical slice sampling for the GP, than to apply NUTS to all variables at once. This effect is even more pronounced when embedding MCMC sampling within Sequential Monte Carlo (see [Hinne, 2025](https://link.springer.com/article/10.3758/s13428-025-02642-1) for more details).
+1. It does not allow you update variables in your model using Gibbs Markov chain Monte Carlo (MCMC) algorithms. For example, if one wants to approximate the posterior over a latent Gaussian process (GP) and its hyperparameters, it is much more efficient to use elliptical slice sampling for the GP, than to apply the No-U-Turn Sampler [(Hoffman and Gelman, 2014)](https://jmlr.org/papers/v15/hoffman14a.html) to all variables at once. This effect is even more pronounced when embedding MCMC sampling within Sequential Monte Carlo (see [Hinne, 2025](https://link.springer.com/article/10.3758/s13428-025-02642-1) for more details).
 2. It is harder to embed this logdensity into tempered Sequential Monte Carlo algorithms, as for this one needs access to the prior and likelihood separately. 
 
 By implementing your own models and samplers using Blackjax, these problems can be circumvented. However, this is a labour-intensive and error-prone process. Therefore, **bamojax** provides a user-friendly interface around Blackjax, that allows for easy model construction and Gibbs sampling. 
@@ -134,7 +134,7 @@ theta = my_model.add_node('theta', distribution=dx.Beta, parents=dict(mode=omega
 
 The link function `beta_link_fn` takes the mode (given by another node `omega`) and the concentration (given by a scalar, which is implicitly converted to a deterministic and observed node), and returns the standard arguments $\alpha$ and $\beta$ which the `dx.Beta` distribution object recognizes as valid parameters.
 
-Because link functions are written in play Python, they can be of arbitrary complexity. For example, in [bamojax/examples/bnn/bnn_mpl.ipynb](https://github.com/UncertaintyInComplexSystems/bamojax/blob/main/bamojax/examples/bnn/bnn_mpl.ipynb), we use [Flax Linen](https://flax.readthedocs.io/en/latest/) to set up a multilayer perceptron as a link function.
+Because link functions are written in plain Python, they can be of arbitrary complexity. For example, in [bamojax/examples/bnn/bnn_mpl.ipynb](https://github.com/UncertaintyInComplexSystems/bamojax/blob/main/bamojax/examples/bnn/bnn_mpl.ipynb), we use [Flax Linen](https://flax.readthedocs.io/en/latest/) to set up a multilayer perceptron as a link function.
 
 ### Inference
 
