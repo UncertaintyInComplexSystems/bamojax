@@ -33,12 +33,17 @@ Let's estimate the latent probability $\theta=p(x_1=\text{heads} \mid \theta)$ t
 ``` 
 import jax.numpy as jnp
 import jax.random as jrnd
+from bamojax.base import Model
+from bamojax.inference import SMCInference
+from bamojax.samplers import mcmc_sampler
+import distrax as dx
+import blackjax as bjx
 
 key = jrnd.PRNGKey(0)
-key, key_data = jrnd.split(key)
+key, key_data, key_inference = jrnd.split(key, 3)
 
 true_theta = 0.3
-n = 100
+n = 10000
 x = jrnd.bernoulli(key_data, p=true_theta, shape=(n, ))
 ```
 
@@ -58,8 +63,13 @@ def link_fn(probs):
     return {'probs': probs}
 
 #
-latent_theta = my_model.add_node('theta', distribution=dx.Beta(alpha=1, beta=1))
-observations = my_model.add_node('x', distribution=dx.Bernoulli, parents=dict(probs=latent_theta), link_fn, observations=x)
+latent_theta = my_model.add_node('theta', 
+                                 distribution=dx.Beta(alpha=1, beta=1))
+observations = my_model.add_node('x', 
+                                 distribution=dx.Bernoulli, 
+                                 parents=dict(probs=latent_theta), 
+                                 link_fn=link_fn, 
+                                 observations=x)
 ```
 
 #### Perform approximate inference
@@ -74,13 +84,23 @@ num_chains = 1
 stepsize = 0.01
 
 mcmc_params = dict(sigma=stepsize*jnp.eye(my_model.get_model_size()))
-rmh = mcmc_sampler(my_model, mcmc_kernel=blackjax.normal_random_walk, mcmc_parameters=mcmc_params)
+rmh = mcmc_sampler(my_model, 
+                   mcmc_kernel=bjx.normal_random_walk, 
+                   mcmc_parameters=mcmc_params)
 
 key, key_inference = jrnd.split(key)
-final_state, lml, n_iter, final_info = smc_inference_loop(key_inference, model=my_model, kernel=rmh, num_particles=num_particles, num_mcmc_steps=num_mcmc_steps, num_chains=1)
 
-print(jnp.mean(final_state.particles['theta']))
->>> 0.2254779304949821
+engine = SMCInference(model=my_model, 
+                      mcmc_kernel=rmh, 
+                      num_particles=num_particles, 
+                      num_mutations=num_mcmc_steps, 
+                      num_chains=num_chains)
+result = engine.run(key_inference)
+
+
+print(jnp.mean(result['final_state'].particles['theta']))            
+       
+>>> 0.29956531188263924
 ```
 
 ## Modelling in bamojax
