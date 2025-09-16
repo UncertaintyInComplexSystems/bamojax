@@ -1,0 +1,72 @@
+[build-system]
+requires = [
+  "setuptools>=68",
+  "wheel",
+  "versioneer[toml]>=0.28",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bamojax"
+dynamic = ["version"]
+description = "Bayesian Modelling with JAX"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Max Hinne" },
+]
+keywords = ["bayesian modelling", "jax", "probabilistic", "mcmc", "smc", "inference"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+# === Runtime dependencies (from your setup.py) ===
+dependencies = [
+  "jax>=0.4.33",
+  "jaxlib>=0.4.33",
+  "blackjax==1.2.4",
+  "distrax==0.1.5",
+  "jaxtyping>=0.2.34",
+]
+
+# === Dev/test extras so contributors can do: pip install -e ".[dev]" ===
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+  "pytest-cov>=5",
+  "JaxKern @ git+https://github.com/UncertaintyInComplexSystems/JaxKern.git",
+]
+
+[project.urls]
+Homepage = "https://github.com/UncertaintyInComplexSystems/bamojax"
+Issues = "https://github.com/UncertaintyInComplexSystems/bamojax/issues"
+Documentation = "https://mhinne.github.io/uncertainty-in-complex-systems/bamojax_demo.html"
+
+# === Versioneer (TOML config) ===
+[tool.versioneer]
+VCS = "git"
+style = "pep440"
+versionfile_source = "bamojax/_version.py"
+versionfile_build = "bamojax/_version.py"
+tag_prefix = "v"           
+parentdir_prefix = "bamojax-"
+
+# Setuptools reads the version dynamically from your package attribute.
+[tool.setuptools.dynamic]
+version = { attr = "bamojax.__version__" }
+
+# Package discovery (adjust if you move to a src/ layout later)
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["bamojax*"]
+
+# === Pytest defaults (nice quality-of-life) ===
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra"
+testpaths = ["tests"]
+# Uncomment to make coverage the default:
+# addopts = "-ra --cov=bamojax --cov-report=term-missing"
