@@ -301,7 +301,11 @@ class Model:
         def loglikelihood_fn_(state) -> float:
             logprob = 0.0
             for node in self.get_leaf_nodes():
-                logprob += jnp.sum(node.get_distribution(state).log_prob(value=node.observations))
+                if '__mask' in state:
+                    element_wise_logp = node.get_distribution(state).log_prob(value=node.observations)
+                    logprob += jnp.sum(jnp.nan_to_num(element_wise_logp, nan=0.0)*state['__mask'])
+                else:
+                    logprob += jnp.sum(node.get_distribution(state).log_prob(value=node.observations))
             return logprob
         
         #
@@ -413,7 +417,7 @@ class Model:
         return state
 
 
-    def sample_prior_predictive(self, key, **prediction_options) -> dict:
+    def sample_prior_predictive(self, key, prediction_options: dict = None) -> dict:
         r""" Sample from the (hierarchical) prior predictive distribution of the model.
 
         Args:
