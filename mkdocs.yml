@@ -30,7 +30,7 @@ plugins:
             filters: ["!^_"]          # hide private members
             inherited_members: true
             extra:
-              source_url_pattern: "https://github.com/UncertaintyInComplexSystems/bamojax/blob/main/{path}#L{start_line}-L{end_line}"
+              source_url_pattern: "https://github.com/UncertaintyInComplexSystems/bamojax/blob/{commit}/{path}#L{start_line}-L{end_line}"
 
 markdown_extensions:
   - admonition
