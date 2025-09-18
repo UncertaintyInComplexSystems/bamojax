@@ -23,8 +23,9 @@ def iid_likelihood(L: Callable):
     
     We typically have multiple observations and assume the likelihood factorizes 
     as: 
-    
-        \log p(Y \mid \theta) = \sum_{i=1}^N \log p(y_i \mid \theta) .
+    $$    
+        \log p\left(Y \mid \theta\right) = \sum_{i=1}^N \log p\left(y_i \mid \theta\right) \enspace.
+    $$
 
     """
     return lambda x: jnp.sum(L()(x))
@@ -38,15 +39,16 @@ def naive_monte_carlo(key,
                       pb = True) -> Float:   
     r"""The Naive Monte Carlo (NMC) estimator
 
-    The marginal likelihood is defined by 
-    
-        p(D) = \int_\Theta p(D \mid \theta) p(\theta) d\theta.
+    The marginal likelihood is defined as 
+    $$
+        p(D) = \int_\Theta p\left(D \mid \theta\right) p(\theta) \,\text{d}\theta \enspace .
+    $$
 
     In NMC we draw samples from the prior and approximate the ML as
-
-        p(D) \approx 1/N \sum_{i=1}^N p(D \mid \theta_i), with \theta_i ~ p(\theta).
-
-    In nontrivial models, we need a *large* N for this approximation to be 
+    $$
+        p(D) \approx 1/N \sum_{i=1}^N p\left(D \mid \theta_i\right), with \theta_i ~ p(\theta) \enspace.
+    $$
+    In nontrivial models, we need a *large* $N$ for this approximation to be 
     reasonable.
 
     """
@@ -87,11 +89,10 @@ def importance_sampling(key,
     Importance sampling is based around the following approximation to the log
     marginal likelihood (see e.g., Gronau et al., 2017):
 
-    p(D) \approx 1/N \sum_{i=1}^N p(D \mid \theta_i) p(\theta_i) / g_IS(\theta_i),
-
-    with
-
-    \theta_i ~ g_IS(\theta)
+    $$
+    p(D) \approx 1/N \sum_{i=1}^N p\left(D \mid \theta_i\right) \frac{p(\theta_i)}{g_IS(\theta_i)}\enspace,
+    $$
+    with $\theta_i ~ g_IS(\theta)$
 
     Here, g_IS is the importance density, which should meet these criteria:
 
