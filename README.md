@@ -190,6 +190,10 @@ Alternative inference engines include Sequential Monte Carlo, Variational Infere
 
 When sampling from the posterior predictive, the parameter `input_variables=` can be used to provide for example predictor values, such as when sampling from a regression model or a neural network; $p(y^* \mid X, Y, x^*)$.
 
+## API
+
+The full **bamojax** API can be found here: https://uncertaintyincomplexsystems.github.io/bamojax/.
+
 
 ## Citing bamojax
 
