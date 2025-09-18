@@ -47,8 +47,9 @@ def naive_monte_carlo(key,
 
     In NMC we draw samples from the prior and approximate the ML as
     $$
-        p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right), with \theta_i \sim p(\theta) \enspace.
-    $$
+        p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right) \enspace,
+    $$  with $\theta_i \sim p(\theta)$.
+
     In nontrivial models, we need a *large* $N$ for this approximation to be 
     reasonable.
 
