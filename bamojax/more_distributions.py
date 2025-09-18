@@ -108,7 +108,9 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = Zero(),  nd: Tu
             Returns:
                 Returns samples from the posterior predictive distribution:
 
-                f* \sim p(f* | f, X, y x*) = \int p(f* | x*, f) p(f | X, y) df
+                $$
+                    \mathbf{f}* \sim p(\mathbf{f}* \mid \mathbf{f}, X, y x^*) = \int p(\mathbf{f}* \mid x^*, \mathbf{f}) p(\mathbf{f} \mid X, y) \,\text{d} \mathbf{f}
+                ##
             
             
             """
@@ -130,29 +132,36 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = Zero(),  nd: Tu
 
         #
         def sample_predictive(self, key: Array, x_pred: Array, f: Array):
-            """Sample latent f for new points x_pred given one posterior sample.
+            r"""Sample latent f for new points x_pred given one posterior sample.
 
             See Rasmussen & Williams. We are sampling from the posterior predictive for
             the latent GP f, at this point not concerned with an observation model yet.
 
-            We have [f, f*]^T ~ N(0, KK), where KK is a block matrix:
+            We have $[\mathbf{f}, \mathbf{f}^*]^T ~ \mathcal{N}(0, KK)$, where $KK$ can be partitioned as:
 
-            KK = [[K(x, x), K(x, x*)], [K(x, x*)^T, K(x*, x*)]]
+            $$
+                KK = \begin{bmatrix} K(x,x) & K(x,x^*) \\ K(x,x^*)\top & K(x^*,x^*)\end{bmatrix}
+            $$
 
             This results in the conditional
+            $$
+            \mathbf{f}^* | x, x^*, \mathbf{f} ~ \mathcal{N}(\mu, \Sigma) \enspace,
+             $$ where
 
-            f* | x, x*, f ~ N(mu, cov), where
-
-            mu = K(x*, x)K(x,x)^-1 f
-            cov = K(x*, x*) - K(x*, x) K(x, x)^-1 K(x, x*)
+            $$
+            \begin{align*}
+                \mu &= K(x^*, x)K(x,x)^-1 f \enspace,
+                \Sigma &= K(x^*, x^*) - K(x^*, x) K(x, x)^-1 K(x, x^*) \enspace.
+            \end{align*}                
+            $$
 
             Args:
                 key: The jrnd.PRNGKey object
-                x_pred: The prediction locations x*
+                x_pred: The prediction locations $x^*$
                 state_variables: A sample from the posterior
 
             Returns:
-                A single posterior predictive sample f*
+                A single posterior predictive sample $\mathbf{f}^*$
 
             """
             x = self.input
@@ -228,7 +237,7 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = Zero(),  nd: Tu
         #
         @property
         def event_shape(self):
-            r""" Event shape in this case is the shape of a single draw of F = (f(x_1), ..., f(x_n))
+            r""" Event shape in this case is the shape of a single draw of $F = (f(x_1), ..., f(x_n))$
             
             """
 
@@ -254,7 +263,7 @@ def AutoRegressionFactory(ar_fn: Callable):
     This is a generator function that constructs a distrax Distribution object, which can then be queried for its log probability for inference.
     
     Args:
-        ar_fn: A Callable function that takes innovations epsilon \sim N(0, sd**2), and the previous instances x(t-1), ..., x(t-p), and performs whatever computatin the user requires.
+        ar_fn: A Callable function that takes innovations $\epsilon \sim \mathcal{N}(0, \sigma^2)$, and the previous instances $x(t-1), ..., x(t-p)$, and performs whatever computation the user requires.
         
     """
 
@@ -268,7 +277,7 @@ def AutoRegressionFactory(ar_fn: Callable):
                     
         #
         def _construct_lag_matrix(self, y, y_init):
-            r""" Construct y, and up to order shifts of it.
+            r""" Construct $y$, and up to order shifts of it.
             
             """
             order = 1 if jnp.isscalar(y_init) else y_init.shape[0]
@@ -307,10 +316,12 @@ def AutoRegressionFactory(ar_fn: Callable):
 
             Let:
 
-            \epsilon_t \sim N(0, \sigma_y)
-            y_t = f(y_t-1, theta) + epsilon_t
-
-            for t = M+1, ..., T
+            $$
+            \begin{align*}
+                \epsilon_t &\sim \mathcal{N}(0, \sigma_y)
+                y_t &= f(y_t-1, \theta) + \epsilon_t
+            \end{align*}
+            $$ for $t = M+1, \ldots, T$.
             
             """
             @jax.jit
