@@ -461,9 +461,9 @@ $$
 $$</p>
 <p>In NMC we draw samples from the prior and approximate the ML as
 $$
-    p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right), with \theta_i \sim p(\theta) \enspace.
-$$
-In nontrivial models, we need a <em>large</em> <span class="arithmatex">\(N\)</span> for this approximation to be 
+    p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right) \enspace,
+$$  with <span class="arithmatex">\(\theta_i \sim p(\theta)\)</span>.</p>
+<p>In nontrivial models, we need a <em>large</em> <span class="arithmatex">\(N\)</span> for this approximation to be 
 reasonable.</p>
 
 
@@ -506,7 +506,8 @@ reasonable.</p>
 <span class="normal">69</span>
 <span class="normal">70</span>
 <span class="normal">71</span>
-<span class="normal">72</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">naive_monte_carlo</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> 
+<span class="normal">72</span>
+<span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">naive_monte_carlo</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> 
                       <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
                       <span class="n">num_prior_draws</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">,</span> 
                       <span class="n">num_chunks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
@@ -521,8 +522,9 @@ reasonable.</p>
 
 <span class="sd">    In NMC we draw samples from the prior and approximate the ML as</span>
 <span class="sd">    $$</span>
-<span class="sd">        p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right), with \theta_i \sim p(\theta) \enspace.</span>
-<span class="sd">    $$</span>
+<span class="sd">        p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right) \enspace,</span>
+<span class="sd">    $$  with $\theta_i \sim p(\theta)$.</span>
+
 <span class="sd">    In nontrivial models, we need a *large* $N$ for this approximation to be </span>
 <span class="sd">    reasonable.</span>
 
@@ -587,8 +589,7 @@ can make it easier to introduce heavy tails.</p>
 
             <details class="quote">
               <summary>Source code in <code>bamojax/marginal_likelihoods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 82</span>
-<span class="normal"> 83</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 83</span>
 <span class="normal"> 84</span>
 <span class="normal"> 85</span>
 <span class="normal"> 86</span>
@@ -653,7 +654,8 @@ can make it easier to introduce heavy tails.</p>
 <span class="normal">145</span>
 <span class="normal">146</span>
 <span class="normal">147</span>
-<span class="normal">148</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">importance_sampling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> 
+<span class="normal">148</span>
+<span class="normal">149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">importance_sampling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> 
                         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
                         <span class="n">g_IS</span><span class="p">:</span> <span class="n">Distribution</span><span class="p">,</span>
                         <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">,</span>
@@ -748,8 +750,7 @@ and is used to approximate the actual marginal likelihood.</p>
 
             <details class="quote">
               <summary>Source code in <code>bamojax/marginal_likelihoods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">151</span>
-<span class="normal">152</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">152</span>
 <span class="normal">153</span>
 <span class="normal">154</span>
 <span class="normal">155</span>
@@ -816,7 +817,8 @@ and is used to approximate the actual marginal likelihood.</p>
 <span class="normal">216</span>
 <span class="normal">217</span>
 <span class="normal">218</span>
-<span class="normal">219</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">laplace_approximation</span><span class="p">(</span><span class="n">key</span><span class="p">,</span>
+<span class="normal">219</span>
+<span class="normal">220</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">laplace_approximation</span><span class="p">(</span><span class="n">key</span><span class="p">,</span>
                           <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
                           <span class="n">iid_obs</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                           <span class="o">**</span><span class="n">opt_args</span><span class="p">):</span>
