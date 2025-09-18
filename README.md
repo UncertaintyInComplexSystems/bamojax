@@ -194,7 +194,6 @@ When sampling from the posterior predictive, the parameter `input_variables=` ca
 
 The full **bamojax** API can be found here: https://uncertaintyincomplexsystems.github.io/bamojax/.
 
-
 ## Citing bamojax
 
 If you use Bamojax in your work, please cite the following:
