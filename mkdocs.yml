@@ -1,0 +1,40 @@
+site_name: BaMoJAX
+site_url: https://uncertaintyincomplexsystems.github.io/bamojax/
+repo_url: https://github.com/UncertaintyInComplexSystems/bamojax
+repo_name: UncertaintyInComplexSystems/bamojax
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+  palette:
+    - scheme: default
+
+nav:
+  - Home: index.md
+  - API: api.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google   # or "numpy"
+            show_source: true
+            members_order: source
+            filters: ["!^_"]          # hide private members
+            inherited_members: true
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+
+# Math rendering (MathJax v3)
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
