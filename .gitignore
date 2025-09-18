@@ -5,6 +5,7 @@ bamojax/examples/cognitive_models/ind_LogMargLik.txt
 bamojax/examples/cognitive_models/DataBusemeyerNoNA.rdata
 # Ignore build artifacts
 build/
+site/
 dist/
 *.egg-info/
 __pycache__/
