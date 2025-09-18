@@ -23,6 +23,7 @@ def iid_likelihood(L: Callable):
     
     We typically have multiple observations and assume the likelihood factorizes 
     as: 
+    
     $$    
         \log p\left(Y \mid \theta\right) = \sum_{i=1}^N \log p\left(y_i \mid \theta\right) \enspace.
     $$
@@ -46,7 +47,7 @@ def naive_monte_carlo(key,
 
     In NMC we draw samples from the prior and approximate the ML as
     $$
-        p(D) \approx 1/N \sum_{i=1}^N p\left(D \mid \theta_i\right), with \theta_i ~ p(\theta) \enspace.
+        p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right), with \theta_i ~ p(\theta) \enspace.
     $$
     In nontrivial models, we need a *large* $N$ for this approximation to be 
     reasonable.
@@ -90,7 +91,7 @@ def importance_sampling(key,
     marginal likelihood [Gronau et al., 2017]:
 
     $$
-    p(D) \approx 1/N \sum_{i=1}^N p\left(D \mid \theta_i\right) \frac{p(\theta_i)}{g_IS(\theta_i)}\enspace,
+    p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right) \frac{p(\theta_i)}{g_IS(\theta_i)}\enspace,
     $$
     with $\theta_i ~ g_IS(\theta)$
 
