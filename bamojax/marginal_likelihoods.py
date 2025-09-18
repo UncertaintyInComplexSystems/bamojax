@@ -87,7 +87,7 @@ def importance_sampling(key,
     r"""Importance sampling routine for a given BayesianModel.
 
     Importance sampling is based around the following approximation to the log
-    marginal likelihood (see e.g., Gronau et al., 2017):
+    marginal likelihood [Gronau et al., 2017]:
 
     $$
     p(D) \approx 1/N \sum_{i=1}^N p\left(D \mid \theta_i\right) \frac{p(\theta_i)}{g_IS(\theta_i)}\enspace,
@@ -106,6 +106,11 @@ def importance_sampling(key,
 
     Note that the importance density can also be a mixture distribution, which 
     can make it easier to introduce heavy tails.
+
+    References:
+
+    - Gronau, Q. F., Sarafoglou, A., Matzke, D., Ly, A., Boehm, U., Marsman, M., Leslie, D. S., Forster, J. J., Wagenmakers, E.-J., & Steingroever, H. (2017). A tutorial on bridge sampling. Journal of Mathematical Psychology, 81, 80-97. https://doi.org/10.1016/j.jmp.2017.09.005
+
 
     """
 
