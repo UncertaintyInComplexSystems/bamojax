@@ -14,7 +14,7 @@ theme:
 
 nav:
   - Home: index.md
-  - API: api.md
+  - API: api/index.md
 
 plugins:
   - search
@@ -24,6 +24,7 @@ plugins:
           options:
             docstring_style: google   # or "numpy"
             show_source: true
+            source_url_pattern: "https://github.com/UncertaintyInComplexSystems/bamojax/blob/main/{path}#L{start_line}-L{end_line}"
             members_order: source
             filters: ["!^_"]          # hide private members
             inherited_members: true
