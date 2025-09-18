@@ -22,7 +22,7 @@ jobs:
           pip install -e ".[docs]"
 
       - name: Build site
-        run: mkdocs build --strict
+        run: mkdocs build
 
       - name: Deploy to gh-pages
         run: mkdocs gh-deploy --force

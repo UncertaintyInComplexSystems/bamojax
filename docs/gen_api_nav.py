@@ -21,3 +21,10 @@ for mod in modules:
     with gen.open(out_path, "w") as f:
         print(f"# `{mod}`\n", file=f)
         print(f"::: {mod}\n", file=f)
+
+with gen.open("SUMMARY.md", "w") as nav:
+    print("# Table of contents\n", file=nav)
+    print("- [Home](index.md)", file=nav)
+    print("- API", file=nav)
+    for mod in modules:
+        print(f"  - [`{mod}`](api/{mod}.md)", file=nav)
