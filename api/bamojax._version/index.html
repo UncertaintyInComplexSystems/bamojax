@@ -1,0 +1,2398 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax._version/">
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>bamojax._version - BaMoJAX</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#bamojax_version" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="BaMoJAX" class="md-header__button md-logo" aria-label="BaMoJAX" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BaMoJAX
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              bamojax._version
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/UncertaintyInComplexSystems/bamojax" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    UncertaintyInComplexSystems/bamojax
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="BaMoJAX" class="md-nav__button md-logo" aria-label="BaMoJAX" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    BaMoJAX
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/UncertaintyInComplexSystems/bamojax" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    UncertaintyInComplexSystems/bamojax
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version" class="md-nav__link">
+    <span class="md-ellipsis">
+      _version
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.VersioneerConfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      VersioneerConfig
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.NotThisMethod" class="md-nav__link">
+    <span class="md-ellipsis">
+      NotThisMethod
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.get_keywords" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_keywords
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.get_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_config
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.register_vcs_handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      register_vcs_handler
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.run_command" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_command
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.versions_from_parentdir" class="md-nav__link">
+    <span class="md-ellipsis">
+      versions_from_parentdir
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.git_get_keywords" class="md-nav__link">
+    <span class="md-ellipsis">
+      git_get_keywords
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.git_versions_from_keywords" class="md-nav__link">
+    <span class="md-ellipsis">
+      git_versions_from_keywords
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.git_pieces_from_vcs" class="md-nav__link">
+    <span class="md-ellipsis">
+      git_pieces_from_vcs
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.plus_or_dot" class="md-nav__link">
+    <span class="md-ellipsis">
+      plus_or_dot
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.render_pep440" class="md-nav__link">
+    <span class="md-ellipsis">
+      render_pep440
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.render_pep440_branch" class="md-nav__link">
+    <span class="md-ellipsis">
+      render_pep440_branch
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.pep440_split_post" class="md-nav__link">
+    <span class="md-ellipsis">
+      pep440_split_post
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.render_pep440_pre" class="md-nav__link">
+    <span class="md-ellipsis">
+      render_pep440_pre
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.render_pep440_post" class="md-nav__link">
+    <span class="md-ellipsis">
+      render_pep440_post
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.render_pep440_post_branch" class="md-nav__link">
+    <span class="md-ellipsis">
+      render_pep440_post_branch
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.render_pep440_old" class="md-nav__link">
+    <span class="md-ellipsis">
+      render_pep440_old
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.render_git_describe" class="md-nav__link">
+    <span class="md-ellipsis">
+      render_git_describe
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.render_git_describe_long" class="md-nav__link">
+    <span class="md-ellipsis">
+      render_git_describe_long
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.render" class="md-nav__link">
+    <span class="md-ellipsis">
+      render
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax._version.get_versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_versions
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="bamojax_version"><code>bamojax._version</code><a class="headerlink" href="#bamojax_version" title="Permanent link">&para;</a></h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="bamojax._version"></a>
+    <div class="doc doc-contents first">
+
+        <p>Git implementation of _version.py.</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="bamojax._version.VersioneerConfig" class="doc doc-heading">
+            <code>VersioneerConfig</code>
+
+
+<a href="#bamojax._version.VersioneerConfig" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+        <p>Container for Versioneer configuration parameters.</p>
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>bamojax/_version.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">VersioneerConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Container for Versioneer configuration parameters.&quot;&quot;&quot;</span>
+
+    <span class="n">VCS</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">style</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">tag_prefix</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">parentdir_prefix</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">versionfile_source</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="bamojax._version.NotThisMethod" class="doc doc-heading">
+            <code>NotThisMethod</code>
+
+
+<a href="#bamojax._version.NotThisMethod" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="Exception">Exception</span></code></p>
+
+
+        <p>Exception raised if a method is not valid for the current scenario.</p>
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>bamojax/_version.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">61</span>
+<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">NotThisMethod</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception raised if a method is not valid for the current scenario.&quot;&quot;&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+    </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.get_keywords" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_keywords</span><span class="p">()</span></code>
+
+<a href="#bamojax._version.get_keywords" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the keywords needed to look up the version information.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_keywords</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the keywords needed to look up the version information.&quot;&quot;&quot;</span>
+    <span class="c1"># these strings will be replaced by git during git-archive.</span>
+    <span class="c1"># setup.py/versioneer.py will grep for the variable names, so they must</span>
+    <span class="c1"># each be defined on a line of their own. _version.py will just call</span>
+    <span class="c1"># get_keywords().</span>
+    <span class="n">git_refnames</span> <span class="o">=</span> <span class="s2">&quot;$Format:</span><span class="si">%d</span><span class="s2">$&quot;</span>
+    <span class="n">git_full</span> <span class="o">=</span> <span class="s2">&quot;$Format:%H$&quot;</span>
+    <span class="n">git_date</span> <span class="o">=</span> <span class="s2">&quot;$Format:</span><span class="si">%c</span><span class="s2">i$&quot;</span>
+    <span class="n">keywords</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;refnames&quot;</span><span class="p">:</span> <span class="n">git_refnames</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="n">git_full</span><span class="p">,</span> <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">git_date</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">keywords</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.get_config" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_config</span><span class="p">()</span></code>
+
+<a href="#bamojax._version.get_config" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create, populate and return the VersioneerConfig() object.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">VersioneerConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create, populate and return the VersioneerConfig() object.&quot;&quot;&quot;</span>
+    <span class="c1"># these strings are filled in when &#39;setup.py versioneer&#39; creates</span>
+    <span class="c1"># _version.py</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">VersioneerConfig</span><span class="p">()</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">VCS</span> <span class="o">=</span> <span class="s2">&quot;git&quot;</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="s2">&quot;pep440&quot;</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">tag_prefix</span> <span class="o">=</span> <span class="s2">&quot;v&quot;</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">parentdir_prefix</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">versionfile_source</span> <span class="o">=</span> <span class="s2">&quot;bamojax/_version.py&quot;</span>
+    <span class="n">cfg</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">cfg</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.register_vcs_handler" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">register_vcs_handler</span><span class="p">(</span><span class="n">vcs</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.register_vcs_handler" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create decorator to mark a method as the handler of a VCS.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_vcs_handler</span><span class="p">(</span><span class="n">vcs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>  <span class="c1"># decorator</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create decorator to mark a method as the handler of a VCS.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorate</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store f in HANDLERS[vcs][method].&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">vcs</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">HANDLERS</span><span class="p">:</span>
+            <span class="n">HANDLERS</span><span class="p">[</span><span class="n">vcs</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">HANDLERS</span><span class="p">[</span><span class="n">vcs</span><span class="p">][</span><span class="n">method</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+        <span class="k">return</span> <span class="n">f</span>
+    <span class="k">return</span> <span class="n">decorate</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.run_command" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">run_command</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hide_stderr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.run_command" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Call the given command(s).</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_command</span><span class="p">(</span>
+    <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">cwd</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">hide_stderr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call the given command(s).&quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">popen_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+        <span class="c1"># This hides the console window if pythonw.exe is used</span>
+        <span class="n">startupinfo</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">STARTUPINFO</span><span class="p">()</span>
+        <span class="n">startupinfo</span><span class="o">.</span><span class="n">dwFlags</span> <span class="o">|=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">STARTF_USESHOWWINDOW</span>
+        <span class="n">popen_kwargs</span><span class="p">[</span><span class="s2">&quot;startupinfo&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">startupinfo</span>
+
+    <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dispcmd</span> <span class="o">=</span> <span class="nb">str</span><span class="p">([</span><span class="n">command</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span><span class="p">)</span>
+            <span class="c1"># remember shell=False, so use git.cmd on windows, not just git</span>
+            <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="n">command</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                                       <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                                       <span class="n">stderr</span><span class="o">=</span><span class="p">(</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span> <span class="k">if</span> <span class="n">hide_stderr</span>
+                                               <span class="k">else</span> <span class="kc">None</span><span class="p">),</span> <span class="o">**</span><span class="n">popen_kwargs</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">errno</span> <span class="o">==</span> <span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;unable to run </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">dispcmd</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;unable to find command, tried </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">commands</span><span class="p">,))</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;unable to run </span><span class="si">%s</span><span class="s2"> (error)&quot;</span> <span class="o">%</span> <span class="n">dispcmd</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;stdout was </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">stdout</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span>
+    <span class="k">return</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.versions_from_parentdir" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">versions_from_parentdir</span><span class="p">(</span><span class="n">parentdir_prefix</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.versions_from_parentdir" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Try to determine the version from the parent directory name.</p>
+<p>Source tarballs conventionally unpack into a directory that includes both
+the project name and a version string. We will also support searching up
+two directory levels for an appropriately named parent directory</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">versions_from_parentdir</span><span class="p">(</span>
+    <span class="n">parentdir_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Try to determine the version from the parent directory name.</span>
+
+<span class="sd">    Source tarballs conventionally unpack into a directory that includes both</span>
+<span class="sd">    the project name and a version string. We will also support searching up</span>
+<span class="sd">    two directory levels for an appropriately named parent directory</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rootdirs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dirname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">parentdir_prefix</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">dirname</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">parentdir_prefix</span><span class="p">):],</span>
+                    <span class="s2">&quot;full-revisionid&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s2">&quot;dirty&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="n">rootdirs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>  <span class="c1"># up a level</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tried directories </span><span class="si">%s</span><span class="s2"> but none started with prefix </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
+              <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rootdirs</span><span class="p">),</span> <span class="n">parentdir_prefix</span><span class="p">))</span>
+    <span class="k">raise</span> <span class="n">NotThisMethod</span><span class="p">(</span><span class="s2">&quot;rootdir doesn&#39;t start with parentdir_prefix&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.git_get_keywords" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">git_get_keywords</span><span class="p">(</span><span class="n">versionfile_abs</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.git_get_keywords" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Extract version information from the given file.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@register_vcs_handler</span><span class="p">(</span><span class="s2">&quot;git&quot;</span><span class="p">,</span> <span class="s2">&quot;get_keywords&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">git_get_keywords</span><span class="p">(</span><span class="n">versionfile_abs</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract version information from the given file.&quot;&quot;&quot;</span>
+    <span class="c1"># the code embedded in _version.py can just fetch the value of these</span>
+    <span class="c1"># keywords. When used from setup.py, we don&#39;t want to import _version.py,</span>
+    <span class="c1"># so we do it with a regexp instead. This function is not used from</span>
+    <span class="c1"># _version.py.</span>
+    <span class="n">keywords</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">versionfile_abs</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fobj</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fobj</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;git_refnames =&quot;</span><span class="p">):</span>
+                    <span class="n">mo</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;=\s*&quot;(.*)&quot;&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">mo</span><span class="p">:</span>
+                        <span class="n">keywords</span><span class="p">[</span><span class="s2">&quot;refnames&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mo</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;git_full =&quot;</span><span class="p">):</span>
+                    <span class="n">mo</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;=\s*&quot;(.*)&quot;&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">mo</span><span class="p">:</span>
+                        <span class="n">keywords</span><span class="p">[</span><span class="s2">&quot;full&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mo</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;git_date =&quot;</span><span class="p">):</span>
+                    <span class="n">mo</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;=\s*&quot;(.*)&quot;&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">mo</span><span class="p">:</span>
+                        <span class="n">keywords</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mo</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">keywords</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.git_versions_from_keywords" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">git_versions_from_keywords</span><span class="p">(</span><span class="n">keywords</span><span class="p">,</span> <span class="n">tag_prefix</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.git_versions_from_keywords" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get version information from git keywords.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@register_vcs_handler</span><span class="p">(</span><span class="s2">&quot;git&quot;</span><span class="p">,</span> <span class="s2">&quot;keywords&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">git_versions_from_keywords</span><span class="p">(</span>
+    <span class="n">keywords</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">tag_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get version information from git keywords.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;refnames&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">NotThisMethod</span><span class="p">(</span><span class="s2">&quot;Short version file found&quot;</span><span class="p">)</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">keywords</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Use only the last line.  Previous lines may contain GPG signature</span>
+        <span class="c1"># information.</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># git-2.2.0 added &quot;%cI&quot;, which expands to an ISO-8601 -compliant</span>
+        <span class="c1"># datestamp. However we prefer &quot;%ci&quot; (which expands to an &quot;ISO-8601</span>
+        <span class="c1"># -like&quot; string, which we must then edit to make compliant), because</span>
+        <span class="c1"># it&#39;s been around since git-1.5.3, and it&#39;s too difficult to</span>
+        <span class="c1"># discover which version we&#39;re using, or to work around using an</span>
+        <span class="c1"># older one.</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">refnames</span> <span class="o">=</span> <span class="n">keywords</span><span class="p">[</span><span class="s2">&quot;refnames&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">refnames</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;$Format&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;keywords are unexpanded, not using&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">NotThisMethod</span><span class="p">(</span><span class="s2">&quot;unexpanded keywords, not a git-archive tarball&quot;</span><span class="p">)</span>
+    <span class="n">refs</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">refnames</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;()&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)}</span>
+    <span class="c1"># starting in git-1.8.3, tags are listed as &quot;tag: foo-1.0&quot; instead of</span>
+    <span class="c1"># just &quot;foo-1.0&quot;. If we see a &quot;tag: &quot; prefix, prefer those.</span>
+    <span class="n">TAG</span> <span class="o">=</span> <span class="s2">&quot;tag: &quot;</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">TAG</span><span class="p">):]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">refs</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">TAG</span><span class="p">)}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">tags</span><span class="p">:</span>
+        <span class="c1"># Either we&#39;re using git &lt; 1.8.3, or there really are no tags. We use</span>
+        <span class="c1"># a heuristic: assume all version tags have a digit. The old git %d</span>
+        <span class="c1"># expansion behaves like git log --decorate=short and strips out the</span>
+        <span class="c1"># refs/heads/ and refs/tags/ prefixes that would let us distinguish</span>
+        <span class="c1"># between branches and tags. By ignoring refnames without digits, we</span>
+        <span class="c1"># filter out many common branch names like &quot;release&quot; and</span>
+        <span class="c1"># &quot;stabilization&quot;, as well as &quot;HEAD&quot; and &quot;master&quot;.</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">refs</span> <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d&#39;</span><span class="p">,</span> <span class="n">r</span><span class="p">)}</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;discarding &#39;</span><span class="si">%s</span><span class="s2">&#39;, no digits&quot;</span> <span class="o">%</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">refs</span> <span class="o">-</span> <span class="n">tags</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;likely tags: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">tags</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">ref</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tags</span><span class="p">):</span>
+        <span class="c1"># sorting will prefer e.g. &quot;2.0&quot; over &quot;2.0rc1&quot;</span>
+        <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">tag_prefix</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">ref</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">tag_prefix</span><span class="p">):]</span>
+            <span class="c1"># Filter out refs that exactly match prefix or that don&#39;t start</span>
+            <span class="c1"># with a number once the prefix is stripped (mostly a concern</span>
+            <span class="c1"># when prefix is &#39;&#39;)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d&#39;</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;picking </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">r</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">,</span>
+                    <span class="s2">&quot;full-revisionid&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="p">[</span><span class="s2">&quot;full&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+                    <span class="s2">&quot;dirty&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">date</span><span class="p">}</span>
+    <span class="c1"># no suitable tags, so version is &quot;0+unknown&quot;, but full hex is still there</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;no suitable tags, using unknown + full revision id&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0+unknown&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;full-revisionid&quot;</span><span class="p">:</span> <span class="n">keywords</span><span class="p">[</span><span class="s2">&quot;full&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+            <span class="s2">&quot;dirty&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;no suitable tags&quot;</span><span class="p">,</span> <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.git_pieces_from_vcs" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">git_pieces_from_vcs</span><span class="p">(</span><span class="n">tag_prefix</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">runner</span><span class="o">=</span><span class="n">run_command</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.git_pieces_from_vcs" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get version from 'git describe' in the root of the source tree.</p>
+<p>This only gets called if the git-archive 'subst' keywords were <em>not</em>
+expanded, and _version.py hasn't already been rewritten with a short
+version string, meaning we're inside a checked out source tree.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@register_vcs_handler</span><span class="p">(</span><span class="s2">&quot;git&quot;</span><span class="p">,</span> <span class="s2">&quot;pieces_from_vcs&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">git_pieces_from_vcs</span><span class="p">(</span>
+    <span class="n">tag_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">runner</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">run_command</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get version from &#39;git describe&#39; in the root of the source tree.</span>
+
+<span class="sd">    This only gets called if the git-archive &#39;subst&#39; keywords were *not*</span>
+<span class="sd">    expanded, and _version.py hasn&#39;t already been rewritten with a short</span>
+<span class="sd">    version string, meaning we&#39;re inside a checked out source tree.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">GITS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;git&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+        <span class="n">GITS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;git.cmd&quot;</span><span class="p">,</span> <span class="s2">&quot;git.exe&quot;</span><span class="p">]</span>
+
+    <span class="c1"># GIT_DIR can interfere with correct operation of Versioneer.</span>
+    <span class="c1"># It may be intended to be passed to the Versioneer-versioned project,</span>
+    <span class="c1"># but that should not change where we get our version from.</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;GIT_DIR&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">runner</span><span class="p">(</span><span class="n">GITS</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;rev-parse&quot;</span><span class="p">,</span> <span class="s2">&quot;--git-dir&quot;</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">root</span><span class="p">,</span>
+                   <span class="n">hide_stderr</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">rc</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Directory </span><span class="si">%s</span><span class="s2"> not under git control&quot;</span> <span class="o">%</span> <span class="n">root</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">NotThisMethod</span><span class="p">(</span><span class="s2">&quot;&#39;git rev-parse --git-dir&#39; returned error&quot;</span><span class="p">)</span>
+
+    <span class="c1"># if there is a tag matching tag_prefix, this yields TAG-NUM-gHEX[-dirty]</span>
+    <span class="c1"># if there isn&#39;t one, this yields HEX[-dirty] (no NUM)</span>
+    <span class="n">describe_out</span><span class="p">,</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">runner</span><span class="p">(</span><span class="n">GITS</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s2">&quot;describe&quot;</span><span class="p">,</span> <span class="s2">&quot;--tags&quot;</span><span class="p">,</span> <span class="s2">&quot;--dirty&quot;</span><span class="p">,</span> <span class="s2">&quot;--always&quot;</span><span class="p">,</span> <span class="s2">&quot;--long&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--match&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tag_prefix</span><span class="si">}</span><span class="s2">[[:digit:]]*&quot;</span>
+    <span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+    <span class="c1"># --long was added in git-1.5.5</span>
+    <span class="k">if</span> <span class="n">describe_out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">NotThisMethod</span><span class="p">(</span><span class="s2">&quot;&#39;git describe&#39; failed&quot;</span><span class="p">)</span>
+    <span class="n">describe_out</span> <span class="o">=</span> <span class="n">describe_out</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">full_out</span><span class="p">,</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">runner</span><span class="p">(</span><span class="n">GITS</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;rev-parse&quot;</span><span class="p">,</span> <span class="s2">&quot;HEAD&quot;</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">full_out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">NotThisMethod</span><span class="p">(</span><span class="s2">&quot;&#39;git rev-parse&#39; failed&quot;</span><span class="p">)</span>
+    <span class="n">full_out</span> <span class="o">=</span> <span class="n">full_out</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="n">pieces</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;long&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">full_out</span>
+    <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">full_out</span><span class="p">[:</span><span class="mi">7</span><span class="p">]</span>  <span class="c1"># maybe improved later</span>
+    <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">branch_name</span><span class="p">,</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">runner</span><span class="p">(</span><span class="n">GITS</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;rev-parse&quot;</span><span class="p">,</span> <span class="s2">&quot;--abbrev-ref&quot;</span><span class="p">,</span> <span class="s2">&quot;HEAD&quot;</span><span class="p">],</span>
+                             <span class="n">cwd</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+    <span class="c1"># --abbrev-ref was added in git-1.6.3</span>
+    <span class="k">if</span> <span class="n">rc</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">branch_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">NotThisMethod</span><span class="p">(</span><span class="s2">&quot;&#39;git rev-parse --abbrev-ref&#39; returned error&quot;</span><span class="p">)</span>
+    <span class="n">branch_name</span> <span class="o">=</span> <span class="n">branch_name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">branch_name</span> <span class="o">==</span> <span class="s2">&quot;HEAD&quot;</span><span class="p">:</span>
+        <span class="c1"># If we aren&#39;t exactly on a branch, pick a branch which represents</span>
+        <span class="c1"># the current commit. If all else fails, we are on a branchless</span>
+        <span class="c1"># commit.</span>
+        <span class="n">branches</span><span class="p">,</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">runner</span><span class="p">(</span><span class="n">GITS</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;branch&quot;</span><span class="p">,</span> <span class="s2">&quot;--contains&quot;</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+        <span class="c1"># --contains was added in git-1.5.4</span>
+        <span class="k">if</span> <span class="n">rc</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">branches</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotThisMethod</span><span class="p">(</span><span class="s2">&quot;&#39;git branch --contains&#39; returned error&quot;</span><span class="p">)</span>
+        <span class="n">branches</span> <span class="o">=</span> <span class="n">branches</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Remove the first line if we&#39;re running detached</span>
+        <span class="k">if</span> <span class="s2">&quot;(&quot;</span> <span class="ow">in</span> <span class="n">branches</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">branches</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Strip off the leading &quot;* &quot; from the list of branches.</span>
+        <span class="n">branches</span> <span class="o">=</span> <span class="p">[</span><span class="n">branch</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">branches</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;master&quot;</span> <span class="ow">in</span> <span class="n">branches</span><span class="p">:</span>
+            <span class="n">branch_name</span> <span class="o">=</span> <span class="s2">&quot;master&quot;</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">branches</span><span class="p">:</span>
+            <span class="n">branch_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Pick the first branch that is returned. Good or bad.</span>
+            <span class="n">branch_name</span> <span class="o">=</span> <span class="n">branches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;branch&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">branch_name</span>
+
+    <span class="c1"># parse describe_out. It will be like TAG-NUM-gHEX[-dirty] or HEX[-dirty]</span>
+    <span class="c1"># TAG might have hyphens.</span>
+    <span class="n">git_describe</span> <span class="o">=</span> <span class="n">describe_out</span>
+
+    <span class="c1"># look for -dirty suffix</span>
+    <span class="n">dirty</span> <span class="o">=</span> <span class="n">git_describe</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;-dirty&quot;</span><span class="p">)</span>
+    <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dirty</span>
+    <span class="k">if</span> <span class="n">dirty</span><span class="p">:</span>
+        <span class="n">git_describe</span> <span class="o">=</span> <span class="n">git_describe</span><span class="p">[:</span><span class="n">git_describe</span><span class="o">.</span><span class="n">rindex</span><span class="p">(</span><span class="s2">&quot;-dirty&quot;</span><span class="p">)]</span>
+
+    <span class="c1"># now we have TAG-NUM-gHEX or HEX</span>
+
+    <span class="k">if</span> <span class="s2">&quot;-&quot;</span> <span class="ow">in</span> <span class="n">git_describe</span><span class="p">:</span>
+        <span class="c1"># TAG-NUM-gHEX</span>
+        <span class="n">mo</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(.+)-(\d+)-g([0-9a-f]+)$&#39;</span><span class="p">,</span> <span class="n">git_describe</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mo</span><span class="p">:</span>
+            <span class="c1"># unparsable. Maybe git-describe is misbehaving?</span>
+            <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;unable to parse git-describe output: &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span>
+                               <span class="o">%</span> <span class="n">describe_out</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">pieces</span>
+
+        <span class="c1"># tag</span>
+        <span class="n">full_tag</span> <span class="o">=</span> <span class="n">mo</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">full_tag</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">tag_prefix</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;tag &#39;</span><span class="si">%s</span><span class="s2">&#39; doesn&#39;t start with prefix &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">fmt</span> <span class="o">%</span> <span class="p">(</span><span class="n">full_tag</span><span class="p">,</span> <span class="n">tag_prefix</span><span class="p">))</span>
+            <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;tag &#39;</span><span class="si">%s</span><span class="s2">&#39; doesn&#39;t start with prefix &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span>
+                               <span class="o">%</span> <span class="p">(</span><span class="n">full_tag</span><span class="p">,</span> <span class="n">tag_prefix</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">pieces</span>
+        <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">full_tag</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">tag_prefix</span><span class="p">):]</span>
+
+        <span class="c1"># distance: number of commits since tag</span>
+        <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mo</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="c1"># commit: short hex revision ID</span>
+        <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mo</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># HEX: no tags</span>
+        <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">runner</span><span class="p">(</span><span class="n">GITS</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;rev-list&quot;</span><span class="p">,</span> <span class="s2">&quot;HEAD&quot;</span><span class="p">,</span> <span class="s2">&quot;--left-right&quot;</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+        <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>  <span class="c1"># total number of commits</span>
+
+    <span class="c1"># commit date: see ISO-8601 comment in git_versions_from_keywords()</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">runner</span><span class="p">(</span><span class="n">GITS</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;show&quot;</span><span class="p">,</span> <span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;--format=</span><span class="si">%c</span><span class="s2">i&quot;</span><span class="p">,</span> <span class="s2">&quot;HEAD&quot;</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">root</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="c1"># Use only the last line.  Previous lines may contain GPG signature</span>
+    <span class="c1"># information.</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pieces</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.plus_or_dot" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">plus_or_dot</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.plus_or_dot" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return a + if we don't already have one, else return a .</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">plus_or_dot</span><span class="p">(</span><span class="n">pieces</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a + if we don&#39;t already have one, else return a .&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;+&quot;</span> <span class="ow">in</span> <span class="n">pieces</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;.&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;+&quot;</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.render_pep440" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">render_pep440</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.render_pep440" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build up version string, with post-release "local version identifier".</p>
+<p>Our goal: TAG[+DISTANCE.gHEX[.dirty]] . Note that if you
+get a tagged build and then dirty it, you'll get TAG+0.gHEX.dirty</p>
+<p>Exceptions:
+1: no tags. git_describe was just HEX. 0+untagged.DISTANCE.gHEX[.dirty]</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">render_pep440</span><span class="p">(</span><span class="n">pieces</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build up version string, with post-release &quot;local version identifier&quot;.</span>
+
+<span class="sd">    Our goal: TAG[+DISTANCE.gHEX[.dirty]] . Note that if you</span>
+<span class="sd">    get a tagged build and then dirty it, you&#39;ll get TAG+0.gHEX.dirty</span>
+
+<span class="sd">    Exceptions:</span>
+<span class="sd">    1: no tags. git_describe was just HEX. 0+untagged.DISTANCE.gHEX[.dirty]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="n">plus_or_dot</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">.g</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">],</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+                <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.dirty&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># exception #1</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="s2">&quot;0+untagged.</span><span class="si">%d</span><span class="s2">.g</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">],</span>
+                                          <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.dirty&quot;</span>
+    <span class="k">return</span> <span class="n">rendered</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.render_pep440_branch" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">render_pep440_branch</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.render_pep440_branch" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>TAG[[.dev0]+DISTANCE.gHEX[.dirty]] .</p>
+<p>The ".dev0" means not master branch. Note that .dev0 sorts backwards
+(a feature branch will appear "older" than the master branch).</p>
+<p>Exceptions:
+1: no tags. 0[.dev0]+untagged.DISTANCE.gHEX[.dirty]</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">422</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span>
+<span class="normal">429</span>
+<span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span>
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span>
+<span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">render_pep440_branch</span><span class="p">(</span><span class="n">pieces</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TAG[[.dev0]+DISTANCE.gHEX[.dirty]] .</span>
+
+<span class="sd">    The &quot;.dev0&quot; means not master branch. Note that .dev0 sorts backwards</span>
+<span class="sd">    (a feature branch will appear &quot;older&quot; than the master branch).</span>
+
+<span class="sd">    Exceptions:</span>
+<span class="sd">    1: no tags. 0[.dev0]+untagged.DISTANCE.gHEX[.dirty]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;branch&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;master&quot;</span><span class="p">:</span>
+                <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.dev0&quot;</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="n">plus_or_dot</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">.g</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">],</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+                <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.dirty&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># exception #1</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
+        <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;branch&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;master&quot;</span><span class="p">:</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.dev0&quot;</span>
+        <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;+untagged.</span><span class="si">%d</span><span class="s2">.g</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">],</span>
+                                          <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.dirty&quot;</span>
+    <span class="k">return</span> <span class="n">rendered</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.pep440_split_post" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">pep440_split_post</span><span class="p">(</span><span class="n">ver</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.pep440_split_post" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Split pep440 version string at the post-release segment.</p>
+<p>Returns the release segments before the post-release and the
+post-release version number (or -1 if no post-release segment is present).</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span>
+<span class="normal">457</span>
+<span class="normal">458</span>
+<span class="normal">459</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">pep440_split_post</span><span class="p">(</span><span class="n">ver</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split pep440 version string at the post-release segment.</span>
+
+<span class="sd">    Returns the release segments before the post-release and the</span>
+<span class="sd">    post-release version number (or -1 if no post-release segment is present).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">vc</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">ver</span><span class="p">,</span> <span class="s2">&quot;.post&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">vc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">vc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="kc">None</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.render_pep440_pre" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">render_pep440_pre</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.render_pep440_pre" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>TAG[.postN.devDISTANCE] -- No -dirty.</p>
+<p>Exceptions:
+1: no tags. 0.post0.devDISTANCE</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span>
+<span class="normal">471</span>
+<span class="normal">472</span>
+<span class="normal">473</span>
+<span class="normal">474</span>
+<span class="normal">475</span>
+<span class="normal">476</span>
+<span class="normal">477</span>
+<span class="normal">478</span>
+<span class="normal">479</span>
+<span class="normal">480</span>
+<span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">render_pep440_pre</span><span class="p">(</span><span class="n">pieces</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TAG[.postN.devDISTANCE] -- No -dirty.</span>
+
+<span class="sd">    Exceptions:</span>
+<span class="sd">    1: no tags. 0.post0.devDISTANCE</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]:</span>
+            <span class="c1"># update the post release segment</span>
+            <span class="n">tag_version</span><span class="p">,</span> <span class="n">post_version</span> <span class="o">=</span> <span class="n">pep440_split_post</span><span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">])</span>
+            <span class="n">rendered</span> <span class="o">=</span> <span class="n">tag_version</span>
+            <span class="k">if</span> <span class="n">post_version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.post</span><span class="si">%d</span><span class="s2">.dev</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">post_version</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.post0.dev</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># no commits, use the tag as the version</span>
+            <span class="n">rendered</span> <span class="o">=</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># exception #1</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="s2">&quot;0.post0.dev</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">rendered</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.render_pep440_post" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">render_pep440_post</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.render_pep440_post" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>TAG[.postDISTANCE[.dev0]+gHEX] .</p>
+<p>The ".dev0" means dirty. Note that .dev0 sorts backwards
+(a dirty tree will appear "older" than the corresponding clean one),
+but you shouldn't be releasing software with -dirty anyways.</p>
+<p>Exceptions:
+1: no tags. 0.postDISTANCE[.dev0]</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">486</span>
+<span class="normal">487</span>
+<span class="normal">488</span>
+<span class="normal">489</span>
+<span class="normal">490</span>
+<span class="normal">491</span>
+<span class="normal">492</span>
+<span class="normal">493</span>
+<span class="normal">494</span>
+<span class="normal">495</span>
+<span class="normal">496</span>
+<span class="normal">497</span>
+<span class="normal">498</span>
+<span class="normal">499</span>
+<span class="normal">500</span>
+<span class="normal">501</span>
+<span class="normal">502</span>
+<span class="normal">503</span>
+<span class="normal">504</span>
+<span class="normal">505</span>
+<span class="normal">506</span>
+<span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">render_pep440_post</span><span class="p">(</span><span class="n">pieces</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TAG[.postDISTANCE[.dev0]+gHEX] .</span>
+
+<span class="sd">    The &quot;.dev0&quot; means dirty. Note that .dev0 sorts backwards</span>
+<span class="sd">    (a dirty tree will appear &quot;older&quot; than the corresponding clean one),</span>
+<span class="sd">    but you shouldn&#39;t be releasing software with -dirty anyways.</span>
+
+<span class="sd">    Exceptions:</span>
+<span class="sd">    1: no tags. 0.postDISTANCE[.dev0]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.post</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+                <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.dev0&quot;</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="n">plus_or_dot</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;g</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># exception #1</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="s2">&quot;0.post</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.dev0&quot;</span>
+        <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;+g</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">rendered</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.render_pep440_post_branch" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">render_pep440_post_branch</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.render_pep440_post_branch" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>TAG[.postDISTANCE[.dev0]+gHEX[.dirty]] .</p>
+<p>The ".dev0" means not master branch.</p>
+<p>Exceptions:
+1: no tags. 0.postDISTANCE[.dev0]+gHEX[.dirty]</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">513</span>
+<span class="normal">514</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span>
+<span class="normal">523</span>
+<span class="normal">524</span>
+<span class="normal">525</span>
+<span class="normal">526</span>
+<span class="normal">527</span>
+<span class="normal">528</span>
+<span class="normal">529</span>
+<span class="normal">530</span>
+<span class="normal">531</span>
+<span class="normal">532</span>
+<span class="normal">533</span>
+<span class="normal">534</span>
+<span class="normal">535</span>
+<span class="normal">536</span>
+<span class="normal">537</span>
+<span class="normal">538</span>
+<span class="normal">539</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">render_pep440_post_branch</span><span class="p">(</span><span class="n">pieces</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TAG[.postDISTANCE[.dev0]+gHEX[.dirty]] .</span>
+
+<span class="sd">    The &quot;.dev0&quot; means not master branch.</span>
+
+<span class="sd">    Exceptions:</span>
+<span class="sd">    1: no tags. 0.postDISTANCE[.dev0]+gHEX[.dirty]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.post</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;branch&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;master&quot;</span><span class="p">:</span>
+                <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.dev0&quot;</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="n">plus_or_dot</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;g</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+                <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.dirty&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># exception #1</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="s2">&quot;0.post</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;branch&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;master&quot;</span><span class="p">:</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.dev0&quot;</span>
+        <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;+g</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.dirty&quot;</span>
+    <span class="k">return</span> <span class="n">rendered</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.render_pep440_old" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">render_pep440_old</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.render_pep440_old" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>TAG[.postDISTANCE[.dev0]] .</p>
+<p>The ".dev0" means dirty.</p>
+<p>Exceptions:
+1: no tags. 0.postDISTANCE[.dev0]</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">542</span>
+<span class="normal">543</span>
+<span class="normal">544</span>
+<span class="normal">545</span>
+<span class="normal">546</span>
+<span class="normal">547</span>
+<span class="normal">548</span>
+<span class="normal">549</span>
+<span class="normal">550</span>
+<span class="normal">551</span>
+<span class="normal">552</span>
+<span class="normal">553</span>
+<span class="normal">554</span>
+<span class="normal">555</span>
+<span class="normal">556</span>
+<span class="normal">557</span>
+<span class="normal">558</span>
+<span class="normal">559</span>
+<span class="normal">560</span>
+<span class="normal">561</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">render_pep440_old</span><span class="p">(</span><span class="n">pieces</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TAG[.postDISTANCE[.dev0]] .</span>
+
+<span class="sd">    The &quot;.dev0&quot; means dirty.</span>
+
+<span class="sd">    Exceptions:</span>
+<span class="sd">    1: no tags. 0.postDISTANCE[.dev0]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.post</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+                <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.dev0&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># exception #1</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="s2">&quot;0.post</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;.dev0&quot;</span>
+    <span class="k">return</span> <span class="n">rendered</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.render_git_describe" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">render_git_describe</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.render_git_describe" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>TAG[-DISTANCE-gHEX][-dirty].</p>
+<p>Like 'git describe --tags --dirty --always'.</p>
+<p>Exceptions:
+1: no tags. HEX[-dirty]  (note: no 'g' prefix)</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">564</span>
+<span class="normal">565</span>
+<span class="normal">566</span>
+<span class="normal">567</span>
+<span class="normal">568</span>
+<span class="normal">569</span>
+<span class="normal">570</span>
+<span class="normal">571</span>
+<span class="normal">572</span>
+<span class="normal">573</span>
+<span class="normal">574</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span>
+<span class="normal">579</span>
+<span class="normal">580</span>
+<span class="normal">581</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">render_git_describe</span><span class="p">(</span><span class="n">pieces</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TAG[-DISTANCE-gHEX][-dirty].</span>
+
+<span class="sd">    Like &#39;git describe --tags --dirty --always&#39;.</span>
+
+<span class="sd">    Exceptions:</span>
+<span class="sd">    1: no tags. HEX[-dirty]  (note: no &#39;g&#39; prefix)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]:</span>
+            <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;-</span><span class="si">%d</span><span class="s2">-g</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">],</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># exception #1</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+        <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;-dirty&quot;</span>
+    <span class="k">return</span> <span class="n">rendered</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.render_git_describe_long" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">render_git_describe_long</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.render_git_describe_long" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>TAG-DISTANCE-gHEX[-dirty].</p>
+<p>Like 'git describe --tags --dirty --always -long'.
+The distance/hash is unconditional.</p>
+<p>Exceptions:
+1: no tags. HEX[-dirty]  (note: no 'g' prefix)</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">584</span>
+<span class="normal">585</span>
+<span class="normal">586</span>
+<span class="normal">587</span>
+<span class="normal">588</span>
+<span class="normal">589</span>
+<span class="normal">590</span>
+<span class="normal">591</span>
+<span class="normal">592</span>
+<span class="normal">593</span>
+<span class="normal">594</span>
+<span class="normal">595</span>
+<span class="normal">596</span>
+<span class="normal">597</span>
+<span class="normal">598</span>
+<span class="normal">599</span>
+<span class="normal">600</span>
+<span class="normal">601</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">render_git_describe_long</span><span class="p">(</span><span class="n">pieces</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TAG-DISTANCE-gHEX[-dirty].</span>
+
+<span class="sd">    Like &#39;git describe --tags --dirty --always -long&#39;.</span>
+<span class="sd">    The distance/hash is unconditional.</span>
+
+<span class="sd">    Exceptions:</span>
+<span class="sd">    1: no tags. HEX[-dirty]  (note: no &#39;g&#39; prefix)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;closest-tag&quot;</span><span class="p">]</span>
+        <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;-</span><span class="si">%d</span><span class="s2">-g</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">],</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># exception #1</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]:</span>
+        <span class="n">rendered</span> <span class="o">+=</span> <span class="s2">&quot;-dirty&quot;</span>
+    <span class="k">return</span> <span class="n">rendered</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.render" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">render</span><span class="p">(</span><span class="n">pieces</span><span class="p">,</span> <span class="n">style</span><span class="p">)</span></code>
+
+<a href="#bamojax._version.render" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Render the given version pieces into the requested style.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">604</span>
+<span class="normal">605</span>
+<span class="normal">606</span>
+<span class="normal">607</span>
+<span class="normal">608</span>
+<span class="normal">609</span>
+<span class="normal">610</span>
+<span class="normal">611</span>
+<span class="normal">612</span>
+<span class="normal">613</span>
+<span class="normal">614</span>
+<span class="normal">615</span>
+<span class="normal">616</span>
+<span class="normal">617</span>
+<span class="normal">618</span>
+<span class="normal">619</span>
+<span class="normal">620</span>
+<span class="normal">621</span>
+<span class="normal">622</span>
+<span class="normal">623</span>
+<span class="normal">624</span>
+<span class="normal">625</span>
+<span class="normal">626</span>
+<span class="normal">627</span>
+<span class="normal">628</span>
+<span class="normal">629</span>
+<span class="normal">630</span>
+<span class="normal">631</span>
+<span class="normal">632</span>
+<span class="normal">633</span>
+<span class="normal">634</span>
+<span class="normal">635</span>
+<span class="normal">636</span>
+<span class="normal">637</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="n">pieces</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">style</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render the given version pieces into the requested style.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;full-revisionid&quot;</span><span class="p">:</span> <span class="n">pieces</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;long&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;dirty&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">style</span> <span class="ow">or</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="s2">&quot;pep440&quot;</span>  <span class="c1"># the default</span>
+
+    <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;pep440&quot;</span><span class="p">:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">render_pep440</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;pep440-branch&quot;</span><span class="p">:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">render_pep440_branch</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;pep440-pre&quot;</span><span class="p">:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">render_pep440_pre</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;pep440-post&quot;</span><span class="p">:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">render_pep440_post</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;pep440-post-branch&quot;</span><span class="p">:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">render_pep440_post_branch</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;pep440-old&quot;</span><span class="p">:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">render_pep440_old</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;git-describe&quot;</span><span class="p">:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">render_git_describe</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">style</span> <span class="o">==</span> <span class="s2">&quot;git-describe-long&quot;</span><span class="p">:</span>
+        <span class="n">rendered</span> <span class="o">=</span> <span class="n">render_git_describe_long</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;unknown style &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">style</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">rendered</span><span class="p">,</span> <span class="s2">&quot;full-revisionid&quot;</span><span class="p">:</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;long&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;dirty&quot;</span><span class="p">:</span> <span class="n">pieces</span><span class="p">[</span><span class="s2">&quot;dirty&quot;</span><span class="p">],</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">pieces</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">)}</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax._version.get_versions" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_versions</span><span class="p">()</span></code>
+
+<a href="#bamojax._version.get_versions" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get version information or return default if unable to do so.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/_version.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">640</span>
+<span class="normal">641</span>
+<span class="normal">642</span>
+<span class="normal">643</span>
+<span class="normal">644</span>
+<span class="normal">645</span>
+<span class="normal">646</span>
+<span class="normal">647</span>
+<span class="normal">648</span>
+<span class="normal">649</span>
+<span class="normal">650</span>
+<span class="normal">651</span>
+<span class="normal">652</span>
+<span class="normal">653</span>
+<span class="normal">654</span>
+<span class="normal">655</span>
+<span class="normal">656</span>
+<span class="normal">657</span>
+<span class="normal">658</span>
+<span class="normal">659</span>
+<span class="normal">660</span>
+<span class="normal">661</span>
+<span class="normal">662</span>
+<span class="normal">663</span>
+<span class="normal">664</span>
+<span class="normal">665</span>
+<span class="normal">666</span>
+<span class="normal">667</span>
+<span class="normal">668</span>
+<span class="normal">669</span>
+<span class="normal">670</span>
+<span class="normal">671</span>
+<span class="normal">672</span>
+<span class="normal">673</span>
+<span class="normal">674</span>
+<span class="normal">675</span>
+<span class="normal">676</span>
+<span class="normal">677</span>
+<span class="normal">678</span>
+<span class="normal">679</span>
+<span class="normal">680</span>
+<span class="normal">681</span>
+<span class="normal">682</span>
+<span class="normal">683</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_versions</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get version information or return default if unable to do so.&quot;&quot;&quot;</span>
+    <span class="c1"># I am in _version.py, which lives at ROOT/VERSIONFILE_SOURCE. If we have</span>
+    <span class="c1"># __file__, we can work backwards from there to the root. Some</span>
+    <span class="c1"># py2exe/bbfreeze/non-CPython implementations don&#39;t do __file__, in which</span>
+    <span class="c1"># case we can only use expanded keywords.</span>
+
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">()</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">verbose</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">git_versions_from_keywords</span><span class="p">(</span><span class="n">get_keywords</span><span class="p">(),</span> <span class="n">cfg</span><span class="o">.</span><span class="n">tag_prefix</span><span class="p">,</span>
+                                          <span class="n">verbose</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">NotThisMethod</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+        <span class="c1"># versionfile_source is the relative path from the top of the source</span>
+        <span class="c1"># tree (where the .git directory might live) to this file. Invert</span>
+        <span class="c1"># this to find the root from __file__.</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">versionfile_source</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0+unknown&quot;</span><span class="p">,</span> <span class="s2">&quot;full-revisionid&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;dirty&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;unable to find root of source tree&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">pieces</span> <span class="o">=</span> <span class="n">git_pieces_from_vcs</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">tag_prefix</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">pieces</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">style</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">NotThisMethod</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">parentdir_prefix</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">versions_from_parentdir</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">parentdir_prefix</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">NotThisMethod</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0+unknown&quot;</span><span class="p">,</span> <span class="s2">&quot;full-revisionid&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;dirty&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;unable to compute version&quot;</span><span class="p">,</span> <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "navigation.top", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
