@@ -18,6 +18,11 @@ nav:
 
 plugins:
   - search
+    - gen-files:
+      scripts:
+        - docs/gen_api_nav.py
+  - literate-nav:
+      nav_file: SUMMARY.md
   - mkdocstrings:
       handlers:
         python:
