@@ -63,29 +63,13 @@ def get_model_bijectors(model) -> dict:
     
     """
     latent_nodes = model.get_latent_nodes()
-
-    # forward_transforms = {}
-    # backward_transforms = {}
-    # for node_name, node in latent_nodes.items():
-    #     if hasattr(node.distribution, '_bijector'):
-    #         bij = node.distribution._bijector
-    #         forward_transform = lambda x, bij=bij: bij.forward(x)
-    #         backward_transform = lambda x, bij=bij: bij.inverse(x)
-    #     else:
-    #         forward_transform = lambda x: x
-    #         backward_transform = lambda x: x
-    #     forward_transforms[node_name] = forward_transform
-    #     backward_transforms[node_name] = backward_transform
-    # return forward_transforms, backward_transforms
     bijectors = {}
     for node_name, node in latent_nodes.items():
         if hasattr(node.distribution, '_bijector'):
             bij = node.distribution._bijector
             transform = bij
         else:
-            # transform = dx.Independent(tfb.Identity(), reinterpreted_batch_ndims=1)
             transform = tfb.Identity()  # Use TensorFlow Probability's Identity bijector
-            # transform = dx.Lambda(forward = lambda x: x, inverse = lambda x: x)  # Use Distrax's Lambda bijector
         bijectors[node_name] = transform
     return bijectors
 

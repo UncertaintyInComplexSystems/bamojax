@@ -403,7 +403,7 @@ class Model:
 
         Args:
             key: PRNGKey
-            state: a draw from either p(x) or p(x|.)
+            state: a draw from either $p(x)$ or $p(x \mid \cdot)$
             input_variables: a dictionary with values for observed non-stochastic nodes
         
         Returns:
@@ -483,6 +483,8 @@ class Model:
 
 #
 class MetaModel():
+    r""" A meta-model is a collection of Bayesian models, which can be used for reversible jump MCMC.
+    """
 
     def __init__(self, 
                  model_list):

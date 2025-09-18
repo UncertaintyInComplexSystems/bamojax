@@ -9,12 +9,16 @@ import blackjax
 ##### BINARY LATENT VARIABLES #####
 
 def generate_bernoulli_noise(rng_key: PRNGKey, position, theta):
+    r""" Given a position (pytree) and a probability theta, generate a new position by flipping each bit with probability theta.
+    """
     p, unravel_fn = jax.flatten_util.ravel_pytree(position)
     sample = jrnd.bernoulli(rng_key, shape=p.shape, p=theta)
     return unravel_fn(sample)
 
 #
 def bernoulli(theta: Array) -> Callable:
+    r""" Create a proposal function that flips each Bernoulli random variable of the input position with probability theta.
+    """
     def propose(rng_key: PRNGKey, position) -> ArrayTree:
         return generate_bernoulli_noise(rng_key, position, theta=theta)
     
@@ -23,6 +27,8 @@ def bernoulli(theta: Array) -> Callable:
 
 #
 def build_xor_step():
+    r""" Build a kernel that uses the xor operation to flip bits in a binary vector.
+    """
     def kernel(
         rng_key: PRNGKey, state, logdensity_fn: Callable, random_step: Callable
     ):
@@ -38,6 +44,8 @@ def build_xor_step():
 
 #  
 def xor_step_random_walk(logdensity_fn: Callable, random_step: Callable) -> SamplingAlgorithm:
+    r""" Create a random walk MCMC algorithm that uses the xor operation to flip bits in a binary vector.
+    """
 
     kernel = build_xor_step()
     def init_fn(position: ArrayLikeTree, rng_key=None):
@@ -51,6 +59,8 @@ def xor_step_random_walk(logdensity_fn: Callable, random_step: Callable) -> Samp
 
 #
 def bernoulli_random_walk(logdensity_fn: Callable, theta):
+    r""" Create a random walk MCMC algorithm that moves across the space of binary vectors.
+    """
     return xor_step_random_walk(logdensity_fn, bernoulli(theta))
 
 #

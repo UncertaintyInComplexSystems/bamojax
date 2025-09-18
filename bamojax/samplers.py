@@ -100,9 +100,11 @@ def gibbs_sampler(model: Model,
         
         The signature of the Gibbs function is (key, state, temperature) -> (state, info)
 
-        The Gibbs densities are defined as follows. Let Pa(x) give the parents of the set of variables x, and let Ch(x) give the set of children. Then the density is given by:
+        The Gibbs densities are defined as follows. Let $\text{Pa}(x)$ give the parents of the set of variables $x$, and let $\text{Ch}(x)$ give the set of children. Then the density is given by:
 
-        p(x | Pa(x)) \propto p(Ch(x) | Pa(Ch(x))) p(x | Pa(x))
+        $$
+            p\left(x \mid \text{Pa}(x)\right) \propto p\left(\text{Ch}(x) \mid \text{Pa}(\text{Ch}(x))\right) p\left(x \mid \text{Pa}(x)\right)
+        $$
 
         Args:
             key: PRNGKey
@@ -154,8 +156,6 @@ def gibbs_sampler(model: Model,
                 
             key, subkey = jrnd.split(key)     
             # [TODO]: add functionality to sample specific variables for different numbers of steps
-            # def step_body(key, state): step_kernel.step...
-            # step_substate, step_info = jax.lax.scan(step_body, keys, state)
             step_substate, step_info = step_kernel.step(subkey, step_substate)
             info[node.name] = step_info
             
