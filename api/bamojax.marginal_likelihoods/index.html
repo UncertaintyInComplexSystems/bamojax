@@ -561,7 +561,7 @@ reasonable.</p>
 
         <p>Importance sampling routine for a given BayesianModel.</p>
 <p>Importance sampling is based around the following approximation to the log
-marginal likelihood (see e.g., Gronau et al., 2017):</p>
+marginal likelihood [Gronau et al., 2017]:</p>
 <p>$$
 p(D) \approx 1/N \sum_{i=1}^N p\left(D \mid \theta_i\right) \frac{p(\theta_i)}{g_IS(\theta_i)}\enspace,
 $$
@@ -577,6 +577,10 @@ with <span class="arithmatex">\(\theta_i ~ g_IS(\theta)\)</span></p>
 carefully for each specific problem.</p>
 <p>Note that the importance density can also be a mixture distribution, which 
 can make it easier to introduce heavy tails.</p>
+<p>References:</p>
+<ul>
+<li>Gronau, Q. F., Sarafoglou, A., Matzke, D., Ly, A., Boehm, U., Marsman, M., Leslie, D. S., Forster, J. J., Wagenmakers, E.-J., &amp; Steingroever, H. (2017). A tutorial on bridge sampling. Journal of Mathematical Psychology, 81, 80-97. https://doi.org/10.1016/j.jmp.2017.09.005</li>
+</ul>
 
 
             <details class="quote">
@@ -642,7 +646,12 @@ can make it easier to introduce heavy tails.</p>
 <span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
-<span class="normal">142</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">importance_sampling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> 
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">importance_sampling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> 
                         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
                         <span class="n">g_IS</span><span class="p">:</span> <span class="n">Distribution</span><span class="p">,</span>
                         <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">,</span>
@@ -651,7 +660,7 @@ can make it easier to introduce heavy tails.</p>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Importance sampling routine for a given BayesianModel.</span>
 
 <span class="sd">    Importance sampling is based around the following approximation to the log</span>
-<span class="sd">    marginal likelihood (see e.g., Gronau et al., 2017):</span>
+<span class="sd">    marginal likelihood [Gronau et al., 2017]:</span>
 
 <span class="sd">    $$</span>
 <span class="sd">    p(D) \approx 1/N \sum_{i=1}^N p\left(D \mid \theta_i\right) \frac{p(\theta_i)}{g_IS(\theta_i)}\enspace,</span>
@@ -670,6 +679,11 @@ can make it easier to introduce heavy tails.</p>
 
 <span class="sd">    Note that the importance density can also be a mixture distribution, which </span>
 <span class="sd">    can make it easier to introduce heavy tails.</span>
+
+<span class="sd">    References:</span>
+
+<span class="sd">    - Gronau, Q. F., Sarafoglou, A., Matzke, D., Ly, A., Boehm, U., Marsman, M., Leslie, D. S., Forster, J. J., Wagenmakers, E.-J., &amp; Steingroever, H. (2017). A tutorial on bridge sampling. Journal of Mathematical Psychology, 81, 80-97. https://doi.org/10.1016/j.jmp.2017.09.005</span>
+
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -732,12 +746,7 @@ and is used to approximate the actual marginal likelihood.</p>
 
             <details class="quote">
               <summary>Source code in <code>bamojax/marginal_likelihoods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">150</span>
 <span class="normal">151</span>
 <span class="normal">152</span>
 <span class="normal">153</span>
@@ -800,7 +809,12 @@ and is used to approximate the actual marginal likelihood.</p>
 <span class="normal">210</span>
 <span class="normal">211</span>
 <span class="normal">212</span>
-<span class="normal">213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">laplace_approximation</span><span class="p">(</span><span class="n">key</span><span class="p">,</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">laplace_approximation</span><span class="p">(</span><span class="n">key</span><span class="p">,</span>
                           <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
                           <span class="n">iid_obs</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                           <span class="o">**</span><span class="n">opt_args</span><span class="p">):</span>
