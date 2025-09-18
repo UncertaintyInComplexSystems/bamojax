@@ -1836,7 +1836,7 @@ _ = model.add_node('x', observations=...)
 
 <span class="sd">        Args:</span>
 <span class="sd">            key: PRNGKey</span>
-<span class="sd">            state: a draw from either p(x) or p(x|.)</span>
+<span class="sd">            state: a draw from either $p(x)$ or $p(x \mid \cdot)$</span>
 <span class="sd">            input_variables: a dictionary with values for observed non-stochastic nodes</span>
 
 <span class="sd">        Returns:</span>
@@ -2832,7 +2832,7 @@ _ = model.add_node('x', observations=...)
             </td>
             <td>
               <div class="doc-md-description">
-                <p>a draw from either p(x) or p(x|.)</p>
+                <p>a draw from either <span class="arithmatex">\(p(x)\)</span> or <span class="arithmatex">\(p(x \mid \cdot)\)</span></p>
               </div>
             </td>
             <td>
@@ -2905,7 +2905,7 @@ _ = model.add_node('x', observations=...)
 
 <span class="sd">    Args:</span>
 <span class="sd">        key: PRNGKey</span>
-<span class="sd">        state: a draw from either p(x) or p(x|.)</span>
+<span class="sd">        state: a draw from either $p(x)$ or $p(x \mid \cdot)$</span>
 <span class="sd">        input_variables: a dictionary with values for observed non-stochastic nodes</span>
 
 <span class="sd">    Returns:</span>
@@ -3276,6 +3276,8 @@ _ = model.add_node('x', observations=...)
     <div class="doc doc-contents ">
 
 
+        <p>A meta-model is a collection of Bayesian models, which can be used for reversible jump MCMC.</p>
+
 
 
 
@@ -3396,7 +3398,11 @@ _ = model.add_node('x', observations=...)
 <span class="normal">593</span>
 <span class="normal">594</span>
 <span class="normal">595</span>
-<span class="normal">596</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MetaModel</span><span class="p">():</span>
+<span class="normal">596</span>
+<span class="normal">597</span>
+<span class="normal">598</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MetaModel</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; A meta-model is a collection of Bayesian models, which can be used for reversible jump MCMC.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                  <span class="n">model_list</span><span class="p">):</span>

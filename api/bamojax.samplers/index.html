@@ -712,9 +712,11 @@
 
 <span class="sd">        The signature of the Gibbs function is (key, state, temperature) -&gt; (state, info)</span>
 
-<span class="sd">        The Gibbs densities are defined as follows. Let Pa(x) give the parents of the set of variables x, and let Ch(x) give the set of children. Then the density is given by:</span>
+<span class="sd">        The Gibbs densities are defined as follows. Let $\text{Pa}(x)$ give the parents of the set of variables $x$, and let $\text{Ch}(x)$ give the set of children. Then the density is given by:</span>
 
-<span class="sd">        p(x | Pa(x)) \propto p(Ch(x) | Pa(Ch(x))) p(x | Pa(x))</span>
+<span class="sd">        $$</span>
+<span class="sd">            p\left(x \mid \text{Pa}(x)\right) \propto p\left(\text{Ch}(x) \mid \text{Pa}(\text{Ch}(x))\right) p\left(x \mid \text{Pa}(x)\right)</span>
+<span class="sd">        $$</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            key: PRNGKey</span>
@@ -766,8 +768,6 @@
 
             <span class="n">key</span><span class="p">,</span> <span class="n">subkey</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>     
             <span class="c1"># [TODO]: add functionality to sample specific variables for different numbers of steps</span>
-            <span class="c1"># def step_body(key, state): step_kernel.step...</span>
-            <span class="c1"># step_substate, step_info = jax.lax.scan(step_body, keys, state)</span>
             <span class="n">step_substate</span><span class="p">,</span> <span class="n">step_info</span> <span class="o">=</span> <span class="n">step_kernel</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">subkey</span><span class="p">,</span> <span class="n">step_substate</span><span class="p">)</span>
             <span class="n">info</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_info</span>
 

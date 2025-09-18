@@ -312,6 +312,51 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#bamojax.modified_blackjax.more_proposals.generate_bernoulli_noise" class="md-nav__link">
+    <span class="md-ellipsis">
+      generate_bernoulli_noise
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.modified_blackjax.more_proposals.bernoulli" class="md-nav__link">
+    <span class="md-ellipsis">
+      bernoulli
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.modified_blackjax.more_proposals.build_xor_step" class="md-nav__link">
+    <span class="md-ellipsis">
+      build_xor_step
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.modified_blackjax.more_proposals.xor_step_random_walk" class="md-nav__link">
+    <span class="md-ellipsis">
+      xor_step_random_walk
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.modified_blackjax.more_proposals.bernoulli_random_walk" class="md-nav__link">
+    <span class="md-ellipsis">
+      bernoulli_random_walk
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -357,6 +402,203 @@
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.modified_blackjax.more_proposals.generate_bernoulli_noise" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">generate_bernoulli_noise</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span></code>
+
+<a href="#bamojax.modified_blackjax.more_proposals.generate_bernoulli_noise" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Given a position (pytree) and a probability theta, generate a new position by flipping each bit with probability theta.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/modified_blackjax/more_proposals.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_bernoulli_noise</span><span class="p">(</span><span class="n">rng_key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Given a position (pytree) and a probability theta, generate a new position by flipping each bit with probability theta.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">,</span> <span class="n">unravel_fn</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">flatten_util</span><span class="o">.</span><span class="n">ravel_pytree</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">theta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">unravel_fn</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.modified_blackjax.more_proposals.bernoulli" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">bernoulli</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span></code>
+
+<a href="#bamojax.modified_blackjax.more_proposals.bernoulli" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a proposal function that flips each Bernoulli random variable of the input position with probability theta.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/modified_blackjax/more_proposals.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bernoulli</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Create a proposal function that flips each Bernoulli random variable of the input position with probability theta.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">propose</span><span class="p">(</span><span class="n">rng_key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayTree</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">generate_bernoulli_noise</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="k">return</span> <span class="n">propose</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.modified_blackjax.more_proposals.build_xor_step" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">build_xor_step</span><span class="p">()</span></code>
+
+<a href="#bamojax.modified_blackjax.more_proposals.build_xor_step" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build a kernel that uses the xor operation to flip bits in a binary vector.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/modified_blackjax/more_proposals.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_xor_step</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Build a kernel that uses the xor operation to flip bits in a binary vector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span>
+        <span class="n">rng_key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">logdensity_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">random_step</span><span class="p">:</span> <span class="n">Callable</span>
+    <span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">proposal_generator</span><span class="p">(</span><span class="n">key_proposal</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+            <span class="n">move_proposal</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">random_step</span><span class="p">(</span><span class="n">key_proposal</span><span class="p">,</span> <span class="n">position</span><span class="p">))</span> 
+            <span class="n">new_position</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">tree_map</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">bitwise_xor</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">move_proposal</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">new_position</span>
+
+        <span class="n">inner_kernel</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mcmc</span><span class="o">.</span><span class="n">random_walk</span><span class="o">.</span><span class="n">build_rmh</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">inner_kernel</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">logdensity_fn</span><span class="p">,</span> <span class="n">proposal_generator</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">kernel</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.modified_blackjax.more_proposals.xor_step_random_walk" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">xor_step_random_walk</span><span class="p">(</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="n">random_step</span><span class="p">)</span></code>
+
+<a href="#bamojax.modified_blackjax.more_proposals.xor_step_random_walk" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a random walk MCMC algorithm that uses the xor operation to flip bits in a binary vector.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/modified_blackjax/more_proposals.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">xor_step_random_walk</span><span class="p">(</span><span class="n">logdensity_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">random_step</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Create a random walk MCMC algorithm that uses the xor operation to flip bits in a binary vector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">kernel</span> <span class="o">=</span> <span class="n">build_xor_step</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_fn</span><span class="p">(</span><span class="n">position</span><span class="p">:</span> <span class="n">ArrayLikeTree</span><span class="p">,</span> <span class="n">rng_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">del</span> <span class="n">rng_key</span>
+        <span class="k">return</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mcmc</span><span class="o">.</span><span class="n">random_walk</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">logdensity_fn</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">step_fn</span><span class="p">(</span><span class="n">rng_key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">kernel</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">logdensity_fn</span><span class="p">,</span> <span class="n">random_step</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">SamplingAlgorithm</span><span class="p">(</span><span class="n">init_fn</span><span class="p">,</span> <span class="n">step_fn</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.modified_blackjax.more_proposals.bernoulli_random_walk" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">bernoulli_random_walk</span><span class="p">(</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span></code>
+
+<a href="#bamojax.modified_blackjax.more_proposals.bernoulli_random_walk" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a random walk MCMC algorithm that moves across the space of binary vectors.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/modified_blackjax/more_proposals.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bernoulli_random_walk</span><span class="p">(</span><span class="n">logdensity_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Create a random walk MCMC algorithm that moves across the space of binary vectors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">xor_step_random_walk</span><span class="p">(</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="n">bernoulli</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 
