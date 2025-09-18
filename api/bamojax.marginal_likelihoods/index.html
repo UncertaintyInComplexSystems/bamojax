@@ -461,7 +461,7 @@ $$
 $$</p>
 <p>In NMC we draw samples from the prior and approximate the ML as
 $$
-    p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right), with \theta_i ~ p(\theta) \enspace.
+    p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right), with \theta_i \sim p(\theta) \enspace.
 $$
 In nontrivial models, we need a <em>large</em> <span class="arithmatex">\(N\)</span> for this approximation to be 
 reasonable.</p>
@@ -521,7 +521,7 @@ reasonable.</p>
 
 <span class="sd">    In NMC we draw samples from the prior and approximate the ML as</span>
 <span class="sd">    $$</span>
-<span class="sd">        p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right), with \theta_i ~ p(\theta) \enspace.</span>
+<span class="sd">        p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right), with \theta_i \sim p(\theta) \enspace.</span>
 <span class="sd">    $$</span>
 <span class="sd">    In nontrivial models, we need a *large* $N$ for this approximation to be </span>
 <span class="sd">    reasonable.</span>
@@ -567,7 +567,7 @@ marginal likelihood [Gronau et al., 2017]:</p>
 <p>$$
 p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right) \frac{p(\theta_i)}{g_IS(\theta_i)}\enspace,
 $$
-with <span class="arithmatex">\(\theta_i ~ g_IS(\theta)\)</span></p>
+with <span class="arithmatex">\(\theta_i \sim g_IS(\theta)\)</span></p>
 <p>Here, g_IS is the importance density, which should meet these criteria:</p>
 <ol>
 <li>It is easy to evaluate.</li>
@@ -667,7 +667,7 @@ can make it easier to introduce heavy tails.</p>
 <span class="sd">    $$</span>
 <span class="sd">    p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right) \frac{p(\theta_i)}{g_IS(\theta_i)}\enspace,</span>
 <span class="sd">    $$</span>
-<span class="sd">    with $\theta_i ~ g_IS(\theta)$</span>
+<span class="sd">    with $\theta_i \sim g_IS(\theta)$</span>
 
 <span class="sd">    Here, g_IS is the importance density, which should meet these criteria:</span>
 
