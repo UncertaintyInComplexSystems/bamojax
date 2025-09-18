@@ -406,9 +406,10 @@
     <div class="doc doc-contents ">
 
         <p>We typically have multiple observations and assume the likelihood factorizes 
-as: </p>
-<pre><code>\log p(Y \mid \theta) = \sum_{i=1}^N \log p(y_i \mid \theta) .
-</code></pre>
+as: 
+$$  <br />
+    \log p\left(Y \mid \theta\right) = \sum_{i=1}^N \log p\left(y_i \mid \theta\right) \enspace.
+$$</p>
 
 
             <details class="quote">
@@ -422,13 +423,15 @@ as: </p>
 <span class="normal">27</span>
 <span class="normal">28</span>
 <span class="normal">29</span>
-<span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">iid_likelihood</span><span class="p">(</span><span class="n">L</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="normal">30</span>
+<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">iid_likelihood</span><span class="p">(</span><span class="n">L</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    We typically have multiple observations and assume the likelihood factorizes </span>
 <span class="sd">    as: </span>
-
-<span class="sd">        \log p(Y \mid \theta) = \sum_{i=1}^N \log p(y_i \mid \theta) .</span>
+<span class="sd">    $$    </span>
+<span class="sd">        \log p\left(Y \mid \theta\right) = \sum_{i=1}^N \log p\left(y_i \mid \theta\right) \enspace.</span>
+<span class="sd">    $$</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">L</span><span class="p">()(</span><span class="n">x</span><span class="p">))</span>
@@ -450,20 +453,21 @@ as: </p>
     <div class="doc doc-contents ">
 
         <p>The Naive Monte Carlo (NMC) estimator</p>
-<p>The marginal likelihood is defined by </p>
-<pre><code>p(D) = \int_\Theta p(D \mid \theta) p(\theta) d\theta.
-</code></pre>
-<p>In NMC we draw samples from the prior and approximate the ML as</p>
-<pre><code>p(D) \approx 1/N \sum_{i=1}^N p(D \mid \theta_i), with \theta_i ~ p(\theta).
-</code></pre>
-<p>In nontrivial models, we need a <em>large</em> N for this approximation to be 
+<p>The marginal likelihood is defined as 
+$$
+    p(D) = \int_\Theta p\left(D \mid \theta\right) p(\theta) \,\text{d}\theta \enspace .
+$$</p>
+<p>In NMC we draw samples from the prior and approximate the ML as
+$$
+    p(D) \approx 1/N \sum_{i=1}^N p\left(D \mid \theta_i\right), with \theta_i ~ p(\theta) \enspace.
+$$
+In nontrivial models, we need a <em>large</em> <span class="arithmatex">\(N\)</span> for this approximation to be 
 reasonable.</p>
 
 
             <details class="quote">
               <summary>Source code in <code>bamojax/marginal_likelihoods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">33</span>
-<span class="normal">34</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
 <span class="normal">35</span>
 <span class="normal">36</span>
 <span class="normal">37</span>
@@ -498,7 +502,9 @@ reasonable.</p>
 <span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span>
-<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">naive_monte_carlo</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> 
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">naive_monte_carlo</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> 
                       <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
                       <span class="n">num_prior_draws</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">,</span> 
                       <span class="n">num_chunks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
@@ -506,15 +512,16 @@ reasonable.</p>
                       <span class="n">pb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">:</span>   
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Naive Monte Carlo (NMC) estimator</span>
 
-<span class="sd">    The marginal likelihood is defined by </span>
-
-<span class="sd">        p(D) = \int_\Theta p(D \mid \theta) p(\theta) d\theta.</span>
+<span class="sd">    The marginal likelihood is defined as </span>
+<span class="sd">    $$</span>
+<span class="sd">        p(D) = \int_\Theta p\left(D \mid \theta\right) p(\theta) \,\text{d}\theta \enspace .</span>
+<span class="sd">    $$</span>
 
 <span class="sd">    In NMC we draw samples from the prior and approximate the ML as</span>
-
-<span class="sd">        p(D) \approx 1/N \sum_{i=1}^N p(D \mid \theta_i), with \theta_i ~ p(\theta).</span>
-
-<span class="sd">    In nontrivial models, we need a *large* N for this approximation to be </span>
+<span class="sd">    $$</span>
+<span class="sd">        p(D) \approx 1/N \sum_{i=1}^N p\left(D \mid \theta_i\right), with \theta_i ~ p(\theta) \enspace.</span>
+<span class="sd">    $$</span>
+<span class="sd">    In nontrivial models, we need a *large* $N$ for this approximation to be </span>
 <span class="sd">    reasonable.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -555,9 +562,10 @@ reasonable.</p>
         <p>Importance sampling routine for a given BayesianModel.</p>
 <p>Importance sampling is based around the following approximation to the log
 marginal likelihood (see e.g., Gronau et al., 2017):</p>
-<p>p(D) \approx 1/N \sum_{i=1}^N p(D \mid \theta_i) p(\theta_i) / g_IS(\theta_i),</p>
-<p>with</p>
-<p>\theta_i ~ g_IS(\theta)</p>
+<p>$$
+p(D) \approx 1/N \sum_{i=1}^N p\left(D \mid \theta_i\right) \frac{p(\theta_i)}{g_IS(\theta_i)}\enspace,
+$$
+with <span class="arithmatex">\(\theta_i ~ g_IS(\theta)\)</span></p>
 <p>Here, g_IS is the importance density, which should meet these criteria:</p>
 <ol>
 <li>It is easy to evaluate.</li>
@@ -573,9 +581,7 @@ can make it easier to introduce heavy tails.</p>
 
             <details class="quote">
               <summary>Source code in <code>bamojax/marginal_likelihoods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 79</span>
-<span class="normal"> 80</span>
-<span class="normal"> 81</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 81</span>
 <span class="normal"> 82</span>
 <span class="normal"> 83</span>
 <span class="normal"> 84</span>
@@ -635,7 +641,8 @@ can make it easier to introduce heavy tails.</p>
 <span class="normal">138</span>
 <span class="normal">139</span>
 <span class="normal">140</span>
-<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">importance_sampling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> 
+<span class="normal">141</span>
+<span class="normal">142</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">importance_sampling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> 
                         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
                         <span class="n">g_IS</span><span class="p">:</span> <span class="n">Distribution</span><span class="p">,</span>
                         <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">,</span>
@@ -646,11 +653,10 @@ can make it easier to introduce heavy tails.</p>
 <span class="sd">    Importance sampling is based around the following approximation to the log</span>
 <span class="sd">    marginal likelihood (see e.g., Gronau et al., 2017):</span>
 
-<span class="sd">    p(D) \approx 1/N \sum_{i=1}^N p(D \mid \theta_i) p(\theta_i) / g_IS(\theta_i),</span>
-
-<span class="sd">    with</span>
-
-<span class="sd">    \theta_i ~ g_IS(\theta)</span>
+<span class="sd">    $$</span>
+<span class="sd">    p(D) \approx 1/N \sum_{i=1}^N p\left(D \mid \theta_i\right) \frac{p(\theta_i)}{g_IS(\theta_i)}\enspace,</span>
+<span class="sd">    $$</span>
+<span class="sd">    with $\theta_i ~ g_IS(\theta)$</span>
 
 <span class="sd">    Here, g_IS is the importance density, which should meet these criteria:</span>
 
@@ -726,8 +732,7 @@ and is used to approximate the actual marginal likelihood.</p>
 
             <details class="quote">
               <summary>Source code in <code>bamojax/marginal_likelihoods.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">144</span>
-<span class="normal">145</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
 <span class="normal">146</span>
 <span class="normal">147</span>
 <span class="normal">148</span>
@@ -794,7 +799,8 @@ and is used to approximate the actual marginal likelihood.</p>
 <span class="normal">209</span>
 <span class="normal">210</span>
 <span class="normal">211</span>
-<span class="normal">212</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">laplace_approximation</span><span class="p">(</span><span class="n">key</span><span class="p">,</span>
+<span class="normal">212</span>
+<span class="normal">213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">laplace_approximation</span><span class="p">(</span><span class="n">key</span><span class="p">,</span>
                           <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
                           <span class="n">iid_obs</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                           <span class="o">**</span><span class="n">opt_args</span><span class="p">):</span>
