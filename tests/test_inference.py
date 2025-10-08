@@ -221,7 +221,7 @@ stddevs = jnp.array([15, 10, 16, 11, 9, 11, 10, 18])
 J = len(means)
 ES = Model('eight schools')
 mu = ES.add_node('mu', distribution=dist.Normal(loc=0, scale=10))
-tau = ES.add_node('tau', distribution=dist.TransformedDistribution(dist.Normal(loc=0., scale=1.), nprb.ExpTransform()))
+tau = ES.add_node('tau', distribution=dist.TransformedDistribution(dist.Normal(loc=5., scale=1.), nprb.ExpTransform()))
 theta = ES.add_node('theta', distribution=dist.Normal, parents=dict(loc=mu, scale=tau), shape=(J, ))
 _ = ES.add_node('y', distribution=dist.Normal, parents=dict(loc=theta, scale=stddevs), observations=means)
 
