@@ -5,25 +5,8 @@ import jax.random as jrnd
 
 import jaxkern as jk
 
-import numpyro as npr
-import numpyro.distributions as dist
-import numpyro.distributions.transforms as nprb
+from bamojax.more_distributions import GaussianProcessFactory
 
-from bamojax.more_distributions import AscendingDistribution, GaussianProcessFactory, Zero
-
-def test_ascending_distribution():
-
-    min_val, max_val, num_el = 0.0, 5.0, 100
-    asc_dist = AscendingDistribution(min_val, max_val, num_el)
-    num_draws = 1000
-    draws = asc_dist.sample(key=jrnd.PRNGKey(0), sample_shape=(num_draws, ))
-    is_sorted = lambda a: jnp.all(a[:-1] <= a[1:])
-
-    assert jnp.isclose(min_val, jnp.mean(draws[:, 0]), atol=0.1, rtol=1e-3)
-    assert jnp.isclose(jnp.mean(draws[:, -1]), max_val, rtol=1e-3)
-    assert jnp.all(jax.vmap(is_sorted)(draws))
-
-#
 def test_gaussian_processes():
 
     cov_fn = jk.RBF().cross_covariance

@@ -182,7 +182,7 @@ def test_sginference():
     num_samples = 200_000
     num_burn = 200_000
     num_thin = 20
-    num_chains = 1
+    num_chains = 4
     stepsize = 1e-5  # with larger learning rates we encounter nans
 
     engine = SGMCMCInference(model=mgpmodel, 
