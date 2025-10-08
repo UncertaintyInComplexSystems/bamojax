@@ -37,14 +37,6 @@ def test_gibbs_inference():
 
     """
 
-    step_fns = dict(mu=blackjax.normal_random_walk,
-                    tau=blackjax.normal_random_walk,
-                    theta=blackjax.normal_random_walk)
-    step_fn_params = dict(mu=dict(sigma=10.0),
-                            tau=dict(sigma=5.0),
-                            theta=dict(sigma=5.0*jnp.eye(J)))
-    gibbs_kernel = gibbs_sampler(model=ES, step_fns=step_fns, step_fn_params=step_fn_params)
-
     num_chains = 4
     num_samples = 100000
     num_burn = 100000
