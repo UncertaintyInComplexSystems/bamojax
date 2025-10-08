@@ -178,7 +178,7 @@ def test_sginference():
                                             obs_noise=obs_noise), 
                             link_fn=marginal_gp_fn)
     
-    batch_size = 25
+    batch_size = 50
     num_samples = 200_000
     num_burn = 200_000
     num_thin = 20
