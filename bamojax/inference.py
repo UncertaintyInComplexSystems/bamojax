@@ -5,6 +5,10 @@ from blackjax.types import PRNGKey
 from blackjax.smc.resampling import systematic
 from blackjax import window_adaptation, nuts, generate_top_level_api_from, meanfield_vi
 
+import numpyro
+import numpyro.distributions as dist
+import numpyro.distributions.transforms as nprb
+
 from bamojax.base import Model
 from bamojax.samplers import mcmc_sampler
 from .modified_blackjax import modified_adaptive_tempered, modified_tempered
@@ -12,7 +16,7 @@ from .modified_blackjax import modified_adaptive_tempered, modified_tempered
 tempered_smc = generate_top_level_api_from(modified_tempered)
 adaptive_tempered_smc = generate_top_level_api_from(modified_adaptive_tempered)
 
-import distrax as dx
+
 
 from typing import Tuple, Callable
 import optax
@@ -24,9 +28,9 @@ import jax.numpy as jnp
 from jax.tree_util import tree_map, tree_flatten, tree_unflatten
 from jax.flatten_util import ravel_pytree
 
-from tensorflow_probability.substrates import jax as tfp
-tfd = tfp.distributions
-tfb = tfp.bijectors
+# from tensorflow_probability.substrates import jax as tfp
+# tfd = tfp.distributions
+# tfb = tfp.bijectors
 
 def run_window_adaptation(model, key: PRNGKey, num_warmup_steps):
     r""" Find optimized parameters for HMC-based inference.
@@ -69,7 +73,7 @@ def get_model_bijectors(model) -> dict:
             bij = node.distribution._bijector
             transform = bij
         else:
-            transform = tfb.Identity()  # Use TensorFlow Probability's Identity bijector
+            transform = nprb.IdentityTransform()  # Use TensorFlow Probability's Identity bijector
         bijectors[node_name] = transform
     return bijectors
 
@@ -524,9 +528,9 @@ class VIInference(InferenceEngine):
                 optimizer_chain_args = [optimizer_chain_args]
             self.optimizer = optax.chain(*optimizer_chain_args, optimizer)
         self.bijectors = get_model_bijectors(self.model)
-        self.is_leaf_fn = lambda x: hasattr(x, 'forward') and hasattr(x, 'inverse')
-        self.forward_bijectors = lambda x: jax.tree.map(lambda b, v: b.forward(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
-        self.backward_bijectors = lambda x: jax.tree.map(lambda b, v: b.inverse(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
+        self.is_leaf_fn = lambda x: hasattr(x, '__call__') and hasattr(x, '_inverse')
+        self.forward_bijectors = lambda x: jax.tree.map(lambda b, v: b(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
+        self.backward_bijectors = lambda x: jax.tree.map(lambda b, v: b._inverse(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
 
         def logdensity_fn(z):
             z = self.forward_bijectors(z)
@@ -621,9 +625,9 @@ class LaplaceInference(InferenceEngine):
         self.bounds = bounds
 
         self.bijectors = get_model_bijectors(model)
-        self.is_leaf_fn = lambda x: hasattr(x, 'forward') and hasattr(x, 'inverse')
-        self.forward_bijectors = lambda x: jax.tree.map(lambda b, v: b.forward(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
-        self.backward_bijectors = lambda x: jax.tree.map(lambda b, v: b.inverse(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
+        self.is_leaf_fn = lambda x: hasattr(x, '__call__') and hasattr(x, '_inverse')
+        self.forward_bijectors = lambda x: jax.tree.map(lambda b, v: b(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
+        self.backward_bijectors = lambda x: jax.tree.map(lambda b, v: b._inverse(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
 
         @jax.jit
         def logdensity_fn(z):
@@ -645,12 +649,14 @@ class LaplaceInference(InferenceEngine):
     def run_single_chain(self, key):
         def get_unconstrained_init(model, key):
             constrained = tree_map(jnp.asarray, model.sample_prior(key))
+            print('constrained sample:', constrained)
             unconstrained = self.backward_bijectors(constrained)
+            print('unconstrained sample:', unconstrained)
             return unconstrained
         
         #
-        init_params = get_unconstrained_init(self.model, key)
 
+        init_params = get_unconstrained_init(self.model, key)
         if self.bounds is not None:
             sol = self.optimizer.run(init_params, bounds=self.bounds)   
         else:
@@ -673,9 +679,9 @@ class LaplaceInference(InferenceEngine):
         Sigma = jnp.linalg.inv(H)
 
         if theta_hat_flat.shape == () or theta_hat_flat.shape == (1,):  # Univariate case
-            dist = dx.Normal(loc=theta_hat_flat, scale=jnp.sqrt(Sigma))
+            laplace_dist = dist.Normal(loc=theta_hat_flat, scale=jnp.sqrt(Sigma))
         else:
-            dist = dx.MultivariateNormalFullCovariance(loc=theta_hat_flat, covariance_matrix=Sigma)
+            laplace_dist = dist.MultivariateNormal(loc=theta_hat_flat, covariance_matrix=Sigma)
 
         _, logdet = jnp.linalg.slogdet(Sigma)
 
@@ -683,7 +689,7 @@ class LaplaceInference(InferenceEngine):
         lml = log_posterior + 1/2*logdet + self.D/2 * jnp.log(2*jnp.pi)
 
         return dict(
-            distribution=dist,
+            distribution=laplace_dist,
             mode=mode,
             flat_mode=theta_hat_flat,
             covariance=Sigma,

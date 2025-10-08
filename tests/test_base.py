@@ -1,34 +1,33 @@
 import jax.numpy as jnp
 from bamojax.base import Model
-import distrax as dx
 from jax.scipy.stats import norm
 
-from tensorflow_probability.substrates import jax as tfp
-tfd = tfp.distributions
-tfb = tfp.bijectors
+import numpyro as npr
+import numpyro.distributions as dist
+import numpyro.distributions.transforms as nprb
 
 y = jnp.asarray([-3.470e-1, -1.520e+0, 6.760e-1, -1.410e+0, -1.610e+0, 1.430e+0, -3.810e-2, 6.930e-1, -8.290e-1,  1.030e+0])
 n = len(y)
 
 model1 = Model('test_model 1')
-A = model1.add_node('A', distribution=dx.Transformed(dx.Normal(loc=0.0, scale=1.0), tfb.Exp()))
-B = model1.add_node('B', distribution=dx.Normal(loc=jnp.zeros((n, )), scale=jnp.ones((n, ))))
-_ = model1.add_node('C', distribution=dx.Normal, observations=y, parents=dict(loc=B, scale=A))
+A = model1.add_node('A', distribution=dist.TransformedDistribution(dist.Normal(loc=0.0, scale=1.0), nprb.ExpTransform()))
+B = model1.add_node('B', distribution=dist.Normal(loc=jnp.zeros((n, )), scale=jnp.ones((n, ))))
+_ = model1.add_node('C', distribution=dist.Normal, observations=y, parents=dict(loc=B, scale=A))
 
 model2 = Model('test_model 2')
-D = model2.add_node('D', distribution=dx.Transformed(dx.Normal(loc=0.0, scale=1.0), tfb.Exp()))
-E = model2.add_node('E', distribution=dx.Normal(loc=0.0, scale=1.0), shape=(n, ))
-_ = model2.add_node('F', distribution=dx.Normal, observations=y, parents=dict(loc=E, scale=D))
+D = model2.add_node('D', distribution=dist.TransformedDistribution(dist.Normal(loc=0.0, scale=1.0), nprb.ExpTransform()))
+E = model2.add_node('E', distribution=dist.Normal(loc=0.0, scale=1.0), shape=(n, ))
+_ = model2.add_node('F', distribution=dist.Normal, observations=y, parents=dict(loc=E, scale=D))
 
 model3 = Model('test_model 3')
-G = model3.add_node('G', distribution=dx.Transformed(dx.Normal(loc=0.0, scale=1.0), tfb.Exp()))
-H = model3.add_node('H', distribution=dx.Normal(loc=0.0, scale=1.0))
-_ = model3.add_node('I', distribution=dx.Normal, observations=y, parents=dict(loc=H, scale=G))
+G = model3.add_node('G', distribution=dist.TransformedDistribution(dist.Normal(loc=0.0, scale=1.0), nprb.ExpTransform()))
+H = model3.add_node('H', distribution=dist.Normal(loc=0.0, scale=1.0))
+_ = model3.add_node('I', distribution=dist.Normal, observations=y, parents=dict(loc=H, scale=G))
 
 model4 = Model('test_model 4 - uninstantiated parent')
-J = model4.add_node('J', distribution=dx.Transformed(dx.Normal(loc=0.0, scale=1.0), tfb.Exp()))
-K = model4.add_node('K', distribution=dx.Normal, parents=dict(loc=0.0, scale=1.0), shape=(n, ))
-_ = model4.add_node('L', distribution=dx.Normal, observations=y, parents=dict(loc=K, scale=J))
+J = model4.add_node('J', distribution=dist.TransformedDistribution(dist.Normal(loc=0.0, scale=1.0), nprb.ExpTransform()))
+K = model4.add_node('K', distribution=dist.Normal, parents=dict(loc=0.0, scale=1.0), shape=(n, ))
+_ = model4.add_node('L', distribution=dist.Normal, observations=y, parents=dict(loc=K, scale=J))
 
 def test_node_shapes():    
 

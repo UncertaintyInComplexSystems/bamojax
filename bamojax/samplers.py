@@ -5,7 +5,9 @@ import jax.numpy as jnp
 from blackjax.base import SamplingAlgorithm
 from blackjax.types import ArrayTree, PRNGKey
 from blackjax import normal_random_walk, generate_top_level_api_from
-from distrax import Distribution
+
+import numpyro
+from numpyro.distributions import Distribution
 
 from .base import Model
 from .modified_blackjax import modified_elliptical_slice_nd
@@ -361,7 +363,7 @@ def reversible_jump_mcmc(models: list[Model],
             key_aux, key_accept = jrnd.split(key)            
             
             def up_branch(_):
-                u = auxiliary_proposal_dist.sample(seed=key_aux)
+                u = auxiliary_proposal_dist.sample(key=key_aux)
                 new_position = jump_functions[0](position, u)  # make kappa from the auxiliary variable u
                 jac_det = jacobian_det_up(u)
                 logq = -1.0*auxiliary_proposal_dist.log_prob(u)  # Note the negative sign! To check: is this robust for other proposal distributions?
