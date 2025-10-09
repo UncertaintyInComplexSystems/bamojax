@@ -182,7 +182,7 @@ def test_sginference():
 
     assert jnp.isclose(jnp.median(result['states']['lengthscale']), true_lengthscale, atol=0.01)
     assert jnp.isclose(jnp.median(result['states']['obs_noise']), true_noise, atol=0.01)  
-    # Note that we do not check the variance, as it is not identifiable in the model. 
+    # Note that we do not check the variance, as it is not identifiable in the model.
 #
 
 true_mean = 5.0
