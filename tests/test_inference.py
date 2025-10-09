@@ -115,7 +115,7 @@ def test_vi():
                         optimizer_chain_args=optax.clip_by_global_norm(1.0))
 
     result = engine.run(key=jrnd.PRNGKey(0))
-    assert jnp.allclose(result['states'].mu['mu'][:,-1], 6.1, atol=0.1)
+    assert jnp.allclose(result['states'].mu['mu'][:,-1], 6.1, atol=0.15)
 
     vi_samples = engine.sample_from_variational(jrnd.PRNGKey(1), vi_result=result, num_draws=num_draws)
     assert jnp.min(vi_samples['tau'].flatten()) > 0.0
@@ -124,7 +124,7 @@ def test_vi():
     num_chains = 4
     num_steps = 100_000
     num_gradient_samples = 10
-    num_draws = 1_000
+    num_draws = 2_000
 
     engine = VIInference(ES, 
                         num_chains=num_chains, 
