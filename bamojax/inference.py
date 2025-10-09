@@ -594,7 +594,7 @@ class VIInference(InferenceEngine):
         mfvi = meanfield_vi(self.logdensity_fn, self.optimizer, self.num_gradient_samples)
         initial_position = self.model.sample_prior(key=jrnd.PRNGKey(0))  # these are overriden by Blackjax
 
-        initial_position_unconstrained = {k: self.bijectors[k](v) for k, v in initial_position.items()}
+        initial_position_unconstrained = {k: self.bijectors[k]._inverse(v) for k, v in initial_position.items()}
         initial_state = mfvi.init(initial_position_unconstrained)
 
         @jax.jit
@@ -654,9 +654,7 @@ class LaplaceInference(InferenceEngine):
     def run_single_chain(self, key):
         def get_unconstrained_init(model, key):
             constrained = tree_map(jnp.asarray, model.sample_prior(key))
-            print('constrained sample:', constrained)
-            unconstrained = self.backward_bijectors(constrained)
-            print('unconstrained sample:', unconstrained)
+            unconstrained = {k: self.bijectors[k]._inverse(v) for k, v in constrained.items()}
             return unconstrained
         
         #
@@ -691,7 +689,7 @@ class LaplaceInference(InferenceEngine):
         _, logdet = jnp.linalg.slogdet(Sigma)
 
         log_posterior = -1.0 * self.obj_fun(mode)
-        lml = log_posterior + 1/2*logdet + self.D/2 * jnp.log(2*jnp.pi)
+        lml = log_posterior + 1/2*logdet + self.D/2 * jnp.log(2*jnp.pi)        
 
         return dict(
             distribution=laplace_dist,
