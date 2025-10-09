@@ -1,6 +1,20 @@
 name: Run tests (CPU)
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+      - feat/**
+  pull_request:
+    branches:
+      - main
+      - feat/**
+  workflow_dispatch:  # <-- add temporarily so you can run it by hand
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 
 jobs:
   test:
