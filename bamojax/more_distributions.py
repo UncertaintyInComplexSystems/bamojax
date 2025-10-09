@@ -357,35 +357,3 @@ def AutoRegressionFactory(ar_fn: Callable):
     return ARInstance
 
 #
-def AscendingDistribution(min_u, max_u, num_el):
-    r""" Creates a distribution of a sorted array of continuous values in [min_u, max_u].
-
-    To ensure gradient-based methods can work on the model, all transformations must be bijectors.
-    A generic sort() does not meet this condition, as it is not invertible. By using the tfb 
-    bijector Ascending() in combination with scaling and deriving the expected maximum value of 
-    dist.TransformedDistribution(Uniform, Ascending()), we can construct, in expectation, the desired random 
-    variable. Note that individual draws main contain values that exceed max_u. 
-
-    Args:
-        min_u, max_u: The desired range.
-        num_el: The length of the desired variate.
-    Returns:
-        A distribution over arrays of length `num_el`, with values in ascending order.
-
-    
-    """
-    # to migrate
-
-    raise NotImplementedError('Move to numpyro')
-    # R = 0.5 + (num_el-1)*(jnp.exp(1) - 1)
-    # base_distribution = dx.Independent(dx.Uniform(low=jnp.zeros(num_el), high=jnp.ones(num_el)), reinterpreted_batch_ndims=1)
-
-    # bijector = tfb.Chain([
-    #     tfb.Scale(scale=(max_u - min_u) / R),  
-    #     tfb.Shift(shift=jnp.array(min_u, dtype=jnp.float64)),  
-    #     tfb.Ascending()               
-    # ])
-
-    return dist.TransformedDistribution(base_distribution, bijector)
-
-#

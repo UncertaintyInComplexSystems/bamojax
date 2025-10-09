@@ -1,7 +1,6 @@
 from jaxtyping import Array, Union
 import jax
 import jax.numpy as jnp
-# import distrax as dx
 
 import jax.random as jrnd
 from typing import Tuple, Callable
@@ -9,12 +8,6 @@ from typing import Tuple, Callable
 from numpyro.distributions import Distribution, TransformedDistribution
 from numpyro.distributions.transforms import Transform as Bijector
 
-
-# from distrax._src.distributions.distribution import Distribution
-# from distrax._src.bijectors.bijector import Bijector
-# from tensorflow_probability.substrates import jax as tfp
-# tfd = tfp.distributions
-# tfb = tfp.bijectors
 
 
 class Node:
