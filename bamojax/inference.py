@@ -69,9 +69,11 @@ def get_model_bijectors(model) -> dict:
     latent_nodes = model.get_latent_nodes()
     bijectors = {}
     for node_name, node in latent_nodes.items():
-        if hasattr(node.distribution, '_bijector'):
-            bij = node.distribution._bijector
-            transform = bij
+        if isinstance(node.distribution, dist.TransformedDistribution):
+            if len(node.distribution.transforms) == 1:
+                transform = node.distribution.transforms[0]
+            else:
+                transform = nprb.ComposeTransform(node.distribution.transforms)
         else:
             transform = nprb.IdentityTransform()  # Use TensorFlow Probability's Identity bijector
         bijectors[node_name] = transform
@@ -528,6 +530,7 @@ class VIInference(InferenceEngine):
                 optimizer_chain_args = [optimizer_chain_args]
             self.optimizer = optax.chain(*optimizer_chain_args, optimizer)
         self.bijectors = get_model_bijectors(self.model)
+
         self.is_leaf_fn = lambda x: hasattr(x, '__call__') and hasattr(x, '_inverse')
         self.forward_bijectors = lambda x: jax.tree.map(lambda b, v: b(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
         self.backward_bijectors = lambda x: jax.tree.map(lambda b, v: b._inverse(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
@@ -590,7 +593,9 @@ class VIInference(InferenceEngine):
         """
         mfvi = meanfield_vi(self.logdensity_fn, self.optimizer, self.num_gradient_samples)
         initial_position = self.model.sample_prior(key=jrnd.PRNGKey(0))  # these are overriden by Blackjax
-        initial_state = mfvi.init(initial_position)
+
+        initial_position_unconstrained = {k: self.bijectors[k](v) for k, v in initial_position.items()}
+        initial_state = mfvi.init(initial_position_unconstrained)
 
         @jax.jit
         def one_step(state, rng_key):
