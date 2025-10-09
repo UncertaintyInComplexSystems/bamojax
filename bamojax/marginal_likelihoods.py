@@ -8,8 +8,12 @@ from tqdm import tqdm
 
 from jax.scipy.special import logsumexp
 from jax.tree_util import tree_flatten, tree_unflatten, tree_map
-from distrax._src.distributions.distribution import Distribution
-from distrax._src.bijectors.bijector import Bijector
+
+
+import numpyro as npr
+import numpyro.distributions as dist
+from numpyro.distributions import Distribution, TransformedDistribution
+import numpyro.distributions.transforms as nprb
 
 from jaxtyping import Float
 from typing import Callable, Dict
@@ -137,12 +141,12 @@ def importance_sampling(key,
     logprior_fn = model.logprior_fn()
 
     g_flat, g_treedef = tree_flatten(g_IS, 
-                                     lambda l: isinstance(l, (Distribution, Bijector)))
+                                     lambda l: isinstance(l, (Distribution, TransformedDistribution)))
        
     samples = list()
     for g in g_flat:
         key, subkey = jrnd.split(key)
-        samples.append(g.sample(seed=subkey, sample_shape=(num_samples, )))
+        samples.append(g.sample(key=subkey, sample_shape=(num_samples, )))
 
     importance_samples = tree_unflatten(g_treedef, samples)
     adjusted_likelihoods = jax.vmap(adjusted_likelihood)(importance_samples)
