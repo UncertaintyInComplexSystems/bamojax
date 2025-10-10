@@ -52,7 +52,7 @@ def get_config() -> VersioneerConfig:
     cfg.VCS = "git"
     cfg.style = "pep440"
     cfg.tag_prefix = "v"
-    cfg.parentdir_prefix = "None"
+    cfg.parentdir_prefix = "bamojax-"
     cfg.versionfile_source = "bamojax/_version.py"
     cfg.verbose = False
     return cfg

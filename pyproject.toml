@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 name = "bamojax"
 dynamic = ["version"]
 description = "Bayesian Modelling with JAX"
-readme = "README.md"
+readme = {file = ["README.md"], content-type = "text/markdown"}
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
 authors = [
@@ -19,16 +19,15 @@ authors = [
 keywords = ["bayesian modelling", "jax", "probabilistic", "mcmc", "smc", "inference"]
 classifiers = [
   "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
 ]
 
 # === Runtime dependencies (from your setup.py) ===
 dependencies = [
-  "jax",
-  "jaxlib",
-  "blackjax",
-  "numpyro",
+  "jax>=0.4.33",
+  "jaxlib>=0.4.33",
+  "blackjax>=1.2",
+  "numpyro>=0.14",
   "jaxtyping",
 ]
 
