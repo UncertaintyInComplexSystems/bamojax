@@ -65,7 +65,7 @@ def link_fn(probs):
 
 #
 latent_theta = my_model.add_node('theta', 
-                                 distribution=dist.Beta(concentration0=1, concentration1=1))
+                                 distribution=dist.Beta(concentration1=1, concentration0=1))
 observations = my_model.add_node('x', 
                                  distribution=dist.Bernoulli, 
                                  parents=dict(probs=latent_theta), 
@@ -147,7 +147,7 @@ An important 'feature' of **bamojax** is that it is straightforward to add any d
 def beta_link_fn(mode, conc):
   a = mode*(conc-2) + 1
   b = (1 - mode)*(conc-2) + 1
-  return {'concentration0': a, 'concentration1': b}
+  return {'concentration1': a, 'concentration0': b}
 
 omega = my_model.add_node('omega', distribution=dist.Beta, parents=dict(concentration0=1.0, concentration1=1.0))
 theta = my_model.add_node('theta', distribution=dist.Beta, parents=dict(mode=omega, conc=15), link_fn=beta_link_fn)
