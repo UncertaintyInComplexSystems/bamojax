@@ -1,14 +1,13 @@
 from jaxtyping import Array, Union
 import jax
 import jax.numpy as jnp
-import distrax as dx
+
 import jax.random as jrnd
 from typing import Tuple, Callable
-from distrax._src.distributions.distribution import Distribution
-from distrax._src.bijectors.bijector import Bijector
-from tensorflow_probability.substrates import jax as tfp
-tfd = tfp.distributions
-tfb = tfp.bijectors
+
+from numpyro.distributions import Distribution, TransformedDistribution
+from numpyro.distributions.transforms import Transform as Bijector
+
 
 
 class Node:
@@ -125,7 +124,7 @@ class Node:
 
         transformed_parents = self.link_fn(**parent_values)
         if hasattr(self, 'bijector'):
-            return dx.Transformed(self.distribution(**transformed_parents), self.bijector)
+            return TransformedDistribution(self.distribution(**transformed_parents), self.bijector)
         else:
             return self.distribution(**transformed_parents)
 
@@ -394,7 +393,7 @@ class Model:
                 dist = node.get_distribution()               
             else:
                 dist = node.get_distribution(state)
-            state[node.name] = dist.sample(seed=subkey, sample_shape=node.shape)   
+            state[node.name] = dist.sample(key=subkey, sample_shape=node.shape)   
         return state
 
     #
@@ -413,7 +412,7 @@ class Model:
         
         for node in self.get_leaf_nodes():
             key, key_obs = jrnd.split(key)
-            state[node.name] = node.get_distribution(state, minibatch=input_variables).sample(seed=key_obs, sample_shape=node.shape)
+            state[node.name] = node.get_distribution(state, minibatch=input_variables).sample(key=key_obs, sample_shape=node.shape)
         return state
 
 

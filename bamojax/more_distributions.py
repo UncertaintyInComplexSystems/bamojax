@@ -4,14 +4,13 @@ from abc import ABC, abstractmethod
 import jax
 import jax.random as jrnd
 import jax.numpy as jnp
-import distrax as dx
 
 from jax.scipy.special import multigammaln
 
-from distrax._src.distributions.distribution import Distribution
-from tensorflow_probability.substrates import jax as tfp
-tfd = tfp.distributions
-tfb = tfp.bijectors
+import numpyro as npr
+import numpyro.distributions as dist
+from numpyro.distributions import Distribution
+import numpyro.distributions.transforms as nprb
 
 from .base import Node
 
@@ -35,7 +34,7 @@ class Zero(MeanFunction):
 def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = Zero(),  nd: Tuple[int, ...] = None, jitter: float = 1e-6):
     r""" Returns an instantiated Gaussian process distribution object. 
     
-    This is essentially a dx.MultivariateNormalFullCovariance object, with its mean and covariance determined by the mean and covariance functions of the GP.
+    This is essentially a dist.MultivariateNormal object, with its mean and covariance determined by the mean and covariance functions of the GP.
     
     Args: 
         cov_fn: The GP covariance function. It assumes a signature of cov_fn(parameters: dict, x: Array, y: Array). 
@@ -63,18 +62,19 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = Zero(),  nd: Tu
                 self.params = params
 
         #
-        def _sample_n(self, key, n):
+        def sample(self, key, sample_shape=()):
             r""" Sample from the instantiated Gaussian process (i.e. multivariate Gaussian)
             
             """
             x = self.input
             m = x.shape[0]
             output_shape = (m, )
+
             if nd is not None:
                 output_shape = nd + output_shape
 
-            if n > 1:
-                output_shape = (n, ) + output_shape
+            if len(sample_shape) >= 1:
+                output_shape = sample_shape + output_shape
 
             mu = self._get_mean()
             cov = self._get_cov()
@@ -82,15 +82,15 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = Zero(),  nd: Tu
             z = jrnd.normal(key, shape=output_shape).T
             V = jnp.tensordot(L, z, axes=(1, 0))
             f = jnp.add(mu, jnp.moveaxis(V, 0, -1))
-            if jnp.ndim(f) == 1:
-                f = f[jnp.newaxis, :]
+            # if jnp.ndim(f) == 1:
+            #     f = f[jnp.newaxis, :]
             return f
         
         #
         def log_prob(self, value):
             mu = self._get_mean()
             cov = self._get_cov()
-            return dx.MultivariateNormalFullCovariance(loc=mu, covariance_matrix=cov).log_prob(value=value)
+            return dist.MultivariateNormal(loc=mu, covariance_matrix=cov).log_prob(value=value)
 
         #
         def sample_predictive_batched(self, key: Array, x_pred: Array, f: Array, num_batches:int = 20):
@@ -267,6 +267,8 @@ def AutoRegressionFactory(ar_fn: Callable):
         
     """
 
+    # TODO: migrate from `distrax` format to `numpyro` format
+
     class ARInstance(Distribution):
         """ An instantiated autoregressive distribution object.
         
@@ -299,11 +301,12 @@ def AutoRegressionFactory(ar_fn: Callable):
             """
             y_lagged = self._construct_lag_matrix(y=value, y_init=self.parameters['y0'])   
             mu = ar_fn(y_prev=y_lagged, **self.parameters) 
-            return dx.Normal(loc=mu, scale=self.parameters['scale']).log_prob(value)
+            return dist.Normal(loc=mu, scale=self.parameters['scale']).log_prob(value)
 
         #
         def _sample_n(self, key, n):
             r""" Sample from the AR distribution
+
             
             """
             keys = jrnd.split(key, n)
@@ -354,116 +357,3 @@ def AutoRegressionFactory(ar_fn: Callable):
     return ARInstance
 
 #
-def AscendingDistribution(min_u, max_u, num_el):
-    r""" Creates a distribution of a sorted array of continuous values in [min_u, max_u].
-
-    To ensure gradient-based methods can work on the model, all transformations must be bijectors.
-    A generic sort() does not meet this condition, as it is not invertible. By using the tfb 
-    bijector Ascending() in combination with scaling and deriving the expected maximum value of 
-    dx.Transformed(Uniform, Ascending()), we can construct, in expectation, the desired random 
-    variable. Note that individual draws main contain values that exceed max_u. 
-
-    Args:
-        min_u, max_u: The desired range.
-        num_el: The length of the desired variate.
-    Returns:
-        A distribution over arrays of length `num_el`, with values in ascending order.
-
-    
-    """
-
-    R = 0.5 + (num_el-1)*(jnp.exp(1) - 1)
-    base_distribution = dx.Independent(dx.Uniform(low=jnp.zeros(num_el), high=jnp.ones(num_el)), reinterpreted_batch_ndims=1)
-
-    bijector = tfb.Chain([
-        tfb.Scale(scale=(max_u - min_u) / R),  
-        tfb.Shift(shift=jnp.array(min_u, dtype=jnp.float64)),  
-        tfb.Ascending()               
-    ])
-
-    return dx.Transformed(base_distribution, bijector)
-
-#
-class Wishart(Distribution):
-    """ Wishart distribution with parameters `dof` and `scale`.
-    
-    TODO: make batchable
-    
-    """
-
-
-    def __init__(self, dof: int, scale: Optional[Array]):
-        """ Initializes a Wishart distribution.
-
-        Args:
-          dof: degrees of freedom
-          scale: scale matrix        
-        """
-        super().__init__()
-        p = scale.shape[0]
-        assert dof > p - 1, f'DoF must be > p - 1, found DoF = {dof}, and p = {p}.'
-        self._dof = dof
-        self._scale = scale
-        self._p = p
-
-    #
-    @property
-    def event_shape(self) -> Tuple[int, ...]:
-        """ Shape of event of distribution samples.
-        
-        """
-        return (self._p, self._p)
-    
-    #
-    @property
-    def batch_shape(self) -> Tuple[int, ...]:
-        """ Shape of batch of distribution samples.
-        
-        """
-        return jax.lax.broadcast_shapes(self._dof.shape, self._scale.shape)
-    
-    #
-
-    def _sample_n(self, key: Array, n: int) -> Array:
-        """ See `Distribution._sample_n`.
-        
-        """
-        X = jrnd.multivariate_normal(key, mean=jnp.zeros((self._p, )), cov=self._scale, shape=(n, self._dof))
-        wishart_matrices = jnp.einsum('ndp,ndq->npq', X, X)
-        return wishart_matrices
-    
-    #
-    def log_prob(self, value: Array) -> Array:
-        """ Computes the log probability of the Wishart distribution.
-        
-        """
-        _, logdetV = jnp.linalg.slogdet(self._scale)
-        _, logdetK = jnp.linalg.slogdet(value)
-
-        logZ = 0.5*self._dof*self._p*jnp.log(2) + 0.5*self._dof*logdetV + multigammaln(0.5*self._dof, self._p)
-        return 0.5*(self._dof - self._p - 1)*logdetK - 0.5*jnp.sum(jnp.diag(jnp.linalg.solve(self._scale, value))) - logZ
-    
-    #
-    def mean(self) -> Array:
-        """Calculates the mean."""
-
-        return self._dof*self._scale
-    
-    #
-    def mode(self) -> Array:
-        """Calculates the mode."""
-
-        assert self._dof > self._p + 2, f'The mode is only defined for DoF > p + 2, found DoF = {self._dof} and p = {self._p}.'
-        return (self._dof - self._p - 1)*self._scale
-    
-    #
-    def variance(self) -> Array:
-        """Calculates the variance."""
-        
-        V_ij_squared = jnp.square(self._scale)  
-        V_ii = jnp.diag(self._scale)  
-        V_ii_V_jj = jnp.outer(V_ii, V_ii) 
-        return self._dof * (V_ij_squared + V_ii_V_jj)
-
-    #
-# 

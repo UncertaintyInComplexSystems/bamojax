@@ -25,11 +25,11 @@ classifiers = [
 
 # === Runtime dependencies (from your setup.py) ===
 dependencies = [
-  "jax>=0.4.33",
-  "jaxlib>=0.4.33",
-  "blackjax==1.2.4",
-  "distrax==0.1.5",
-  "jaxtyping>=0.2.34",
+  "jax",
+  "jaxlib",
+  "blackjax",
+  "numpyro",
+  "jaxtyping",
 ]
 
 # === Dev/test extras so contributors can do: pip install -e ".[dev]" ===

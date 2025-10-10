@@ -4,12 +4,12 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.10
-  - jax=0.4.35
-  - jaxlib=0.4.34
+  - python>=3.10
+  - jax
+  - jaxlib
   - numpy
   - pip
   - pip:
     - pytest
     - blackjax
-    - distrax
+    - numpyro
