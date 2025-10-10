@@ -9,8 +9,8 @@ setup(
     install_requires=[ 
         'jax>=0.4.33', 
         'jaxlib>=0.4.33',
-        'blackjax==1.2.4',
-        'distrax==0.1.5',
+        'blackjax>=1.2.4',
+        'numpyro',
         'jaxtyping>=0.2.34'
     ],
     classifiers=[

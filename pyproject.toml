@@ -23,7 +23,7 @@ classifiers = [
   "Operating System :: OS Independent",
 ]
 
-# === Runtime dependencies (from your setup.py) ===
+# === Runtime dependencies ===
 dependencies = [
   "jax",
   "jaxlib",
@@ -62,7 +62,7 @@ versionfile_build = "bamojax/_version.py"
 tag_prefix = "v"           
 parentdir_prefix = "bamojax-"
 
-# Setuptools reads the version dynamically from your package attribute.
+# Setuptools reads the version dynamically from package attribute.
 [tool.setuptools.dynamic]
 version = { attr = "bamojax.__version__" }
 
