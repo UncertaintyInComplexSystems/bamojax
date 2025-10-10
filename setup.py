@@ -3,14 +3,19 @@ import versioneer
 
 setup(
     name='bamojax',  
+    description='Bayesian Modelling with JAX',
+    long_description=open("README.md", encoding="utf-8").read(),
+    long_description_content_type="text/markdown",
+    license="MIT",  
+    url="https://github.com/UncertaintyInComplexSystems/bamojax",
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),  # Automatically discover all packages
     install_requires=[ 
         'jax>=0.4.33', 
         'jaxlib>=0.4.33',
-        'blackjax==1.2.4',
-        'distrax==0.1.5',
+        'blackjax>=1.2.4',
+        'numpyro',
         'jaxtyping>=0.2.34'
     ],
     classifiers=[

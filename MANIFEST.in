@@ -1,0 +1,4 @@
+include versioneer.py
+include README.md
+include LICENSE
+recursive-include bamojax *.py
