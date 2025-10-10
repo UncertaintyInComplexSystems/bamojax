@@ -23,7 +23,8 @@ Install **bamojax** using
 pip install git+https://github.com/UncertaintyInComplexSystems/bamojax#egg=bamojax
 ```
 
-Please note that **bamojax** has been developed and tested with `Jaxlib` 0.4.34, `Jax` 0.4.35, and Python 3.10. Since the installation for jaxlib depends on your hardware, these dependencies are not automatically installed when setting up **bamojax**.
+Please note that if you want to use hardware acceleration, such as using GPUs, you might want to install `JAX` yourself. Please see https://docs.jax.dev/en/latest/installation.html for instructions. If no JAX installation is present, **bamojax** will install it as a dependency.
+
 
 ## Quick tutorial
 
