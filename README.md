@@ -4,7 +4,7 @@
 
 # Welcome to bamojax!
 
-Welcome to **bamojax**, the Bayesian modelling toolbox implemented using the Jax coding universe. **bamojax** is a probabilistic programming language (PPL), similar to Numpyro, PyMC, Stan, JAGS, and BUGS. It relies on [Blackjax](https://blackjax-devs.github.io/blackjax/) for approximate inference, on [Distrax](https://github.com/google-deepmind/distrax) for probability distributions and their essential operations. 
+Welcome to **bamojax**, the Bayesian modelling toolbox implemented using the Jax coding universe. **bamojax** is a probabilistic programming language (PPL), similar to Numpyro, PyMC, Stan, JAGS, and BUGS. It relies on [Blackjax](https://blackjax-devs.github.io/blackjax/) for approximate inference, on [Numpyro](https://num.pyro.ai/en/stable/) for probability distributions and their essential operations. 
 
 ## What sets bamojax apart?
 
@@ -36,7 +36,8 @@ import jax.random as jrnd
 from bamojax.base import Model
 from bamojax.inference import SMCInference
 from bamojax.samplers import mcmc_sampler
-import distrax as dx
+import numpyro as npr
+import numpyro.distributions as dist
 import blackjax as bjx
 
 key = jrnd.PRNGKey(0)
@@ -64,9 +65,9 @@ def link_fn(probs):
 
 #
 latent_theta = my_model.add_node('theta', 
-                                 distribution=dx.Beta(alpha=1, beta=1))
+                                 distribution=dist.Beta(concentration0=1, concentration1=1))
 observations = my_model.add_node('x', 
-                                 distribution=dx.Bernoulli, 
+                                 distribution=dist.Bernoulli, 
                                  parents=dict(probs=latent_theta), 
                                  link_fn=link_fn, 
                                  observations=x)
@@ -126,7 +127,7 @@ This effectively creates an empty DAG.
 Next, one adds nodes to the DAG one by one, or multiple at once in the case of iteration / plate notation: For instance, the following adds a latent random variable with a Gaussian distribution assigned to it, $x\sim \mathcal{N}(0,1)$:
 
 ```
-a_new_node = my_model.add_node('variable name', distribution=dx.Normal, parents=dict(loc=0.0, scale=1.0))
+a_new_node = my_model.add_node('variable name', distribution=dist.Normal, parents=dict(loc=0.0, scale=1.0))
 ```
 
 Depending on whether a user provides values for the `distribution=`, and/or `observations=` arguments in the `add_node()` method, **bamojax** derives whether the variable is:
@@ -134,9 +135,9 @@ Depending on whether a user provides values for the `distribution=`, and/or `obs
 2. Stochastic and observed,
 3. Deterministic and observed.
 
-The `parents` argument expects a dictionary, in which the keys must correspond to either the arguments of a Distrax `dx.Distribution` object or the arguments of a link function.
+The `parents` argument expects a dictionary, in which the keys must correspond to either the arguments of a Numpyro `dist.Distribution` object or the arguments of a link function.
 
-Nodes can furthermore take any Distrax bijector using the `bijector=` argument, for example to transform a real variable to a bounded domain or vice versa. In many cases, the same goal can be achieved by the link function, but sometimes a bijector is simpler to use.
+Nodes can furthermore take any Numpyro bijector using the `bijector=` argument, for example to transform a real variable to a bounded domain or vice versa. In many cases, the same goal can be achieved by the link function, but sometimes a bijector is simpler to use.
 
 ### Link functions
 
@@ -146,13 +147,13 @@ An important 'feature' of **bamojax** is that it is straightforward to add any d
 def beta_link_fn(mode, conc):
   a = mode*(conc-2) + 1
   b = (1 - mode)*(conc-2) + 1
-  return {'alpha': a, 'beta': b}
+  return {'concentration0': a, 'concentration1': b}
 
-omega = my_model.add_node('omega', distribution=dx.Beta, parents=dict(alpha=1.0, beta=1.0))
-theta = my_model.add_node('theta', distribution=dx.Beta, parents=dict(mode=omega, conc=15), link_fn=beta_link_fn)
+omega = my_model.add_node('omega', distribution=dist.Beta, parents=dict(concentration0=1.0, concentration1=1.0))
+theta = my_model.add_node('theta', distribution=dist.Beta, parents=dict(mode=omega, conc=15), link_fn=beta_link_fn)
 ```
 
-The link function `beta_link_fn` takes the mode (given by another node `omega`) and the concentration (given by a scalar, which is implicitly converted to a deterministic and observed node), and returns the standard arguments $\alpha$ and $\beta$ which the `dx.Beta` distribution object recognizes as valid parameters.
+The link function `beta_link_fn` takes the mode (given by another node `omega`) and the concentration (given by a scalar, which is implicitly converted to a deterministic and observed node), and returns the standard arguments $\alpha$ and $\beta$ which the `dist.Beta` distribution object recognizes as valid parameters.
 
 Because link functions are written in plain Python, they can be of arbitrary complexity. For example, in [bamojax/examples/bnn/bnn_mpl.ipynb](https://github.com/UncertaintyInComplexSystems/bamojax/blob/main/bamojax/examples/bnn/bnn_mpl.ipynb), we use [Flax Linen](https://flax.readthedocs.io/en/latest/) to set up a multilayer perceptron as a link function.
 
