@@ -396,8 +396,7 @@ as: </p>
 
             <details class="quote">
               <summary>Source code in <code>bamojax/marginal_likelihoods/naive_monte_carlo.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">13</span>
-<span class="normal">14</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">14</span>
 <span class="normal">15</span>
 <span class="normal">16</span>
 <span class="normal">17</span>
@@ -407,7 +406,8 @@ as: </p>
 <span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span>
-<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">iid_likelihood</span><span class="p">(</span><span class="n">L</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="normal">24</span>
+<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">iid_likelihood</span><span class="p">(</span><span class="n">L</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    We typically have multiple observations and assume the likelihood factorizes </span>
@@ -451,8 +451,7 @@ reasonable.</p>
 
             <details class="quote">
               <summary>Source code in <code>bamojax/marginal_likelihoods/naive_monte_carlo.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">27</span>
-<span class="normal">28</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
@@ -489,7 +488,8 @@ reasonable.</p>
 <span class="normal">62</span>
 <span class="normal">63</span>
 <span class="normal">64</span>
-<span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">naive_monte_carlo</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> 
+<span class="normal">65</span>
+<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">naive_monte_carlo</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> 
                       <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
                       <span class="n">num_prior_draws</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">,</span> 
                       <span class="n">num_chunks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
