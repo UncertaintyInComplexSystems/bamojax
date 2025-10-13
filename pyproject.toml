@@ -36,7 +36,7 @@ dependencies = [
 dev = [
   "pytest>=8",
   "pytest-cov>=5",
-  "JaxKern @ git+https://github.com/UncertaintyInComplexSystems/JaxKern.git",
+  # "JaxKern @ git+https://github.com/UncertaintyInComplexSystems/JaxKern.git",
 ]
 docs = [
   "mkdocs",
