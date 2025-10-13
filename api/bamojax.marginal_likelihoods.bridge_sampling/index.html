@@ -1,0 +1,1217 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.marginal_likelihoods.bridge_sampling/">
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.21">
+    
+    
+      
+        <title>bamojax.marginal_likelihoods.bridge_sampling - BaMoJAX</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.2a3383ac.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#bamojaxmarginal_likelihoodsbridge_sampling" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="BaMoJAX" class="md-header__button md-logo" aria-label="BaMoJAX" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BaMoJAX
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              bamojax.marginal_likelihoods.bridge_sampling
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/UncertaintyInComplexSystems/bamojax" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    UncertaintyInComplexSystems/bamojax
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="BaMoJAX" class="md-nav__button md-logo" aria-label="BaMoJAX" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    BaMoJAX
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/UncertaintyInComplexSystems/bamojax" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    UncertaintyInComplexSystems/bamojax
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.marginal_likelihoods.bridge_sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      bridge_sampling
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.marginal_likelihoods.bridge_sampling.apply_bijectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_bijectors
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.marginal_likelihoods.bridge_sampling.apply_inverse_bijectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      apply_inverse_bijectors
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.marginal_likelihoods.bridge_sampling.get_jacobians" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_jacobians
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.marginal_likelihoods.bridge_sampling.flatten_dict_to_array" class="md-nav__link">
+    <span class="md-ellipsis">
+      flatten_dict_to_array
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.marginal_likelihoods.bridge_sampling.get_proposal_distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_proposal_distribution
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.marginal_likelihoods.bridge_sampling.sample_from_proposal_distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      sample_from_proposal_distribution
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.marginal_likelihoods.bridge_sampling.proposal_distribution_logprob" class="md-nav__link">
+    <span class="md-ellipsis">
+      proposal_distribution_logprob
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.marginal_likelihoods.bridge_sampling.logposterior_proposals" class="md-nav__link">
+    <span class="md-ellipsis">
+      logposterior_proposals
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.marginal_likelihoods.bridge_sampling.get_importance_weights" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_importance_weights
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.marginal_likelihoods.bridge_sampling.bridge_sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      bridge_sampling
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="bamojaxmarginal_likelihoodsbridge_sampling"><code>bamojax.marginal_likelihoods.bridge_sampling</code><a class="headerlink" href="#bamojaxmarginal_likelihoodsbridge_sampling" title="Permanent link">&para;</a></h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="bamojax.marginal_likelihoods.bridge_sampling"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.marginal_likelihoods.bridge_sampling.apply_bijectors" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">apply_bijectors</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">)</span></code>
+
+<a href="#bamojax.marginal_likelihoods.bridge_sampling.apply_bijectors" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Transform variables from the real line.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">apply_bijectors</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform variables from the real line.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">b</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bijectors</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.marginal_likelihoods.bridge_sampling.apply_inverse_bijectors" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">apply_inverse_bijectors</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">)</span></code>
+
+<a href="#bamojax.marginal_likelihoods.bridge_sampling.apply_inverse_bijectors" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Transform variables to the real line.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">apply_inverse_bijectors</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform variables to the real line.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">_inverse</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bijectors</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.marginal_likelihoods.bridge_sampling.get_jacobians" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_jacobians</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">)</span></code>
+
+<a href="#bamojax.marginal_likelihoods.bridge_sampling.get_jacobians" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the Jacobian for the change-of-variables due to the bijector</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_jacobians</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the Jacobian for the change-of-variables due to the bijector</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">jac</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bijectors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">jac</span> <span class="o">+=</span> <span class="n">b</span><span class="o">.</span><span class="n">log_abs_det_jacobian</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jac</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.marginal_likelihoods.bridge_sampling.flatten_dict_to_array" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">flatten_dict_to_array</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span></code>
+
+<a href="#bamojax.marginal_likelihoods.bridge_sampling.flatten_dict_to_array" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Bamojax states are dictionaries, with entries per model variable. Here we flatten them so the 
+proposal distribution can be one single multivariate distribution.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">flatten_dict_to_array</span><span class="p">(</span><span class="n">samples</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Bamojax states are dictionaries, with entries per model variable. Here we flatten them so the </span>
+<span class="sd">    proposal distribution can be one single multivariate distribution.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">per_sample_template</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="n">samples</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">unravel_one_sample</span> <span class="o">=</span> <span class="n">ravel_pytree</span><span class="p">(</span><span class="n">per_sample_template</span><span class="p">)</span>
+        <span class="n">samples_flattened</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ravel_pytree</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">samples_flattened</span><span class="p">,</span> <span class="n">unravel_one_sample</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">leaves</span><span class="p">,</span> <span class="n">treedef</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">tree_flatten</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+        <span class="n">flattened_leaves</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">leaves</span><span class="p">]</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">flattened_leaves</span><span class="p">]</span>
+        <span class="n">cumulative_sizes</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sizes</span><span class="p">))</span>
+        <span class="n">samples_flattened</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">flattened_leaves</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> 
+        <span class="n">leaf_shapes</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">leaves</span><span class="p">]</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">unravel_one_sample</span><span class="p">(</span><span class="n">vec</span><span class="p">):</span>
+            <span class="n">splits</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">cumulative_sizes</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">reshaped</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">splits</span><span class="p">,</span> <span class="n">leaf_shapes</span><span class="p">)]</span>
+            <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">tree_unflatten</span><span class="p">(</span><span class="n">treedef</span><span class="p">,</span> <span class="n">reshaped</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">samples_flattened</span><span class="p">,</span> <span class="n">unravel_one_sample</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.marginal_likelihoods.bridge_sampling.get_proposal_distribution" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_proposal_distribution</span><span class="p">(</span><span class="n">transformed_samples</span><span class="p">)</span></code>
+
+<a href="#bamojax.marginal_likelihoods.bridge_sampling.get_proposal_distribution" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a proposal distribution on the real line.</p>
+<p>Also returns an unravel function to transform proposals back to the dicts Bamojax uses for sampling.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_proposal_distribution</span><span class="p">(</span><span class="n">transformed_samples</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a proposal distribution on the real line.</span>
+
+<span class="sd">    Also returns an unravel function to transform proposals back to the dicts Bamojax uses for sampling.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">samples_flattened</span><span class="p">,</span> <span class="n">unravel_one_sample</span> <span class="o">=</span> <span class="n">flatten_dict_to_array</span><span class="p">(</span><span class="n">transformed_samples</span><span class="p">)</span>
+    <span class="n">mu</span><span class="p">,</span> <span class="n">cov</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">samples_flattened</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">samples_flattened</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">transformed_samples</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">proposal_distribution</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">mu</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cov</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>        
+        <span class="n">proposal_distribution</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">MultivariateNormal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">covariance_matrix</span><span class="o">=</span><span class="n">cov</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">proposal_distribution</span><span class="p">,</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">unravel_one_sample</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.marginal_likelihoods.bridge_sampling.sample_from_proposal_distribution" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">sample_from_proposal_distribution</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">prop_dist</span><span class="p">,</span> <span class="n">unravel_fn</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span></code>
+
+<a href="#bamojax.marginal_likelihoods.bridge_sampling.sample_from_proposal_distribution" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Sample from the proposal distribution and unravel back into a dictionary.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_from_proposal_distribution</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">prop_dist</span><span class="p">,</span> <span class="n">unravel_fn</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sample from the proposal distribution and unravel back into a dictionary.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">proposal_samples_flattened</span> <span class="o">=</span> <span class="n">prop_dist</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">sample_shape</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="p">))</span>
+    <span class="n">proposal_samples</span> <span class="o">=</span> <span class="n">unravel_fn</span><span class="p">(</span><span class="n">proposal_samples_flattened</span><span class="p">)</span>
+    <span class="n">squeeze_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">squeeze_fn</span><span class="p">,</span> <span class="n">proposal_samples</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.marginal_likelihoods.bridge_sampling.proposal_distribution_logprob" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">proposal_distribution_logprob</span><span class="p">(</span><span class="n">prop_dist</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span></code>
+
+<a href="#bamojax.marginal_likelihoods.bridge_sampling.proposal_distribution_logprob" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Flatten a sample dictionary and compute the log probability according to the proposal distribution.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span>
+<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">proposal_distribution_logprob</span><span class="p">(</span><span class="n">prop_dist</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Flatten a sample dictionary and compute the log probability according to the proposal distribution.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">samples_flattened</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">flatten_dict_to_array</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">prop_dist</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">samples_flattened</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.marginal_likelihoods.bridge_sampling.logposterior_proposals" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">logposterior_proposals</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span></code>
+
+<a href="#bamojax.marginal_likelihoods.bridge_sampling.logposterior_proposals" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Compute the log joint probability for a sample, and adjusting for the Jacobian</p>
+<p>p(D \mid \theta)p(\theta)|J(f(\theta)|</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">logposterior_proposals</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Compute the log joint probability for a sample, and adjusting for the Jacobian</span>
+
+<span class="sd">    p(D \mid \theta)p(\theta)|J(f(\theta)|</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">loglikelihood_fn</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">()</span>
+    <span class="n">logprior_fn</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">logprior_fn</span><span class="p">()</span>
+    <span class="n">logjoint</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">loglikelihood_fn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">logprior_fn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="n">jacobian</span> <span class="o">=</span> <span class="n">get_jacobians</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">)</span>
+    <span class="n">log_prob</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">logjoint</span><span class="p">)(</span><span class="n">apply_bijectors</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">))</span>   
+    <span class="k">return</span> <span class="n">log_prob</span> <span class="o">+</span> <span class="n">jacobian</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.marginal_likelihoods.bridge_sampling.get_importance_weights" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_importance_weights</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">,</span> <span class="n">prop_dist</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span></code>
+
+<a href="#bamojax.marginal_likelihoods.bridge_sampling.get_importance_weights" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Compute the importance weight reflecting the relative probability under the posterior vs the proposal distribution.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_importance_weights</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">prop_dist</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Compute the importance weight reflecting the relative probability under the posterior vs the proposal distribution.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">logposterior_proposals</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span> <span class="o">-</span> <span class="n">proposal_distribution_logprob</span><span class="p">(</span><span class="n">prop_dist</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.marginal_likelihoods.bridge_sampling.bridge_sampling" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">bridge_sampling</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">posterior_samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">,</span> <span class="n">proposal_type</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">N2</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">)</span></code>
+
+<a href="#bamojax.marginal_likelihoods.bridge_sampling.bridge_sampling" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Run the warp-II bridge sampling algorithm, using the optimal bridge function by Meng &amp; Wong (1996).</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>- model</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The bamojax model to get the marginal likelihood for.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>- posterior_samples</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Posterior samples of the model, obtained via any suitable way.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>- bijectors</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A dictionary of transformations to more closely align the proposal distribution with</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>- proposal_type</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Indicates the kind of proposals to use. For now, only Gaussians are supported, </p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>- N2</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The number of draws from the proposal distribution.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>- max_iter</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The maximum number of bridge sampling iterations. Not often used.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>- tol</code>
+            </td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The convergence criterion.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+        <p>Returns:</p>
+<pre><code>- The log marginal likelihood of `model`
+- The number of iterations of the bridge sampler (typically small)
+</code></pre>
+<p>References:</p>
+<pre><code>- Meng &amp; Wong, 1996, Simulating ratios of normalizing constants via a simple identity: a theoretical 
+exploration. Statistica Sinica, 831--860.
+- Gronau et al., 2017, A tutorial on bridge sampling, Journal of Mathematical Psychology 81, 80--97.
+</code></pre>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bridge_sampling</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">posterior_samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">proposal_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">N2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Run the warp-II bridge sampling algorithm, using the optimal bridge function by Meng &amp; Wong (1996).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - model: The bamojax model to get the marginal likelihood for.</span>
+<span class="sd">        - posterior_samples: Posterior samples of the model, obtained via any suitable way.</span>
+<span class="sd">        - bijectors: A dictionary of transformations to more closely align the proposal distribution with</span>
+<span class="sd">        the posterior. When no bijector is provided for a variable, an identity transformation is used for</span>
+<span class="sd">        convenience.</span>
+<span class="sd">        - proposal_type: Indicates the kind of proposals to use. For now, only Gaussians are supported, </span>
+<span class="sd">        ideally we make this generic. Student-T distributions are also common, due to their wide tails.</span>
+<span class="sd">        - N2: The number of draws from the proposal distribution.</span>
+<span class="sd">        - max_iter: The maximum number of bridge sampling iterations. Not often used.</span>
+<span class="sd">        - tol: The convergence criterion.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">        - The log marginal likelihood of `model`</span>
+<span class="sd">        - The number of iterations of the bridge sampler (typically small)</span>
+
+<span class="sd">    References:</span>
+
+<span class="sd">        - Meng &amp; Wong, 1996, Simulating ratios of normalizing constants via a simple identity: a theoretical </span>
+<span class="sd">        exploration. Statistica Sinica, 831--860.</span>
+<span class="sd">        - Gronau et al., 2017, A tutorial on bridge sampling, Journal of Mathematical Psychology 81, 80--97.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">get_latent_nodes</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bijectors</span><span class="p">:</span>
+            <span class="n">bijectors</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">nprb</span><span class="o">.</span><span class="n">IdentityTransform</span><span class="p">()</span>
+
+    <span class="n">posterior_samples_batch_1</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">posterior_samples</span><span class="p">)</span>
+    <span class="n">posterior_samples_batch_2</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[::</span><span class="mi">2</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">posterior_samples</span><span class="p">)</span>
+
+    <span class="n">N1</span> <span class="o">=</span> <span class="n">ravel_pytree</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">posterior_samples_batch_1</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">proposal_type</span> <span class="o">==</span> <span class="s1">&#39;gaussian&#39;</span><span class="p">:</span>
+        <span class="c1"># apply bijector to posterior samples batch 1</span>
+        <span class="n">transformed_samples_1</span> <span class="o">=</span> <span class="n">apply_inverse_bijectors</span><span class="p">(</span><span class="n">posterior_samples_batch_1</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">)</span>
+
+        <span class="c1"># get posterior distribution and unravel function</span>
+        <span class="n">proposal_distribution</span><span class="p">,</span> <span class="n">unravel_fn</span> <span class="o">=</span> <span class="n">get_proposal_distribution</span><span class="p">(</span><span class="n">transformed_samples_1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Proposal type &quot;</span><span class="si">{</span><span class="n">proposal_type</span><span class="si">}</span><span class="s1">&quot; is not implemented&#39;</span><span class="p">)</span>
+
+    <span class="n">proposal_samples</span> <span class="o">=</span> <span class="n">sample_from_proposal_distribution</span><span class="p">(</span><span class="n">proposal_distribution</span><span class="p">,</span> <span class="n">unravel_fn</span><span class="p">,</span> <span class="n">N2</span><span class="p">)</span>
+
+    <span class="n">L2</span> <span class="o">=</span> <span class="n">get_importance_weights</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">,</span> <span class="n">proposal_distribution</span><span class="p">,</span> <span class="n">proposal_samples</span><span class="p">)</span>
+    <span class="n">transformed_samples_2</span> <span class="o">=</span> <span class="n">apply_inverse_bijectors</span><span class="p">(</span><span class="n">posterior_samples_batch_2</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">)</span>
+    <span class="n">L1</span> <span class="o">=</span> <span class="n">get_importance_weights</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">,</span> <span class="n">proposal_distribution</span><span class="p">,</span> <span class="n">transformed_samples_2</span><span class="p">)</span>
+
+    <span class="n">s1</span> <span class="o">=</span> <span class="n">N1</span> <span class="o">/</span> <span class="p">(</span><span class="n">N1</span> <span class="o">+</span> <span class="n">N2</span><span class="p">)</span>
+    <span class="n">s2</span> <span class="o">=</span> <span class="n">N2</span> <span class="o">/</span> <span class="p">(</span><span class="n">N1</span> <span class="o">+</span> <span class="n">N2</span><span class="p">)</span>
+
+    <span class="c1"># For numerical stability, Gronau et al. suggest the following approach:</span>
+    <span class="n">l_star</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">L1</span><span class="p">)</span>
+    <span class="n">L1_c</span> <span class="o">=</span> <span class="n">L1</span> <span class="o">-</span> <span class="n">l_star</span>
+    <span class="n">L2_c</span> <span class="o">=</span> <span class="n">L2</span> <span class="o">-</span> <span class="n">l_star</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">one_iter</span><span class="p">(</span><span class="n">r_prev</span><span class="p">):</span>
+        <span class="n">num_terms</span> <span class="o">=</span> <span class="n">L2_c</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">s1</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">L2_c</span><span class="p">)</span> <span class="o">+</span> <span class="n">s2</span> <span class="o">*</span> <span class="n">r_prev</span><span class="p">)</span>
+        <span class="n">log_num</span> <span class="o">=</span> <span class="n">logsumexp</span><span class="p">(</span><span class="n">num_terms</span><span class="p">)</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N2</span><span class="p">)</span>
+        <span class="n">denom_terms</span> <span class="o">=</span> <span class="o">-</span><span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">s1</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">L1_c</span><span class="p">)</span> <span class="o">+</span> <span class="n">s2</span> <span class="o">*</span> <span class="n">r_prev</span><span class="p">)</span>
+        <span class="n">log_denom</span> <span class="o">=</span> <span class="n">logsumexp</span><span class="p">(</span><span class="n">denom_terms</span><span class="p">)</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_num</span> <span class="o">-</span> <span class="n">log_denom</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cond_fn</span><span class="p">(</span><span class="n">carry</span><span class="p">):</span>
+        <span class="n">t</span><span class="p">,</span> <span class="n">r_prev</span><span class="p">,</span> <span class="n">r_new</span> <span class="o">=</span> <span class="n">carry</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">r_new</span> <span class="o">-</span> <span class="n">r_prev</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">body_fn</span><span class="p">(</span><span class="n">carry</span><span class="p">):</span>
+        <span class="n">t</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">carry</span>
+        <span class="n">r_new</span> <span class="o">=</span> <span class="n">one_iter</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r_new</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="n">init_state</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">n_iter</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">r_new</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">while_loop</span><span class="p">(</span><span class="n">cond_fn</span><span class="p">,</span> <span class="n">body_fn</span><span class="p">,</span> <span class="n">init_state</span><span class="p">)</span>
+
+    <span class="n">log_Z</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">r_new</span><span class="p">)</span> <span class="o">+</span> <span class="n">l_star</span>  <span class="c1"># see Gronau et al., page 95</span>
+
+    <span class="k">return</span> <span class="n">log_Z</span><span class="p">,</span> <span class="n">n_iter</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "navigation.top", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

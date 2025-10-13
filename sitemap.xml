@@ -29,7 +29,19 @@
          <lastmod>2025-10-13</lastmod>
     </url>
     <url>
-         <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.marginal_likelihoods/</loc>
+         <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.marginal_likelihoods.bridge_sampling/</loc>
+         <lastmod>2025-10-13</lastmod>
+    </url>
+    <url>
+         <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.marginal_likelihoods.importance_sampling/</loc>
+         <lastmod>2025-10-13</lastmod>
+    </url>
+    <url>
+         <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.marginal_likelihoods.laplace/</loc>
+         <lastmod>2025-10-13</lastmod>
+    </url>
+    <url>
+         <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.marginal_likelihoods.naive_monte_carlo/</loc>
          <lastmod>2025-10-13</lastmod>
     </url>
     <url>
