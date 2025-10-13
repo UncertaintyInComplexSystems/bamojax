@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Clean dist
-        run: -rf dist build *.egg-info
+        run: rm -rf dist build *.egg-info
       - name: Install build deps
         run: python -m pip install --upgrade build
       - name: Build sdist+wheel
