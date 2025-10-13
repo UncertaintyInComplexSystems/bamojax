@@ -3,7 +3,8 @@ import jax.numpy as jnp
 import jax.random as jrnd
 from jax.scipy.special import logsumexp
 
-from typing import Callable, Float
+from typing import Callable
+from jaxtyping import Float
 from tqdm import tqdm
 
 

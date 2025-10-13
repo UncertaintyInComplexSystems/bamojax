@@ -121,7 +121,7 @@ def get_importance_weights(model, bijectors: dict, prop_dist, samples):
     return logposterior_proposals(model, bijectors, samples) - proposal_distribution_logprob(prop_dist, samples)
 
 #
-def bridge_sampling(model: Model, posterior_samples, bijectors: dict, proposal_type: str = 'gaussian', N2: int = 1000, max_iter: int = 20, tol: float = 1e-6):
+def bridge_sampling(key, model: Model, posterior_samples, bijectors: dict, proposal_type: str = 'gaussian', N2: int = 1000, max_iter: int = 20, tol: float = 1e-6):
     """ Run the warp-II bridge sampling algorithm, using the optimal bridge function by Meng & Wong (1996).
 
     Args:
@@ -167,7 +167,7 @@ def bridge_sampling(model: Model, posterior_samples, bijectors: dict, proposal_t
     else:
         raise NotImplementedError(f'Proposal type "{proposal_type}" is not implemented')
     
-    proposal_samples = sample_from_proposal_distribution(proposal_distribution, unravel_fn, N2)
+    proposal_samples = sample_from_proposal_distribution(key, proposal_distribution, unravel_fn, N2)
 
     L2 = get_importance_weights(model, bijectors, proposal_distribution, proposal_samples)
     transformed_samples_2 = apply_inverse_bijectors(posterior_samples_batch_2, bijectors)

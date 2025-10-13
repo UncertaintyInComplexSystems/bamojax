@@ -5,7 +5,8 @@ from jax.tree_util import tree_flatten, tree_unflatten
 from jax.scipy.special import logsumexp
 
 from numpyro.distributions import Distribution, TransformedDistribution
-from typing import Callable, Float
+from typing import Callable
+from jaxtyping import Float
 
 
 from bamojax.base import Model
