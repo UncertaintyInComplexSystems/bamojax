@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.marginal_likelihoods.naive_monte_carlo/">
+        <link rel="canonical" href="https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.marginal_likelihoods.utility/">
       
       
       
@@ -18,7 +18,7 @@
     
     
       
-        <title>bamojax.marginal_likelihoods.naive_monte_carlo - BaMoJAX</title>
+        <title>bamojax.marginal_likelihoods.utility - BaMoJAX</title>
       
     
     
@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bamojaxmarginal_likelihoodsnaive_monte_carlo" class="md-skip">
+        <a href="#bamojaxmarginal_likelihoodsutility" class="md-skip">
           Skip to content
         </a>
       
@@ -108,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              bamojax.marginal_likelihoods.naive_monte_carlo
+              bamojax.marginal_likelihoods.utility
             
           </span>
         </div>
@@ -304,18 +304,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#bamojax.marginal_likelihoods.naive_monte_carlo" class="md-nav__link">
+  <a href="#bamojax.marginal_likelihoods.utility" class="md-nav__link">
     <span class="md-ellipsis">
-      naive_monte_carlo
+      utility
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#bamojax.marginal_likelihoods.naive_monte_carlo.naive_monte_carlo" class="md-nav__link">
+  <a href="#bamojax.marginal_likelihoods.utility.iid_likelihood" class="md-nav__link">
     <span class="md-ellipsis">
-      naive_monte_carlo
+      iid_likelihood
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bamojax.marginal_likelihoods.utility.flatten_dict_to_array" class="md-nav__link">
+    <span class="md-ellipsis">
+      flatten_dict_to_array
     </span>
   </a>
   
@@ -337,14 +346,14 @@
 
 
 
-<h1 id="bamojaxmarginal_likelihoodsnaive_monte_carlo"><code>bamojax.marginal_likelihoods.naive_monte_carlo</code><a class="headerlink" href="#bamojaxmarginal_likelihoodsnaive_monte_carlo" title="Permanent link">&para;</a></h1>
+<h1 id="bamojaxmarginal_likelihoodsutility"><code>bamojax.marginal_likelihoods.utility</code><a class="headerlink" href="#bamojaxmarginal_likelihoodsutility" title="Permanent link">&para;</a></h1>
 
 
 <div class="doc doc-object doc-module">
 
 
 
-<a id="bamojax.marginal_likelihoods.naive_monte_carlo"></a>
+<a id="bamojax.marginal_likelihoods.utility"></a>
     <div class="doc doc-contents first">
 
 
@@ -370,35 +379,70 @@
 <div class="doc doc-object doc-function">
 
 
-<h2 id="bamojax.marginal_likelihoods.naive_monte_carlo.naive_monte_carlo" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">naive_monte_carlo</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">num_prior_draws</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">num_chunks</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">iid_obs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pb</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<h2 id="bamojax.marginal_likelihoods.utility.iid_likelihood" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">iid_likelihood</span><span class="p">(</span><span class="n">L</span><span class="p">)</span></code>
 
-<a href="#bamojax.marginal_likelihoods.naive_monte_carlo.naive_monte_carlo" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#bamojax.marginal_likelihoods.utility.iid_likelihood" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
     <div class="doc doc-contents ">
 
-        <p>The Naive Monte Carlo (NMC) estimator</p>
-<p>The marginal likelihood is defined as 
-$$
-    p(D) = \int_\Theta p\left(D \mid \theta\right) p(\theta) \,\text{d}\theta \enspace .
-$$</p>
-<p>In NMC we draw samples from the prior and approximate the ML as
-$$
-    p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right) \enspace,
-$$  with <span class="arithmatex">\(\theta_i \sim p(\theta)\)</span>.</p>
-<p>In nontrivial models, we need a <em>large</em> <span class="arithmatex">\(N\)</span> for this approximation to be 
-reasonable.</p>
+        <p>We typically have multiple observations and assume the likelihood factorizes 
+as: </p>
+<div class="arithmatex">\[    
+    \log p\left(Y \mid \theta\right) = \sum_{i=1}^N \log p\left(y_i \mid \theta\right) \enspace.
+\]</div>
 
 
             <details class="quote">
-              <summary>Source code in <code>bamojax/marginal_likelihoods/naive_monte_carlo.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
+              <summary>Source code in <code>bamojax/marginal_likelihoods/utility.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
 <span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
+<span class="normal">17</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">iid_likelihood</span><span class="p">(</span><span class="n">L</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    We typically have multiple observations and assume the likelihood factorizes </span>
+<span class="sd">    as: </span>
+
+<span class="sd">    $$    </span>
+<span class="sd">        \log p\left(Y \mid \theta\right) = \sum_{i=1}^N \log p\left(y_i \mid \theta\right) \enspace.</span>
+<span class="sd">    $$</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">L</span><span class="p">()(</span><span class="n">x</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="bamojax.marginal_likelihoods.utility.flatten_dict_to_array" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">flatten_dict_to_array</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span></code>
+
+<a href="#bamojax.marginal_likelihoods.utility.flatten_dict_to_array" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Bamojax states are dictionaries, with entries per model variable. Here we flatten them so the 
+proposal distribution can be one single multivariate distribution.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>bamojax/marginal_likelihoods/utility.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">20</span>
 <span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span>
@@ -421,55 +465,30 @@ reasonable.</p>
 <span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">naive_monte_carlo</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> 
-                      <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
-                      <span class="n">num_prior_draws</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000</span><span class="p">,</span> 
-                      <span class="n">num_chunks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
-                      <span class="n">iid_obs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-                      <span class="n">pb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Float</span><span class="p">:</span>   
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Naive Monte Carlo (NMC) estimator</span>
-
-<span class="sd">    The marginal likelihood is defined as </span>
-<span class="sd">    $$</span>
-<span class="sd">        p(D) = \int_\Theta p\left(D \mid \theta\right) p(\theta) \,\text{d}\theta \enspace .</span>
-<span class="sd">    $$</span>
-
-<span class="sd">    In NMC we draw samples from the prior and approximate the ML as</span>
-<span class="sd">    $$</span>
-<span class="sd">        p(D) \approx \frac{1}{N} \sum_{i=1}^N p\left(D \mid \theta_i\right) \enspace,</span>
-<span class="sd">    $$  with $\theta_i \sim p(\theta)$.</span>
-
-<span class="sd">    In nontrivial models, we need a *large* $N$ for this approximation to be </span>
-<span class="sd">    reasonable.</span>
+<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">flatten_dict_to_array</span><span class="p">(</span><span class="n">samples</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Bamojax states are dictionaries, with entries per model variable. Here we flatten them so the </span>
+<span class="sd">    proposal distribution can be one single multivariate distribution.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">iid_obs</span><span class="p">:</span>
-        <span class="n">loglikelihood_fn</span> <span class="o">=</span> <span class="n">iid_likelihood</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">per_sample_template</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="n">samples</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">unravel_one_sample</span> <span class="o">=</span> <span class="n">ravel_pytree</span><span class="p">(</span><span class="n">per_sample_template</span><span class="p">)</span>
+        <span class="n">samples_flattened</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ravel_pytree</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">samples_flattened</span><span class="p">,</span> <span class="n">unravel_one_sample</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">loglikelihood_fn</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span>
+        <span class="n">leaves</span><span class="p">,</span> <span class="n">treedef</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">tree_flatten</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+        <span class="n">flattened_leaves</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">leaves</span><span class="p">]</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">flattened_leaves</span><span class="p">]</span>
+        <span class="n">cumulative_sizes</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sizes</span><span class="p">))</span>
+        <span class="n">samples_flattened</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">flattened_leaves</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> 
+        <span class="n">leaf_shapes</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">leaves</span><span class="p">]</span>
 
-    <span class="n">loglikelihoods</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_prior_draws</span><span class="p">,</span> 
-                                <span class="n">num_chunks</span><span class="p">))</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">unravel_one_sample</span><span class="p">(</span><span class="n">vec</span><span class="p">):</span>
+            <span class="n">splits</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">cumulative_sizes</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">reshaped</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">splits</span><span class="p">,</span> <span class="n">leaf_shapes</span><span class="p">)]</span>
+            <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">tree_unflatten</span><span class="p">(</span><span class="n">treedef</span><span class="p">,</span> <span class="n">reshaped</span><span class="p">)</span>
 
-    <span class="c1"># We don&#39;t want to vmap this loop, as the reason for the loop is to avoid</span>
-    <span class="c1"># running out of memory!</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_chunks</span><span class="p">),</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">pb</span><span class="p">):</span>
-        <span class="n">key</span><span class="p">,</span> <span class="n">subkey</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="n">keys</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">subkey</span><span class="p">,</span> <span class="n">num_prior_draws</span><span class="p">)</span>
-        <span class="n">prior_draws</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">sample_prior</span><span class="p">)(</span><span class="n">keys</span><span class="p">)</span>
-        <span class="n">loglikelihoods</span> <span class="o">=</span> <span class="n">loglikelihoods</span><span class="o">.</span><span class="n">at</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">loglikelihood_fn</span><span class="p">)(</span><span class="n">prior_draws</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">logsumexp</span><span class="p">(</span><span class="n">loglikelihoods</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">num_prior_draws</span><span class="o">*</span><span class="n">num_chunks</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">samples_flattened</span><span class="p">,</span> <span class="n">unravel_one_sample</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
