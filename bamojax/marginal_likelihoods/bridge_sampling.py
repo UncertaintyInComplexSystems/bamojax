@@ -1,15 +1,13 @@
 import jax
-jax.config.update("jax_enable_x64", True)
-
 import jax.numpy as jnp
-
-from jax.flatten_util import ravel_pytree
 from jax.scipy.special import logsumexp
 
 import numpyro.distributions as dist
 import numpyro.distributions.transforms as nprb
 
 from bamojax.base import Model
+from bamojax.marginal_likelihoods.utility import flatten_dict_to_array
+from jax.flatten_util import ravel_pytree
 
 
 def apply_bijectors(samples, bijectors):
@@ -33,32 +31,6 @@ def get_jacobians(samples, bijectors):
     for k, b in bijectors.items():
         jac += b.log_abs_det_jacobian(samples[k], None)
     return jac
-
-#
-def flatten_dict_to_array(samples: dict):
-    """ Bamojax states are dictionaries, with entries per model variable. Here we flatten them so the 
-    proposal distribution can be one single multivariate distribution.
-
-    """
-    if len(samples.keys()) == 1:
-        per_sample_template = jax.tree.map(lambda x: jnp.zeros(x.shape[1:], x.dtype), samples)
-        _, unravel_one_sample = ravel_pytree(per_sample_template)
-        samples_flattened, _ = ravel_pytree(samples)
-        return samples_flattened, unravel_one_sample
-    else:
-        leaves, treedef = jax.tree_util.tree_flatten(samples)
-        flattened_leaves = [x.reshape(x.shape[0], -1) for x in leaves]
-        sizes = [f.shape[1] for f in flattened_leaves]
-        cumulative_sizes = jnp.cumsum(jnp.array(sizes))
-        samples_flattened = jnp.concatenate(flattened_leaves, axis=-1) 
-        leaf_shapes = [x.shape[1:] for x in leaves]
-
-        def unravel_one_sample(vec):
-            splits = jnp.split(vec, cumulative_sizes[:-1])
-            reshaped = [v.reshape(s) for v, s in zip(splits, leaf_shapes)]
-            return jax.tree_util.tree_unflatten(treedef, reshaped)
-
-    return samples_flattened, unravel_one_sample
 
 #
 def get_proposal_distribution(transformed_samples):
@@ -156,7 +128,8 @@ def bridge_sampling(key, model: Model, posterior_samples, bijectors: dict, propo
     posterior_samples_batch_1 = jax.tree.map(lambda x: x[1::2, ...], posterior_samples)
     posterior_samples_batch_2 = jax.tree.map(lambda x: x[::2, ...], posterior_samples)
 
-    N1 = ravel_pytree(jax.tree.map(lambda x: x.shape[0], posterior_samples_batch_1))[0][0]
+    # N1 = ravel_pytree(jax.tree.map(lambda x: x.shape[0], posterior_samples_batch_1))[0][0]
+    N1 = list(posterior_samples_batch_1.values())[0].shape[0]
 
     if proposal_type == 'gaussian':
         # apply bijector to posterior samples batch 1

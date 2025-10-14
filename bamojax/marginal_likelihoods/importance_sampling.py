@@ -5,27 +5,12 @@ from jax.tree_util import tree_flatten, tree_unflatten
 from jax.scipy.special import logsumexp
 
 from numpyro.distributions import Distribution, TransformedDistribution
-from typing import Callable
 from jaxtyping import Float
 
-
 from bamojax.base import Model
+from bamojax.marginal_likelihoods.utility import iid_likelihood
 
 
-def iid_likelihood(L: Callable):
-    r"""
-    
-    We typically have multiple observations and assume the likelihood factorizes 
-    as: 
-
-    $$    
-        \log p\left(Y \mid \theta\right) = \sum_{i=1}^N \log p\left(y_i \mid \theta\right) \enspace.
-    $$
-
-    """
-    return lambda x: jnp.sum(L()(x))
-
-#
 def importance_sampling(key, 
                         model: Model, 
                         g_IS: Distribution,

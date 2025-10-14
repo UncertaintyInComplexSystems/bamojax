@@ -9,22 +9,9 @@ from tqdm import tqdm
 
 
 from bamojax.base import Model
+from bamojax.marginal_likelihoods.utility import iid_likelihood
 
 
-def iid_likelihood(L: Callable):
-    r"""
-    
-    We typically have multiple observations and assume the likelihood factorizes 
-    as: 
-
-    $$    
-        \log p\left(Y \mid \theta\right) = \sum_{i=1}^N \log p\left(y_i \mid \theta\right) \enspace.
-    $$
-
-    """
-    return lambda x: jnp.sum(L()(x))
-
-#
 def naive_monte_carlo(key, 
                       model: Model, 
                       num_prior_draws: int = 1_000, 
