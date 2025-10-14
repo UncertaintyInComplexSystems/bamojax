@@ -16,8 +16,6 @@ from .modified_blackjax import modified_adaptive_tempered, modified_tempered
 tempered_smc = generate_top_level_api_from(modified_tempered)
 adaptive_tempered_smc = generate_top_level_api_from(modified_adaptive_tempered)
 
-
-
 from typing import Tuple, Callable
 import optax
 import jaxopt
@@ -27,10 +25,6 @@ import jax.random as jrnd
 import jax.numpy as jnp
 from jax.tree_util import tree_map, tree_flatten, tree_unflatten
 from jax.flatten_util import ravel_pytree
-
-# from tensorflow_probability.substrates import jax as tfp
-# tfd = tfp.distributions
-# tfb = tfp.bijectors
 
 def run_window_adaptation(model, key: PRNGKey, num_warmup_steps):
     r""" Find optimized parameters for HMC-based inference.
