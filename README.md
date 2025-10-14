@@ -4,7 +4,7 @@
 
 # Welcome to bamojax!
 
-Welcome to **bamojax**, the Bayesian modelling and model comparison toolbox implemented using the JAX coding universe. **bamojax** is a probabilistic programming language (PPL), similar to Numpyro, PyMC, Stan, JAGS, and BUGS, as well as a set of analyses for model comparison and averaging. **bamojax** relies on [Blackjax](https://blackjax-devs.github.io/blackjax/) for approximate inference, on [Numpyro](https://num.pyro.ai/en/stable/) for probability distributions and their essential operations. 
+Welcome to **bamojax**, the Bayesian modelling and model comparison toolbox implemented using the JAX coding universe. **bamojax** is a probabilistic programming language (PPL), similar to Numpyro, PyMC, Stan, JAGS, and BUGS, as well as a set of analyses for model comparison and averaging. **bamojax** relies on [Blackjax](https://blackjax-devs.github.io/blackjax/) for approximate inference, and on [Numpyro](https://num.pyro.ai/en/stable/) for probability distributions and their essential operations. 
 
 ## What sets bamojax apart?
 
