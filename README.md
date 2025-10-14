@@ -4,7 +4,7 @@
 
 # Welcome to bamojax!
 
-Welcome to **bamojax**, the Bayesian modelling toolbox implemented using the Jax coding universe. **bamojax** is a probabilistic programming language (PPL), similar to Numpyro, PyMC, Stan, JAGS, and BUGS. It relies on [Blackjax](https://blackjax-devs.github.io/blackjax/) for approximate inference, on [Numpyro](https://num.pyro.ai/en/stable/) for probability distributions and their essential operations. 
+Welcome to **bamojax**, the Bayesian modelling and model comparison toolbox implemented using the JAX coding universe. **bamojax** is a probabilistic programming language (PPL), similar to Numpyro, PyMC, Stan, JAGS, and BUGS, as well as a set of analyses for model comparison and averaging. **bamojax** relies on [Blackjax](https://blackjax-devs.github.io/blackjax/) for approximate inference, on [Numpyro](https://num.pyro.ai/en/stable/) for probability distributions and their essential operations. 
 
 ## What sets bamojax apart?
 
@@ -15,9 +15,18 @@ Existing PPLs, such as PyMC, can export their log density function so it can be 
 
 By implementing your own models and samplers using Blackjax, these problems can be circumvented. However, this is a labour-intensive and error-prone process. Therefore, **bamojax** provides a user-friendly interface around Blackjax, that allows for easy model construction and Gibbs sampling. 
 
+Once a Bayesian model has been determined, the next goal is often to compare it with competing hypotheses. This can, for example, be done by computing the marginal likelihoods of different models, and taking their ratio, a quantity known as the _Bayes factor_. However, computing marginal likelihoods and therefore Bayes factors is computationally challenging, and several approximation strategies exist. **bamojax** makes this process easier by implementing the following marginal likelihood approximations:
+
+- Importance sampling
+- Sequential Monte Carlo
+- The Laplace approximation
+- Bridge sampling
+
+More comparison features are being added to the toolbox continuously.
+
 ## Installation
 
-Install **bamojax** using 
+Install **bamojax** using:
 
 ```
 pip install git+https://github.com/UncertaintyInComplexSystems/bamojax#egg=bamojax
@@ -51,7 +60,7 @@ x = jrnd.bernoulli(key_data, p=true_theta, shape=(n, ))
 
 #### Define Bayesian generative model
 
-Under the good, **bamojax** reprsents the a Bayesian model using a Directed Acyclic Graph (DAG) structure, and automatically derives model priors, likelihoods, and Gibbs inference schemes. These are then combined with the fast inference algorithms implemented in Blackjax. Bayesian models can be instantiated in **bamojax** using:
+Under the good, **bamojax** represents the a Bayesian model using a Directed Acyclic Graph (DAG) structure, and automatically derives model priors, likelihoods, and Gibbs inference schemes. These are then combined with the fast inference algorithms implemented in Blackjax. Bayesian models can be instantiated in **bamojax** using:
 
 ```
 from bamojax.base import Model
@@ -150,7 +159,7 @@ def beta_link_fn(mode, conc):
   b = (1 - mode)*(conc-2) + 1
   return {'concentration1': a, 'concentration0': b}
 
-omega = my_model.add_node('omega', distribution=dist.Beta, parents=dict(concentration0=1.0, concentration1=1.0))
+omega = my_model.add_node('omega', distribution=dist.Beta, parents=dict(concentration1=1.0, concentration0=1.0))
 theta = my_model.add_node('theta', distribution=dist.Beta, parents=dict(mode=omega, conc=15), link_fn=beta_link_fn)
 ```
 
