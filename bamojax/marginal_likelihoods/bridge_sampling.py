@@ -27,9 +27,13 @@ def get_jacobians(samples, bijectors):
     """Get the Jacobian for the change-of-variables due to the bijector
 
     """
+    
     jac = 0.0
     for k, b in bijectors.items():
-        jac += b.log_abs_det_jacobian(samples[k], None)
+        if len(samples[k].shape) == 2:
+            jac += jnp.sum(b.log_abs_det_jacobian(samples[k], None), axis=1)
+        else:
+            jac += b.log_abs_det_jacobian(samples[k], None)
     return jac
 
 #
