@@ -20,7 +20,8 @@ Once a Bayesian model has been determined, the next goal is often to compare it 
 - Importance sampling
 - Sequential Monte Carlo
 - The Laplace approximation
-- Bridge sampling
+- Bridge sampling (Gronau et al., 2017; Meng & Wong, 1996)
+- The THAMES estimator (Metodiev et al., 2025)
 
 More comparison features are being added to the toolbox continuously.
 
