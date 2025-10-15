@@ -524,13 +524,21 @@
 <span class="normal">30</span>
 <span class="normal">31</span>
 <span class="normal">32</span>
-<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_jacobians</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">):</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_jacobians</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the Jacobian for the change-of-variables due to the bijector</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">jac</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bijectors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">jac</span> <span class="o">+=</span> <span class="n">b</span><span class="o">.</span><span class="n">log_abs_det_jacobian</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">jac</span> <span class="o">+=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">log_abs_det_jacobian</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="kc">None</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">jac</span> <span class="o">+=</span> <span class="n">b</span><span class="o">.</span><span class="n">log_abs_det_jacobian</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">jac</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -555,11 +563,7 @@
 
             <details class="quote">
               <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
@@ -570,7 +574,11 @@
 <span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
-<span class="normal">51</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_proposal_distribution</span><span class="p">(</span><span class="n">transformed_samples</span><span class="p">):</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_proposal_distribution</span><span class="p">(</span><span class="n">transformed_samples</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a proposal distribution on the real line.</span>
 
 <span class="sd">    Also returns an unravel function to transform proposals back to the dicts Bamojax uses for sampling.</span>
@@ -608,14 +616,14 @@
 
             <details class="quote">
               <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">58</span>
 <span class="normal">59</span>
 <span class="normal">60</span>
-<span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_from_proposal_distribution</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">prop_dist</span><span class="p">,</span> <span class="n">unravel_fn</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_from_proposal_distribution</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">prop_dist</span><span class="p">,</span> <span class="n">unravel_fn</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sample from the proposal distribution and unravel back into a dictionary.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -645,13 +653,13 @@
 
             <details class="quote">
               <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
 <span class="normal">69</span>
-<span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">proposal_distribution_logprob</span><span class="p">(</span><span class="n">prop_dist</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">proposal_distribution_logprob</span><span class="p">(</span><span class="n">prop_dist</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Flatten a sample dictionary and compute the log probability according to the proposal distribution.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -681,11 +689,7 @@
 
             <details class="quote">
               <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">77</span>
 <span class="normal">78</span>
 <span class="normal">79</span>
 <span class="normal">80</span>
@@ -694,7 +698,11 @@
 <span class="normal">83</span>
 <span class="normal">84</span>
 <span class="normal">85</span>
-<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">logposterior_proposals</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">logposterior_proposals</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Compute the log joint probability for a sample, and adjusting for the Jacobian</span>
 
 <span class="sd">    p(D \mid \theta)p(\theta)|J(f(\theta)|</span>
@@ -730,11 +738,11 @@
 
             <details class="quote">
               <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_importance_weights</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">prop_dist</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_importance_weights</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">prop_dist</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Compute the importance weight reflecting the relative probability under the posterior vs the proposal distribution.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -890,11 +898,7 @@ exploration. Statistica Sinica, 831--860.
 
             <details class="quote">
               <summary>Source code in <code>bamojax/marginal_likelihoods/bridge_sampling.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span>
@@ -975,7 +979,11 @@ exploration. Statistica Sinica, 831--860.
 <span class="normal">178</span>
 <span class="normal">179</span>
 <span class="normal">180</span>
-<span class="normal">181</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bridge_sampling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">posterior_samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">proposal_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">N2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">):</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bridge_sampling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">posterior_samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">proposal_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">N2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Run the warp-II bridge sampling algorithm, using the optimal bridge function by Meng &amp; Wong (1996).</span>
 
 <span class="sd">    Args:</span>
