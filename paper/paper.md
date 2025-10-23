@@ -54,8 +54,8 @@ In **Bamojax**, users can define a probabilistic model by specifying variables
 as well as their associated distributions and dependencies, structured using a 
 directed acyclic graph (DAG). Under the hood, **Bamojax** translates this DAG and 
 collection of probability distributions to the probability densities used in the
-approximate inference, leveraging the probability definitions defined in distrax 
-[@distrax]. This abstraction allows users to focus on the conceptual model 
+approximate inference, leveraging the probability definitions defined in NumPyro 
+[@numpyro]. This abstraction allows users to focus on the conceptual model 
 formulation, rather than the mathematical or inference details, leading to a more
 intuitive, less error-prone, and more efficient development workflow.
 
@@ -65,7 +65,7 @@ want to focus on model development instead of implementation.
 
 ## Comparison with existing tools
 
-**Bamojax** is comparable to existing modern probabilistic programming languages, like NumPyro [@numpyro], Oryx [https://github.com/jax-ml/oryx], and PyMC [@PyMC], that use the fast JAX backend for efficient computation of Bayesian inference. The aim of **Bamojax** is to stay close to (JAX) Numpy levels of user control in defining probability densities and transformations, while at the same time providing some level of abstraction to the user, by automatically deriving densities from Distrax primitives and the directed acylcic graph structure of a Bayesian model. This allows for convenient integration of new methods with existing tools.
+**Bamojax** is comparable to existing modern probabilistic programming languages, like NumPyro [@numpyro], Oryx [@oryx], and PyMC [@pymc], that use the fast JAX backend for efficient computation of Bayesian inference. The aim of **Bamojax** is to stay close to (JAX) Numpy levels of user control in defining probability densities and transformations, while at the same time providing some level of abstraction to the user, by automatically deriving densities from NumPyro primitives and the directed acylcic graph structure of a Bayesian model. This allows for convenient integration of new methods with existing tools.
 
 **Bamojax** easily admits Gibbs sampling, where individual model parameters are updated in turn, which in practice can lead to efficiency gains and sampling of discrete variables. These benefits increase further when Gibbs sampling is used with Sequential Monte Carlo [@Hinne2025], which is straightforward to set up here.
 
