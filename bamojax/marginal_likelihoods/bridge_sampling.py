@@ -132,7 +132,6 @@ def bridge_sampling(key, model: Model, posterior_samples, bijectors: dict, propo
     posterior_samples_batch_1 = jax.tree.map(lambda x: x[1::2, ...], posterior_samples)
     posterior_samples_batch_2 = jax.tree.map(lambda x: x[::2, ...], posterior_samples)
 
-    # N1 = ravel_pytree(jax.tree.map(lambda x: x.shape[0], posterior_samples_batch_1))[0][0]
     N1 = list(posterior_samples_batch_1.values())[0].shape[0]
 
     if proposal_type == 'gaussian':
