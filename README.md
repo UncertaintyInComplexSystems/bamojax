@@ -1,4 +1,4 @@
-[![Tests](https://github.com/uncertaintyincomplexsystems/bamojax/actions/workflows/test.yml/badge.svg)](https://github.com/uncertaintyincomplexsystems/bamojax/actions/workflows/test.yml)
+[![Tests](https://github.com/uncertaintyincomplexsystems/bamojax/actions/workflows/test.yml/badge.svg)](https://github.com/uncertaintyincomplexsystems/bamojax/actions/workflows/test.yml) [![DOI](https://joss.theoj.org/papers/10.21105/joss.08642/status.svg)](https://doi.org/10.21105/joss.08642)
 
 ![bamojax logo](https://github.com/uncertaintyincomplexsystems/bamojax/blob/main/figures/bamojax_logo_2x.png "bamojax")
 

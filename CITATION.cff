@@ -1,20 +1,26 @@
-cff-version: 1.2.0
-message: "If you use this software, please cite it using the metadata below."
-title: "Bamojax: Bayesian Modelling with JAX"
-version: 0.1.0
-doi: 10.5281/zenodo.15038847
+cff-version: "1.2.0"
 authors:
+- family-names: Hinne
+  given-names: Max
+  orcid: "https://orcid.org/0000-0002-9279-6725"
+doi: 10.5281/zenodo.17456689
+message: If you use this software, please cite our article in the
+  Journal of Open Source Software.
+preferred-citation:
+  authors:
   - family-names: Hinne
     given-names: Max
-    orcid: https://orcid.org/0000-0002-9279-6725
-    affiliation: Radboud University, Nijmegen, The Netherlands
-date-released: 2025-04-22
-license: MIT
-repository-code: https://github.com/maxhinne/bamojax
-url: https://github.com/maxhinne/bamojax
-keywords:
-  - Bayesian inference
-  - probabilistic programming
-  - JAX
-  - Blackjax
-  - Bayesian model comparison
+    orcid: "https://orcid.org/0000-0002-9279-6725"
+  date-published: 2025-10-27
+  doi: 10.21105/joss.08642
+  issn: 2475-9066
+  issue: 114
+  journal: Journal of Open Source Software
+  publisher:
+    name: Open Journals
+  start: 8642
+  title: "Bamojax: Bayesian Modelling with JAX"
+  type: article
+  url: "https://joss.theoj.org/papers/10.21105/joss.08642"
+  volume: 10
+title: "Bamojax: Bayesian Modelling with JAX"
