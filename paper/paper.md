@@ -65,17 +65,13 @@ want to focus on model development instead of implementation.
 
 ## Comparison with existing tools
 
-**Bamojax** is comparable to existing modern probabilistic programming languages, like NumPyro [@numpyro], Oryx [@oryx], and PyMC [@pymc], that use the fast JAX backend for efficient computation of Bayesian inference. The aim of **Bamojax** is to stay close to (JAX) Numpy levels of user control in defining probability densities and transformations, while at the same time providing some level of abstraction to the user, by automatically deriving densities from NumPyro primitives and the directed acylcic graph structure of a Bayesian model. This allows for convenient integration of new methods with existing tools.
+**Bamojax** is comparable to existing modern probabilistic programming languages, like NumPyro [@numpyro], Oryx [@oryx], and PyMC [@pymc], that use the fast JAX backend for efficient computation of Bayesian inference. The aim of **Bamojax** is to give users full control in defining probability densities and transformations, while at the same time providing some level of abstraction, by automatically deriving densities from NumPyro primitives and the DAG structure of a Bayesian model. This allows for convenient integration of new methods with existing tools.
 
 **Bamojax** easily admits Gibbs sampling, where individual model parameters are updated in turn, which in practice can lead to efficiency gains and sampling of discrete variables. These benefits increase further when Gibbs sampling is used with Sequential Monte Carlo [@Hinne2025], which is straightforward to set up here.
 
 Furthermore, **Bamojax** provides a convenient interface to the different sampling algorithms that are available in BlackJAX, giving the user fine-grained control over the inference strategy of their models. This enables users to mix-and-match
 BlackJAX MCMC kernels with elements of their probabilistic model, while maintaining
 the efficiency of JAX-based inference.
-
-# Acknowledgements
-
-None at this time.
 
 # References
 
