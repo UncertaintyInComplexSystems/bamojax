@@ -210,18 +210,20 @@ The full **bamojax** API can be found here: https://uncertaintyincomplexsystems.
 
 If you use Bamojax in your work, please cite the following:
 
-    Max Hinne. (2025). Bamojax: Bayesian Modelling with JAX (Version 0.1.0) [Computer software]. https://doi.org/10.5281/zenodo.15038847
+    Max Hinne. (2025). Bamojax: Bayesian Modelling with JAX (Version 0.3.11). Journal of Open Source Software, 114. https://doi.org/10.21105/joss.08642.
 
 BibTeX:
 
 ```
-@software{hinne2025bamojax,
+@article{hinne2025bamojax,
   author       = {Hinne, Max},
   title        = {Bamojax: Bayesian Modelling with JAX},
+  journal      = {Journal of Open Source Software},
+  volume       = 114
   year         = 2025,
-  publisher    = {Zenodo},
-  version      = {0.1.0},
-  doi          = {10.5281/zenodo.15038847},
-  url          = {https://github.com/maxhinne/bamojax}
+  publisher    = {Open Journals},
+  version      = {0.3.11},
+  doi          = {10.21105/joss.08642},
+  url          = {https://joss.theoj.org/papers/10.21105/joss.08642}
 }
 ```
