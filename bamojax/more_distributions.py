@@ -228,7 +228,9 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = Zero(),  nd: Tu
             """
             x = self.input
             m = x.shape[0]
-            return cov_fn(params=self.params, x=x, y=x) + jitter * jnp.eye(m)
+            cov = cov_fn(params=self.params, x=x, y=x)
+            jitter_matrix = jitter * jnp.eye(m)
+            return cov + jitter_matrix
         
         #
         def get_cov(self):
