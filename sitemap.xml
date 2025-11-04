@@ -2,78 +2,78 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/SUMMARY/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax._version/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.base/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.inference/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.marginal_likelihoods.bridge_sampling/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.marginal_likelihoods.importance_sampling/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.marginal_likelihoods.laplace/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.marginal_likelihoods.naive_monte_carlo/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.marginal_likelihoods.thames/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.marginal_likelihoods.utility/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.modified_blackjax.modified_adaptive_tempered/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.modified_blackjax.modified_elliptical_slice_nd/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.modified_blackjax.modified_tempered/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.modified_blackjax.more_proposals/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.more_distributions/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://uncertaintyincomplexsystems.github.io/bamojax/api/bamojax.samplers/</loc>
-         <lastmod>2025-10-27</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
 </urlset>
