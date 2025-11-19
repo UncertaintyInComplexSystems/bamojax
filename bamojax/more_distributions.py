@@ -11,6 +11,7 @@ import numpyro as npr
 import numpyro.distributions as dist
 from numpyro.distributions import Distribution
 import numpyro.distributions.transforms as nprb
+from numpyro.distributions.constraints import positive_definite
 
 from .base import Node
 
@@ -357,5 +358,125 @@ def AutoRegressionFactory(ar_fn: Callable):
 
     #
     return ARInstance
+
+#
+class GWishart(Distribution):
+
+    support = positive_definite
+
+    def __init__(self, G, dof, scale=None, data=None):
+        """Initializes a G-Wishart distribution.
+
+        Args:
+          G: binary adjacency matrix
+          dof: degrees of freedom
+          scale: scale matrix        
+        """
+        self.G = G
+        self.dof = dof
+        assert scale is not None or data is not None, 'Provide either a scale matrix or data to compute the scale matrix from.'
+        if scale is None:
+            # Note that the scale matrix is the empirical scatter matrix, not the covariance matrix; hence the multiplication with n
+            n = data.shape[0]
+            emp_cov = jnp.cov(data, rowvar=False)
+            scale = emp_cov * n
+        self.scale = scale
+        self.scale_inv = jnp.linalg.inv(scale)
+        self.p = scale.shape[0]
+        super().__init__(batch_shape=(), event_shape=(self.p, self.p), validate_args=False)
+    
+    #
+    def _sample_G_Wishart(self, key, tol=1e-6, max_iter=100):
+        """Draws a sample from the G-Wishart distribution with graph G, scale matrix D, and dof degrees of freedom.
+
+        The procedure implements the algorithm proposed by Alex Lenkoski (2013), based on iterative proportional scaling.
+
+        The key to making this function jittable is to avoid dynamic indexing and keep all arrays and matrices of size (p, ) or (p, p), in the update_W function.
+
+        Args:
+            key: JAX PRNG key
+            G: binary adjacency matrix of shape (p, p)
+            D: scale matrix of shape (p, p)
+            dof: degrees of freedom
+            tol: tolerance for convergence
+            max_iter: maximum number of iterations  
+        Returns:
+            A sample from the G-Wishart distribution of shape (p, p).
+
+        Literature:
+            Lenkoski, A. (2013). A direct sampler for G-Wishart variates. Stat (2):1, pp. 119-128. https://doi.org/10.1002/sta4.23
+
+        """
+        # See parametrization of the Wishart distribution in https://github.com/mhinne/BaCon
+        # To match the results in Lenkoski (2013), we need to sample K ~ Wishart(dof + p - 1, D^{-1})
+        K = dist.Wishart(concentration=self.dof + self.p - 1, scale_matrix=self.scale_inv).sample(key)
+        Sigma = jnp.linalg.inv(K)
+        W0 = Sigma
+        
+        def sweep_nodes(W):
+            """ Perform one sweep over all nodes to update W.
+            
+            """
+            def update_W(W, j):
+                mask_j = self.G[j, :]
+                beta_j = jnp.linalg.solve(W, Sigma[:, j] * mask_j)
+                update_w = jnp.dot(W, beta_j)
+                W_new = W.at[j, :].set(update_w)
+                W_new = W_new.at[:, j].set(update_w)
+                return W_new, None
+
+            #
+            W, _ = jax.lax.scan(update_W, W, xs=jnp.arange(self.p))
+            return W
+
+        #
+        def cond_fn(state):
+            W_old, W_new, iter = state
+            diff = jnp.linalg.norm(W_new - W_old)
+            return jnp.logical_and(diff > tol, iter < max_iter)
+        
+        #
+        def body_fn(state):
+            _, W_new, iter = state
+            W_next = sweep_nodes(W_new)
+            return (W_new, W_next, iter + 1)
+
+        #
+        W1 = sweep_nodes(W0)                          
+        init_state = (W0, W1, 0)
+
+        _, W_final, _ = jax.lax.while_loop(cond_fn, body_fn, init_state)
+
+        # Due to numerical issues, we ensure symmetry and zeros:
+        return jnp.linalg.inv((W_final + W_final.T)/2)*self.G
+
+    #
+    def sample(self, key, sample_shape=( )):
+        """Draws samples from the G-Wishart distribution.
+
+        Args:
+            key: JAX PRNG key
+            sample_shape: shape of the samples to draw  
+        Returns:
+            Samples from the G-Wishart distribution.
+        """
+        if sample_shape == ():
+            return self._sample_G_Wishart(key)
+        keys = jrnd.split(key, jnp.prod(jnp.array(sample_shape)))
+        samples = jax.vmap(self._sample_G_Wishart)(keys)
+        return samples.reshape(sample_shape + self.event_shape)
+    
+    #
+    def log_prob(self, value):
+        """Calculates the log probability of a given value.
+
+        Args:
+            value: value to calculate the log probability for  
+        Returns:
+            Log probability of the given value.
+        """
+        raise NotImplementedError('Log probability for G-Wishart distribution is intractable and not implemented.')
+    
+    #
 
 #
