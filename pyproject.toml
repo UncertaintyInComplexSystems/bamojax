@@ -28,8 +28,7 @@ dependencies = [
   "jaxlib>=0.4.33",
   "blackjax>=1.2",
   "numpyro>=0.14",
-  "jaxtyping",
-  "ipython"
+  "jaxtyping"
 ]
 
 # === Dev/test extras so contributors can do: pip install -e ".[dev]" ===
@@ -37,6 +36,7 @@ dependencies = [
 dev = [
   "pytest>=8",
   "pytest-cov>=5",
+  "ipython>=8.0"
   # "JaxKern @ git+https://github.com/UncertaintyInComplexSystems/JaxKern.git",
 ]
 docs = [
