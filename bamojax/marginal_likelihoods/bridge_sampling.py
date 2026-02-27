@@ -47,8 +47,8 @@ def get_proposal_distribution(transformed_samples):
     samples_flattened, unravel_one_sample = flatten_dict_to_array(transformed_samples)
     mu, cov = jnp.mean(samples_flattened, axis=0), jnp.cov(samples_flattened, rowvar=False)
 
-    if len(transformed_samples.keys()) == 1:
-        proposal_distribution = dist.Normal(loc=jnp.atleast_1d(mu), scale=jnp.atleast_1d(jnp.sqrt(cov)))
+    if len(transformed_samples.keys()) == 1 and mu.shape == (1, ):
+        proposal_distribution = dist.Normal(loc=mu, scale=jnp.sqrt(cov))
     else:        
         proposal_distribution = dist.MultivariateNormal(loc=mu, covariance_matrix=cov)
 
@@ -144,7 +144,7 @@ def bridge_sampling(key, model: Model, posterior_samples, bijectors: dict, propo
         raise NotImplementedError(f'Proposal type "{proposal_type}" is not implemented')
     
     proposal_samples = sample_from_proposal_distribution(key, proposal_distribution, unravel_fn, N2)
-
+    proposal_samples = jax.tree.map(lambda x: x[..., jnp.newaxis] if jnp.ndim(x)==1 else x, proposal_samples)
     L2 = get_importance_weights(model, bijectors, proposal_distribution, proposal_samples)
     transformed_samples_2 = apply_inverse_bijectors(posterior_samples_batch_2, bijectors)
     L1 = get_importance_weights(model, bijectors, proposal_distribution, transformed_samples_2)

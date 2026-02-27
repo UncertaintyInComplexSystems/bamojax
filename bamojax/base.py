@@ -211,7 +211,7 @@ class Model:
 
     #    
     def add_edge(self, from_node, to_node):
-        r""" Store the dependence between two nodes.
+        r""" Store the dependency between two nodes.
 
         Args:
             from_node: source node
