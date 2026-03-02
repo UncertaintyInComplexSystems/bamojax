@@ -60,13 +60,13 @@ def test_smc_inference():
     num_particles = 10_000
     num_mcmc_steps = 500
     num_chains = 1
-    stepsize = 0.01
+    stepsize = 0.05
 
     mcmc_params = dict(sigma=stepsize*jnp.eye(gukmodel.get_model_size()))
     rmh = mcmc_sampler(gukmodel, mcmc_kernel=blackjax.normal_random_walk, mcmc_parameters=mcmc_params)
 
     engine = SMCInference(model=gukmodel, num_chains=num_chains, mcmc_kernel=rmh, num_mutations=num_mcmc_steps, num_particles=num_particles)
-    result = engine.run(jrnd.PRNGKey(1))
+    result = engine.run(jrnd.PRNGKey(0))
     final_state = result['final_state']
     lml = result['lml']
 
