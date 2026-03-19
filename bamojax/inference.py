@@ -144,13 +144,11 @@ class MCMCInference(InferenceEngine):
             (optional) Diagnostic information, depending on the `return_diagnostics` attribute
         
         """
-        @jax.jit
         def one_step_fn(state, key):
             state, info = self.mcmc_kernel.step(key, state)
             return state, info
 
         #
-        @jax.jit
         def one_step_state_only_fn(state, key):
             state, _ = self.mcmc_kernel.step(key, state)
             return state, None

@@ -4,7 +4,7 @@ import jax.random as jrnd
 import jax.numpy as jnp
 from blackjax.base import SamplingAlgorithm
 from blackjax.types import ArrayTree, PRNGKey
-from blackjax import normal_random_walk, generate_top_level_api_from
+from blackjax import normal_random_walk, generate_top_level_api_from, nuts
 
 import numpyro
 from numpyro.distributions import Distribution
@@ -187,7 +187,7 @@ def gibbs_sampler(model: Model,
 
 #
 def mcmc_sampler(model: Model, 
-                 mcmc_kernel, 
+                 mcmc_kernel: SamplingAlgorithm = None, 
                  mcmc_parameters: dict = None):
     """ Constructs an MCMC sampler from a given Blackjax algorithm.
 
@@ -202,6 +202,10 @@ def mcmc_sampler(model: Model,
         A Blackjax SamplingAlgorithm object with methods `init_fn` and `step_fn`.
     
     """
+    if mcmc_parameters is None and mcmc_kernel is None:
+        mcmc_kernel = nuts
+        m = model.get_model_size()
+        mcmc_parameters = dict(step_size=0.5, inverse_mass_matrix=0.0001*jnp.eye(m))  # these will be overriden by the window adaptation
 
     def mcmc_fn(model: Model, 
                 key, 
