@@ -687,7 +687,13 @@ https://doi.org/10.1214/24-BA1422
 <span class="normal">113</span>
 <span class="normal">114</span>
 <span class="normal">115</span>
-<span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">thames</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">posterior_samples</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">adjust_volume</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">thames</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">posterior_samples</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">adjust_volume</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Implements the Truncated Harmonic Mean Estimator (THAMES), by Metodiev et al. (2025)</span>
 
 <span class="sd">    Args:</span>
@@ -721,8 +727,14 @@ https://doi.org/10.1214/24-BA1422
     <span class="n">samples_batch_1_flat</span><span class="p">,</span> <span class="n">unravel_one</span> <span class="o">=</span> <span class="n">flatten_dict_to_array</span><span class="p">(</span><span class="n">posterior_samples_batch_1</span><span class="p">)</span>
     <span class="n">samples_batch_2_flat</span><span class="p">,</span> <span class="n">unravel_one</span> <span class="o">=</span> <span class="n">flatten_dict_to_array</span><span class="p">(</span><span class="n">posterior_samples_batch_2</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">samples_batch_1_flat</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">samples_batch_1_flat</span> <span class="o">=</span> <span class="n">samples_batch_1_flat</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">samples_batch_2_flat</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">samples_batch_2_flat</span> <span class="o">=</span> <span class="n">samples_batch_2_flat</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+
     <span class="n">mu</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">samples_batch_1_flat</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">cov</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">samples_batch_1_flat</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">cov</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">samples_batch_1_flat</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
 
     <span class="n">L</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
     <span class="n">samples_std</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="p">(</span><span class="n">samples_batch_2_flat</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
