@@ -13,3 +13,4 @@ dependencies:
     - pytest
     - blackjax
     - numpyro
+    - jaxopt
