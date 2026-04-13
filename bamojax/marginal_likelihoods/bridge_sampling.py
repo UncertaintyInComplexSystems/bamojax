@@ -7,7 +7,6 @@ import numpyro.distributions.transforms as nprb
 
 from bamojax.base import Model
 from bamojax.marginal_likelihoods.utility import flatten_dict_to_array
-from jax.flatten_util import ravel_pytree
 
 
 def apply_bijectors(samples, bijectors):
@@ -38,23 +37,18 @@ def get_jacobians(samples, bijectors):
 
 #
 def get_proposal_distribution(transformed_samples):
-    """Create a proposal distribution on the real line.
-
-    Also returns an unravel function to transform proposals back to the dicts Bamojax uses for sampling.
-
-    """
-
     samples_flattened, unravel_one_sample = flatten_dict_to_array(transformed_samples)
-    mu, cov = jnp.mean(samples_flattened, axis=0), jnp.cov(samples_flattened, rowvar=False)
+    mu = jnp.mean(samples_flattened, axis=0)
+    cov = jnp.cov(samples_flattened, rowvar=False)
 
-    if len(transformed_samples.keys()) == 1 and mu.shape == (1, ):
-        proposal_distribution = dist.Normal(loc=mu, scale=jnp.sqrt(cov))
-    else:        
-        proposal_distribution = dist.MultivariateNormal(loc=mu, covariance_matrix=cov)
+    if mu.ndim == 0:
+        mu = mu[None]
+    if jnp.ndim(cov) == 0:
+        cov = cov[None, None]
+
+    proposal_distribution = dist.MultivariateNormal(loc=mu, covariance_matrix=cov)
 
     return proposal_distribution, jax.vmap(unravel_one_sample)
-
-#
 def sample_from_proposal_distribution(key, prop_dist, unravel_fn, N):
     """Sample from the proposal distribution and unravel back into a dictionary.
 
@@ -176,7 +170,7 @@ def bridge_sampling(key, model: Model, posterior_samples, bijectors: dict, propo
         return (t + 1, r, r_new)
 
     #
-    init_state = (0, 1.0, 0.0)
+    init_state = (0, 0.0, 1.0)
     n_iter, _, r_new = jax.lax.while_loop(cond_fn, body_fn, init_state)
 
     log_Z = jnp.log(r_new) + l_star  # see Gronau et al., page 95

@@ -77,8 +77,14 @@ def thames(key, model: Model, posterior_samples, M=100, adjust_volume=True):
     samples_batch_1_flat, unravel_one = flatten_dict_to_array(posterior_samples_batch_1)
     samples_batch_2_flat, unravel_one = flatten_dict_to_array(posterior_samples_batch_2)
 
+    if samples_batch_1_flat.ndim == 1:
+        samples_batch_1_flat = samples_batch_1_flat[:, None]
+    if samples_batch_2_flat.ndim == 1:
+        samples_batch_2_flat = samples_batch_2_flat[:, None]
+
     mu = jnp.mean(samples_batch_1_flat, axis=0)
-    cov = jnp.cov(samples_batch_1_flat, rowvar=False)
+    cov = jnp.atleast_2d(jnp.cov(samples_batch_1_flat, rowvar=False))
+    mu = jnp.atleast_1d(mu)
 
     L = jnp.linalg.cholesky(cov)
     samples_std = jnp.linalg.solve(L, (samples_batch_2_flat - mu).T).T
