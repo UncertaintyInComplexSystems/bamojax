@@ -154,7 +154,7 @@ def build_kernel(
         delta = lmbda - state.lmbda
 
         # [MODIFICATION]
-        mcmc_parameters['temperature'] = lmbda*jnp.eye(1)
+        mcmc_parameters['temperature'] = state.lmbda*jnp.eye(1)  # lmbda or state.lmbda?
         # [MODIFICATION]
 
         shared_mcmc_parameters = {}
@@ -170,7 +170,7 @@ def build_kernel(
 
         def tempered_logposterior_fn(position: ArrayLikeTree) -> float:
             logprior = logprior_fn(position)
-            tempered_loglikelihood = lmbda * loglikelihood_fn(position)
+            tempered_loglikelihood = state.lmbda * loglikelihood_fn(position)
             return logprior + tempered_loglikelihood
 
         shared_mcmc_step_fn = partial(mcmc_step_fn, **shared_mcmc_parameters)
