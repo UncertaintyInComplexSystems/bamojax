@@ -874,7 +874,7 @@ information about the transition.</p>
         <span class="n">delta</span> <span class="o">=</span> <span class="n">lmbda</span> <span class="o">-</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span>
 
         <span class="c1"># [MODIFICATION]</span>
-        <span class="n">mcmc_parameters</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lmbda</span><span class="o">*</span><span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">mcmc_parameters</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span><span class="o">*</span><span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># lmbda or state.lmbda?</span>
         <span class="c1"># [MODIFICATION]</span>
 
         <span class="n">shared_mcmc_parameters</span> <span class="o">=</span> <span class="p">{}</span>
@@ -890,7 +890,7 @@ information about the transition.</p>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">tempered_logposterior_fn</span><span class="p">(</span><span class="n">position</span><span class="p">:</span> <span class="n">ArrayLikeTree</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
             <span class="n">logprior</span> <span class="o">=</span> <span class="n">logprior_fn</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
-            <span class="n">tempered_loglikelihood</span> <span class="o">=</span> <span class="n">lmbda</span> <span class="o">*</span> <span class="n">loglikelihood_fn</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+            <span class="n">tempered_loglikelihood</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span> <span class="o">*</span> <span class="n">loglikelihood_fn</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">logprior</span> <span class="o">+</span> <span class="n">tempered_loglikelihood</span>
 
         <span class="n">shared_mcmc_step_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">mcmc_step_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">shared_mcmc_parameters</span><span class="p">)</span>
