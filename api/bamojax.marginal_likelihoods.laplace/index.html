@@ -550,6 +550,7 @@ and is used to approximate the actual marginal likelihood.</p>
 
 <span class="sd">    See https://en.wikipedia.org/wiki/Laplace%27s_approximation</span>
 
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># The objective function is the unnormalized posterior</span>
@@ -570,7 +571,6 @@ and is used to approximate the actual marginal likelihood.</p>
 
     <span class="c1"># For some models, the parameters are bounded</span>
     <span class="k">if</span> <span class="s1">&#39;bounds&#39;</span> <span class="ow">in</span> <span class="n">opt_args</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">opt_args</span><span class="p">[</span><span class="s1">&#39;bounds&#39;</span><span class="p">])</span>
         <span class="n">solver</span> <span class="o">=</span> <span class="n">jaxopt</span><span class="o">.</span><span class="n">ScipyBoundedMinimize</span><span class="p">(</span><span class="n">fun</span><span class="o">=</span><span class="n">fun</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">solver</span> <span class="o">=</span> <span class="n">jaxopt</span><span class="o">.</span><span class="n">ScipyMinimize</span><span class="p">(</span><span class="n">fun</span><span class="o">=</span><span class="n">fun</span><span class="p">)</span>
@@ -594,7 +594,7 @@ and is used to approximate the actual marginal likelihood.</p>
     <span class="n">h</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">tree_flatten</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">D</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">S</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> 
-                                                   <span class="n">newshape</span><span class="o">=</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">D</span><span class="p">))))</span>
+                                                   <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">D</span><span class="p">))))</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">logdet</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span> 
         <span class="n">S</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
