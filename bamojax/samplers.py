@@ -215,19 +215,16 @@ def mcmc_sampler(model: Model,
         
         temperature = kwargs.get('temperature', 1.0)
         position = state.position.copy()
-        position['__temperature'] = temperature
 
         loglikelihood_fn_ = model.loglikelihood_fn()
         logprior_fn_ = model.logprior_fn()
 
         # With this approach we only need to build the kernel object once.
         def tempered_logdensity_fn(pos):
-            t = pos.pop('__temperature', 1.0)
-            return jnp.squeeze(t*loglikelihood_fn_(pos) + logprior_fn_(pos))
+            return jnp.squeeze(temperature*loglikelihood_fn_(pos) + logprior_fn_(pos))
 
         #
         kernel_instance = mcmc_kernel(logdensity_fn=tempered_logdensity_fn, **mcmc_parameters)
-        del position['__temperature']
         state = kernel_instance.init(position)
         new_state, mcmc_info = kernel_instance.step(key, state)
         return MCMCState(position=new_state.position), mcmc_info

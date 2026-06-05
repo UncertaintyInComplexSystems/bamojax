@@ -615,11 +615,13 @@ class LaplaceInference(InferenceEngine):
                  num_chains: int = 1,
                  optimizer: Callable = jaxopt.ScipyMinimize,
                  optimizer_args: dict = None,
-                 bounds: dict = None):
+                 bounds: dict = None,
+                 temperature: float = 1.0):
         super().__init__(model, num_chains)
         if optimizer_args is None:
             optimizer_args = {}
         self.bounds = bounds
+        self.temperature = temperature
 
         self.bijectors = get_model_bijectors(model)
         self.is_leaf_fn = lambda x: hasattr(x, '__call__') and hasattr(x, '_inverse')
@@ -629,7 +631,7 @@ class LaplaceInference(InferenceEngine):
         @jax.jit
         def logdensity_fn(z):
             z = self.forward_bijectors(z)
-            return -1.0 * (model.loglikelihood_fn()(z) + model.logprior_fn()(z))
+            return -1.0 * (self.temperature * model.loglikelihood_fn()(z) + model.logprior_fn()(z))
 
         #
         self.obj_fun = logdensity_fn

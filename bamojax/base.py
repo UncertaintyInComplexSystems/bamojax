@@ -104,7 +104,7 @@ class Node:
         
         """
 
-        # Root-level nodes can be defined as instantiated distrax distributions.
+        # Root-level nodes can be defined as instantiated numpyro distributions.
         if isinstance(self.distribution, Distribution):
             return self.distribution
         
@@ -118,7 +118,7 @@ class Node:
                 parent_values[parent_name] = state[parent_node]
             else:
                 if parent_name in minibatch:
-                    parent_values[parent_name] = minibatch[parent_node]
+                    parent_values[parent_name] = minibatch[parent_name]
                 else:
                     parent_values[parent_name] = self.parents[parent_name].observations
 

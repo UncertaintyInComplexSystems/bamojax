@@ -41,6 +41,7 @@ def laplace_approximation(key,
 
     See https://en.wikipedia.org/wiki/Laplace%27s_approximation
 
+
     """
 
     # The objective function is the unnormalized posterior
@@ -61,7 +62,6 @@ def laplace_approximation(key,
 
     # For some models, the parameters are bounded
     if 'bounds' in opt_args:
-        print(opt_args['bounds'])
         solver = jaxopt.ScipyBoundedMinimize(fun=fun)
     else:
         solver = jaxopt.ScipyMinimize(fun=fun)
@@ -85,7 +85,7 @@ def laplace_approximation(key,
     h, _ = tree_flatten(H)
     if D > 1:
         S = jnp.squeeze(jnp.linalg.inv(jnp.reshape(jnp.asarray(h), 
-                                                   newshape=(D, D))))
+                                                   shape=(D, D))))
         _, logdet = jnp.linalg.slogdet(S)
     else: 
         S = 1.0 / jnp.squeeze(jnp.asarray(h))
