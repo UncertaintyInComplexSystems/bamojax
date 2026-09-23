@@ -136,16 +136,22 @@ def gibbs_sampler(model: Model,
                 # Values for co-parents are either taken from the position (if latent), or from their respective observations (if observed)
                 co_parent_arguments = {k: (position[k] if k in position else k.observations) for k in co_parents}
 
-                def loglikelihood_fn_(substate):
+                def loglikelihood_fn_(substate, child=child, co_parent_arguments=co_parent_arguments):
                     dynamic_state = {**co_parent_arguments, node.name: substate[node]}
                     child_value = child.observations if child.is_leaf() else position[child]
                     return child.get_distribution(dynamic_state).log_prob(value=child_value)
                 
                 #            
                 co_parents.add(node)
-                conditionals.append(loglikelihood_fn_)
+                # conditionals.append(loglikelihood_fn_)
 
-            loglikelihood_fn = lambda val: jnp.sum(jnp.asarray([temperature*ll_fn(val).sum() for ll_fn in conditionals]))
+                # Fix tempering in Gibbs updates
+                child_temperature = temperature if child.is_observed() else 1.0
+                conditionals.append((child_temperature, loglikelihood_fn_))
+
+            loglikelihood_fn = lambda val: jnp.sum(jnp.asarray([t*ll_fn(val).sum() for t, ll_fn in conditionals]))
+
+            # loglikelihood_fn = lambda val: jnp.sum(jnp.asarray([temperature*ll_fn(val).sum() for ll_fn in conditionals]))
 
             if 'implied_mvn_prior' in step_fn_params[node]:
                 # Some Blackjax step functions are tailored to multivariate Gaussian priors.
@@ -206,6 +212,10 @@ def mcmc_sampler(model: Model,
         mcmc_kernel = nuts
         m = model.get_model_size()
         mcmc_parameters = dict(step_size=0.5, inverse_mass_matrix=0.0001*jnp.eye(m))  # these will be overriden by the window adaptation
+
+    if (mcmc_parameters is None and mcmc_kernel is not None) or (mcmc_parameters is not None and mcmc_kernel is None):
+        raise ValueError('Both mcmc_kernel and mcmc_parameters must be specified, or neither.')
+    
 
     def mcmc_fn(model: Model, 
                 key, 

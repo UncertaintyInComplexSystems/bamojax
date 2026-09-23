@@ -11,7 +11,11 @@ import numpyro as npr
 import numpyro.distributions as dist
 from numpyro.distributions import Distribution
 import numpyro.distributions.transforms as nprb
+from numpyro.distributions import constraints
 from numpyro.distributions.constraints import positive_definite
+
+import jax.scipy.linalg as jsp_linalg
+from numpyro.distributions import Distribution, constraints
 
 from .base import Node
 
@@ -360,11 +364,39 @@ def AutoRegressionFactory(ar_fn: Callable):
     return ARInstance
 
 #
+class GraphBernoulli(dist.Distribution):
+    """Prior over symmetric binary adjacency matrices with i.i.d. Bernoulli edges."""
+
+    support = constraints.independent(constraints.boolean, 2)
+
+    def __init__(self, p: int, edge_prob: float = 0.5, validate_args=False):
+        self.p = p
+        self.edge_prob = edge_prob
+        self._rows, self._cols = jnp.triu_indices(p, k=1)
+        super().__init__(batch_shape=(), event_shape=(p, p), validate_args=validate_args)
+
+    #
+    def sample(self, key, sample_shape=()):
+        assert sample_shape == () or sample_shape is None
+        e = jrnd.bernoulli(key, self.edge_prob, (self._rows.shape[0],)).astype(jnp.int32)
+        G = jnp.eye(self.p, dtype=jnp.int32)
+        G = G.at[self._rows, self._cols].set(e)
+        G = G.at[self._cols, self._rows].set(e)
+        return G
+
+    #
+    def log_prob(self, value):
+        e = value[..., self._rows, self._cols]
+        return jnp.sum(e * jnp.log(self.edge_prob)
+                       + (1 - e) * jnp.log(1.0 - self.edge_prob), axis=-1)
+
+    #
+
+#
 class GWishart(Distribution):
+    support = constraints.positive_definite
 
-    support = positive_definite
-
-    def __init__(self, G, dof, scale=None, data=None):
+    def __init__(self, G, dof, scale=None, data=None, validate_args=False):
         """Initializes a G-Wishart distribution.
 
         Args:
@@ -372,21 +404,28 @@ class GWishart(Distribution):
           dof: degrees of freedom
           scale: scale matrix        
         """
-        self.G = G
-        self.dof = dof
-        assert scale is not None or data is not None, 'Provide either a scale matrix or data to compute the scale matrix from.'
+        assert scale is not None or data is not None, "Provide either a scale matrix or data to compute the scale matrix from."
+
         if scale is None:
-            # Note that the scale matrix is the empirical scatter matrix, not the covariance matrix; hence the multiplication with n
             n = data.shape[0]
             emp_cov = jnp.cov(data, rowvar=False)
-            scale = emp_cov * n
-        self.scale = scale
-        self.scale_inv = jnp.linalg.inv(scale)
-        self.p = scale.shape[0]
-        super().__init__(batch_shape=(), event_shape=(self.p, self.p), validate_args=False)
-    
-    #
-    def _sample_G_Wishart(self, key, tol=1e-6, max_iter=100):
+            scale = n * emp_cov
+
+        self.G = jnp.array(G)
+        self.dof = dof
+        self.scale = jnp.array(scale)
+        self.p = self.scale.shape[0]
+
+        # Matlab: Kp = wishrnd_opt(inv(S), df+p-1);
+        self.scale_inv = jnp.linalg.inv(self.scale)
+
+        batch_shape = ()
+        event_shape = (self.p, self.p)
+        super().__init__(batch_shape=batch_shape,
+                         event_shape=event_shape,
+                         validate_args=validate_args)
+
+    def _sample_G_Wishart(self, key, tol=1e-5, max_iter=100):
         """Draws a sample from the G-Wishart distribution with graph G, scale matrix D, and dof degrees of freedom.
 
         The procedure implements the algorithm proposed by Alex Lenkoski (2013), based on iterative proportional scaling.
@@ -409,49 +448,79 @@ class GWishart(Distribution):
         """
         # See parametrization of the Wishart distribution in https://github.com/mhinne/BaCon
         # To match the results in Lenkoski (2013), we need to sample K ~ Wishart(dof + p - 1, D^{-1})
-        K = dist.Wishart(concentration=self.dof + self.p - 1, scale_matrix=self.scale_inv).sample(key)
-        Sigma = jnp.linalg.inv(K)
-        W0 = Sigma
+        p = self.p
         
-        def sweep_nodes(W):
-            """ Perform one sweep over all nodes to update W.
+        Kp = dist.Wishart(concentration=self.dof + p - 1,
+                          scale_matrix=self.scale_inv).sample(key)
+        Sigma = jnp.linalg.inv(Kp)
+
+        W = Sigma
+        W_prev = jnp.zeros_like(W)
+
+        G_bool = self.G.astype(bool)
+        G_no_diag = jnp.logical_and(G_bool, ~jnp.eye(p, dtype=bool))
+
+        def one_sweep(W):
+            """Perform one sweep over j = 0, ..., p-1 using masked updates
             
             """
-            def update_W(W, j):
-                mask_j = self.G[j, :]
-                beta_j = jnp.linalg.solve(W, Sigma[:, j] * mask_j)
-                update_w = jnp.dot(W, beta_j)
-                W_new = W.at[j, :].set(update_w)
-                W_new = W_new.at[:, j].set(update_w)
-                return W_new, None
+            idx = jnp.arange(p)
 
-            #
-            W, _ = jax.lax.scan(update_W, W, xs=jnp.arange(self.p))
+            def body(W, j):
+                mask_nei = G_no_diag[j]              # shape (p,)
+                m = mask_nei.astype(W.dtype)         # 0/1 mask
+                
+                outer_mask = jnp.outer(m, m)
+                M_j = W * outer_mask + jnp.diag(1.0 - m)
+
+                rhs_j = Sigma[:, j] * m
+
+                L = jnp.linalg.cholesky(M_j + 1e-8 * jnp.eye(p))
+                y = jsp_linalg.solve_triangular(L, rhs_j, lower=True)
+                gamma_full = jsp_linalg.solve_triangular(L.T, y, lower=False)
+                w_new = W @ gamma_full
+
+                mask_not_j = (idx != j)
+                col_j = W[:, j]
+                row_j = W[j, :]
+
+                col_j_new = jnp.where(mask_not_j, w_new, col_j)   # keep W[j,j]
+                row_j_new = jnp.where(mask_not_j, w_new, row_j)
+
+                W = W.at[:, j].set(col_j_new)
+                W = W.at[j, :].set(row_j_new)
+
+                return W, None
+
+            W, _ = jax.lax.scan(body, W, jnp.arange(p))
             return W
 
         #
-        def cond_fn(state):
-            W_old, W_new, iter = state
-            diff = jnp.linalg.norm(W_new - W_old)
-            return jnp.logical_and(diff > tol, iter < max_iter)
-        
-        #
-        def body_fn(state):
-            _, W_new, iter = state
-            W_next = sweep_nodes(W_new)
-            return (W_new, W_next, iter + 1)
+        def cond_fun(state):
+            W_prev, W, it = state
+            diff = jnp.max(jnp.abs(W - W_prev))
+            return jnp.logical_and(diff > tol, it < max_iter)
 
         #
-        W1 = sweep_nodes(W0)                          
-        init_state = (W0, W1, 0)
+        def body_fun(state):
+            _, W, it = state
+            W_next = one_sweep(W)
+            return (W, W_next, it + 1)
 
-        _, W_final, _ = jax.lax.while_loop(cond_fn, body_fn, init_state)
+        #
+        W1 = one_sweep(W)
+        init_state = (W_prev, W1, 0)
+        _, W_final, _ = jax.lax.while_loop(cond_fun, body_fun, init_state)
 
-        # Due to numerical issues, we ensure symmetry and zeros:
-        return jnp.linalg.inv((W_final + W_final.T)/2)*self.G
+        # For numerical reasons, ensure symmetry and zeros here
+        W_sym = 0.5 * (W_final + W_final.T)
+        G_mask = jnp.maximum(self.G, jnp.eye(p, dtype=self.G.dtype))
+        K = jnp.linalg.inv(W_sym) * G_mask
+
+        return K
 
     #
-    def sample(self, key, sample_shape=( )):
+    def sample(self, key, sample_shape=()):
         """Draws samples from the G-Wishart distribution.
 
         Args:
@@ -475,8 +544,7 @@ class GWishart(Distribution):
         Returns:
             Log probability of the given value.
         """
-        raise NotImplementedError('Log probability for G-Wishart distribution is intractable and not implemented.')
+        raise NotImplementedError("G-Wishart log_prob is intractable.")
     
     #
-
 #
