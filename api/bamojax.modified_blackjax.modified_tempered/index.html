@@ -17,7 +17,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -25,7 +25,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -520,14 +520,14 @@
 <span class="normal">38</span>
 <span class="normal">39</span>
 <span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">TemperedSMCState</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Current state for the tempered SMC algorithm.</span>
+<span class="w">    </span><span class="sd">"""Current state for the tempered SMC algorithm.</span>
 
 <span class="sd">    particles: PyTree</span>
-<span class="sd">        The particles&#39; positions.</span>
+<span class="sd">        The particles' positions.</span>
 <span class="sd">    lmbda: float</span>
 <span class="sd">        Current value of the tempering parameter.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">particles</span><span class="p">:</span> <span class="n">ArrayTree</span>
     <span class="n">weights</span><span class="p">:</span> <span class="n">Array</span>
@@ -608,11 +608,11 @@ samples per chain.</p>
     <span class="n">num_mcmc_steps</span><span class="p">,</span>
     <span class="n">n_particles</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Given N particles, runs num_mcmc_steps of a kernel starting at each particle, and</span>
 <span class="sd">    returns the last values, waisting the previous num_mcmc_steps-1</span>
 <span class="sd">    samples per chain.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">mcmc_kernel</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">step_parameters</span><span class="p">):</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">mcmc_init_fn</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">tempered_logposterior_fn</span><span class="p">)</span>
@@ -805,7 +805,7 @@ information about the transition.</p>
     <span class="n">resampling_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
     <span class="n">update_strategy</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">update_and_take_last</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the base Tempered SMC kernel.</span>
+<span class="w">    </span><span class="sd">"""Build the base Tempered SMC kernel.</span>
 
 <span class="sd">    Tempered SMC uses tempering to sample from a distribution given by</span>
 
@@ -840,7 +840,7 @@ information about the transition.</p>
 <span class="sd">    of the chain and that returns a new state of the chain along with</span>
 <span class="sd">    information about the transition.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span>
         <span class="n">rng_key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span>
@@ -849,7 +849,7 @@ information about the transition.</p>
         <span class="n">lmbda</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">mcmc_parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">TemperedSMCState</span><span class="p">,</span> <span class="n">smc</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">SMCInfo</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Move the particles one step using the Tempered SMC algorithm.</span>
+<span class="w">        </span><span class="sd">"""Move the particles one step using the Tempered SMC algorithm.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -870,11 +870,11 @@ information about the transition.</p>
 <span class="sd">        info</span>
 <span class="sd">            Additional information on the SMC step</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">delta</span> <span class="o">=</span> <span class="n">lmbda</span> <span class="o">-</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span>
 
         <span class="c1"># [MODIFICATION]</span>
-        <span class="n">mcmc_parameters</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span><span class="o">*</span><span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># lmbda or state.lmbda?</span>
+        <span class="n">mcmc_parameters</span><span class="p">[</span><span class="s1">'temperature'</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span><span class="o">*</span><span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># lmbda or state.lmbda?</span>
         <span class="c1"># [MODIFICATION]</span>
 
         <span class="n">shared_mcmc_parameters</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1027,7 +1027,7 @@ num_mcmc_steps
     <span class="n">num_mcmc_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
     <span class="n">update_strategy</span><span class="o">=</span><span class="n">update_and_take_last</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implements the (basic) user interface for the Adaptive Tempered SMC kernel.</span>
+<span class="w">    </span><span class="sd">"""Implements the (basic) user interface for the Adaptive Tempered SMC kernel.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1051,7 +1051,7 @@ num_mcmc_steps
 <span class="sd">    -------</span>
 <span class="sd">    A ``SamplingAlgorithm``.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">kernel</span> <span class="o">=</span> <span class="n">build_kernel</span><span class="p">(</span>
         <span class="n">logprior_fn</span><span class="p">,</span>
@@ -1147,7 +1147,7 @@ num_mcmc_steps
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

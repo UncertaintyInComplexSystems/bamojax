@@ -17,7 +17,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -25,7 +25,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -427,7 +427,7 @@ as: </p>
 <span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">iid_likelihood</span><span class="p">(</span><span class="n">L</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 
 <span class="sd">    We typically have multiple observations and assume the likelihood factorizes </span>
 <span class="sd">    as: </span>
@@ -436,7 +436,7 @@ as: </p>
 <span class="sd">        \log p\left(Y \mid \theta\right) = \sum_{i=1}^N \log p\left(y_i \mid \theta\right) \enspace.</span>
 <span class="sd">    $$</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">L</span><span class="p">()(</span><span class="n">x</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -539,7 +539,7 @@ and is used to approximate the actual marginal likelihood.</p>
                           <span class="n">iid_obs</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                           <span class="o">**</span><span class="n">opt_args</span><span class="p">):</span>
 
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the Laplace approximation of the log marginal likelihood of model</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Compute the Laplace approximation of the log marginal likelihood of model</span>
 
 <span class="sd">    The Laplace approximation approximates the posterior density of the model </span>
 <span class="sd">    with a Gaussian, centered at the mode of the density and with its curvature</span>
@@ -551,7 +551,7 @@ and is used to approximate the actual marginal likelihood.</p>
 <span class="sd">    See https://en.wikipedia.org/wiki/Laplace%27s_approximation</span>
 
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># The objective function is the unnormalized posterior</span>
     <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
@@ -570,7 +570,7 @@ and is used to approximate the actual marginal likelihood.</p>
                            <span class="n">model</span><span class="o">.</span><span class="n">sample_prior</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
 
     <span class="c1"># For some models, the parameters are bounded</span>
-    <span class="k">if</span> <span class="s1">&#39;bounds&#39;</span> <span class="ow">in</span> <span class="n">opt_args</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s1">'bounds'</span> <span class="ow">in</span> <span class="n">opt_args</span><span class="p">:</span>
         <span class="n">solver</span> <span class="o">=</span> <span class="n">jaxopt</span><span class="o">.</span><span class="n">ScipyBoundedMinimize</span><span class="p">(</span><span class="n">fun</span><span class="o">=</span><span class="n">fun</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">solver</span> <span class="o">=</span> <span class="n">jaxopt</span><span class="o">.</span><span class="n">ScipyMinimize</span><span class="p">(</span><span class="n">fun</span><span class="o">=</span><span class="n">fun</span><span class="p">)</span>
@@ -674,7 +674,7 @@ and is used to approximate the actual marginal likelihood.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

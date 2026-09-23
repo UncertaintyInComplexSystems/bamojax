@@ -17,7 +17,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -25,7 +25,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -482,9 +482,9 @@
 <span class="normal">14</span>
 <span class="normal">15</span>
 <span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">apply_bijectors</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform variables from the real line.</span>
+<span class="w">    </span><span class="sd">"""Transform variables from the real line.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">b</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bijectors</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -513,9 +513,9 @@
 <span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">apply_inverse_bijectors</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform variables to the real line.</span>
+<span class="w">    </span><span class="sd">"""Transform variables to the real line.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">_inverse</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bijectors</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -551,9 +551,9 @@
 <span class="normal">34</span>
 <span class="normal">35</span>
 <span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_jacobians</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the Jacobian for the change-of-variables due to the bijector</span>
+<span class="w">    </span><span class="sd">"""Get the Jacobian for the change-of-variables due to the bijector</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">jac</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bijectors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -592,9 +592,9 @@
 <span class="normal">57</span>
 <span class="normal">58</span>
 <span class="normal">59</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_from_proposal_distribution</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">prop_dist</span><span class="p">,</span> <span class="n">unravel_fn</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sample from the proposal distribution and unravel back into a dictionary.</span>
+<span class="w">    </span><span class="sd">"""Sample from the proposal distribution and unravel back into a dictionary.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">proposal_samples_flattened</span> <span class="o">=</span> <span class="n">prop_dist</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">sample_shape</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="p">))</span>
     <span class="n">proposal_samples</span> <span class="o">=</span> <span class="n">unravel_fn</span><span class="p">(</span><span class="n">proposal_samples_flattened</span><span class="p">)</span>
     <span class="n">squeeze_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -628,9 +628,9 @@
 <span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">proposal_distribution_logprob</span><span class="p">(</span><span class="n">prop_dist</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Flatten a sample dictionary and compute the log probability according to the proposal distribution.</span>
+<span class="w">    </span><span class="sd">"""Flatten a sample dictionary and compute the log probability according to the proposal distribution.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">samples_flattened</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">flatten_dict_to_array</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">prop_dist</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">samples_flattened</span><span class="p">)</span>
@@ -671,11 +671,11 @@
 <span class="normal">82</span>
 <span class="normal">83</span>
 <span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">logposterior_proposals</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Compute the log joint probability for a sample, and adjusting for the Jacobian</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Compute the log joint probability for a sample, and adjusting for the Jacobian</span>
 
 <span class="sd">    p(D \mid \theta)p(\theta)|J(f(\theta)|</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">loglikelihood_fn</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">()</span>
     <span class="n">logprior_fn</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">logprior_fn</span><span class="p">()</span>
@@ -711,9 +711,9 @@
 <span class="normal">89</span>
 <span class="normal">90</span>
 <span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_importance_weights</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">prop_dist</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Compute the importance weight reflecting the relative probability under the posterior vs the proposal distribution.</span>
+<span class="w">    </span><span class="sd">""" Compute the importance weight reflecting the relative probability under the posterior vs the proposal distribution.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">logposterior_proposals</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span> <span class="o">-</span> <span class="n">proposal_distribution_logprob</span><span class="p">(</span><span class="n">prop_dist</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -725,7 +725,7 @@
 
 
 <h2 id="bamojax.marginal_likelihoods.bridge_sampling.bridge_sampling" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">bridge_sampling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">posterior_samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">,</span> <span class="n">proposal_type</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">N2</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">bridge_sampling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">posterior_samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">,</span> <span class="n">proposal_type</span><span class="o">=</span><span class="s1">'gaussian'</span><span class="p">,</span> <span class="n">N2</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">)</span></code>
 
 <a href="#bamojax.marginal_likelihoods.bridge_sampling.bridge_sampling" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -950,8 +950,8 @@ exploration. Statistica Sinica, 831--860.
 <span class="normal">175</span>
 <span class="normal">176</span>
 <span class="normal">177</span>
-<span class="normal">178</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bridge_sampling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">posterior_samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">proposal_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="n">N2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Run the warp-II bridge sampling algorithm, using the optimal bridge function by Meng &amp; Wong (1996).</span>
+<span class="normal">178</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bridge_sampling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">posterior_samples</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">proposal_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'gaussian'</span><span class="p">,</span> <span class="n">N2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Run the warp-II bridge sampling algorithm, using the optimal bridge function by Meng &amp; Wong (1996).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        - model: The bamojax model to get the marginal likelihood for.</span>
@@ -976,7 +976,7 @@ exploration. Statistica Sinica, 831--860.
 <span class="sd">        exploration. Statistica Sinica, 831--860.</span>
 <span class="sd">        - Gronau et al., 2017, A tutorial on bridge sampling, Journal of Mathematical Psychology 81, 80--97.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">get_latent_nodes</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bijectors</span><span class="p">:</span>
@@ -987,14 +987,14 @@ exploration. Statistica Sinica, 831--860.
 
     <span class="n">N1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">posterior_samples_batch_1</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="n">proposal_type</span> <span class="o">==</span> <span class="s1">&#39;gaussian&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">proposal_type</span> <span class="o">==</span> <span class="s1">'gaussian'</span><span class="p">:</span>
         <span class="c1"># apply bijector to posterior samples batch 1</span>
         <span class="n">transformed_samples_1</span> <span class="o">=</span> <span class="n">apply_inverse_bijectors</span><span class="p">(</span><span class="n">posterior_samples_batch_1</span><span class="p">,</span> <span class="n">bijectors</span><span class="p">)</span>
 
         <span class="c1"># get posterior distribution and unravel function</span>
         <span class="n">proposal_distribution</span><span class="p">,</span> <span class="n">unravel_fn</span> <span class="o">=</span> <span class="n">get_proposal_distribution</span><span class="p">(</span><span class="n">transformed_samples_1</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Proposal type &quot;</span><span class="si">{</span><span class="n">proposal_type</span><span class="si">}</span><span class="s1">&quot; is not implemented&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Proposal type "</span><span class="si">{</span><span class="n">proposal_type</span><span class="si">}</span><span class="s1">" is not implemented'</span><span class="p">)</span>
 
     <span class="n">proposal_samples</span> <span class="o">=</span> <span class="n">sample_from_proposal_distribution</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">proposal_distribution</span><span class="p">,</span> <span class="n">unravel_fn</span><span class="p">,</span> <span class="n">N2</span><span class="p">)</span>
     <span class="n">proposal_samples</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="k">if</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="k">else</span> <span class="n">x</span><span class="p">,</span> <span class="n">proposal_samples</span><span class="p">)</span>
@@ -1106,7 +1106,7 @@ exploration. Statistica Sinica, 831--860.
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

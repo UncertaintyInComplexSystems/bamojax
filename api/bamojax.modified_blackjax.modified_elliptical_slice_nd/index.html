@@ -17,7 +17,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -25,7 +25,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -540,14 +540,14 @@ logdensity
 <span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">EllipSliceState</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;State of the Elliptical Slice sampling algorithm.</span>
+<span class="w">    </span><span class="sd">"""State of the Elliptical Slice sampling algorithm.</span>
 
 <span class="sd">    position</span>
 <span class="sd">        Current position of the chain.</span>
 <span class="sd">    logdensity</span>
 <span class="sd">        Current value of the logdensity (evaluated at current position).</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">position</span><span class="p">:</span> <span class="n">ArrayTree</span>
     <span class="n">logdensity</span><span class="p">:</span> <span class="n">ArrayTree</span>
@@ -637,7 +637,7 @@ subiter
 <span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">EllipSliceInfo</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Additional information on the Elliptical Slice sampling chain.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Additional information on the Elliptical Slice sampling chain.</span>
 
 <span class="sd">    This additional information can be used for debugging or computing</span>
 <span class="sd">    diagnostics.</span>
@@ -653,7 +653,7 @@ subiter
 <span class="sd">        needed the less efficient the algorithm will be, and the more dependent the</span>
 <span class="sd">        new value is likely to be to the previous value.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">momentum</span><span class="p">:</span> <span class="n">ArrayTree</span>
     <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span>
@@ -872,7 +872,7 @@ information about the transition.</p>
 <span class="normal">238</span>
 <span class="normal">239</span>
 <span class="normal">240</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_kernel</span><span class="p">(</span><span class="n">cov_matrix</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">nd</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build an Elliptical Slice sampling kernel :cite:p:`murray2010elliptical`.</span>
+<span class="w">    </span><span class="sd">"""Build an Elliptical Slice sampling kernel :cite:p:`murray2010elliptical`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -886,7 +886,7 @@ information about the transition.</p>
 <span class="sd">    of the chain and that returns a new state of the chain along with</span>
 <span class="sd">    information about the transition.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ndim</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">cov_matrix</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">cov_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -898,7 +898,7 @@ information about the transition.</p>
         <span class="n">nu</span> <span class="o">=</span> <span class="n">nd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">flat_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nu</span><span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Elliptical slice sampling is not implemented for nd = </span><span class="si">{</span><span class="n">nd</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Elliptical slice sampling is not implemented for nd = </span><span class="si">{</span><span class="n">nd</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># diagonal covariance matrix</span>
         <span class="n">cov_matrix_sqrt</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cov_matrix</span><span class="p">)</span>
@@ -908,8 +908,8 @@ information about the transition.</p>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;The mass matrix has the wrong number of dimensions:&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; expected 1 or 2, got </span><span class="si">{</span><span class="n">jnp</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">cov_matrix</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>  <span class="c1"># type: ignore[arg-type]</span>
+            <span class="s2">"The mass matrix has the wrong number of dimensions:"</span>
+            <span class="sa">f</span><span class="s2">" expected 1 or 2, got </span><span class="si">{</span><span class="n">jnp</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">cov_matrix</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>  <span class="c1"># type: ignore[arg-type]</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">to_flat</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
@@ -946,7 +946,7 @@ information about the transition.</p>
         <span class="n">momentum_generator</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
         <span class="n">mean</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build an Ellitpical slice sampling kernel.</span>
+<span class="w">        </span><span class="sd">"""Build an Ellitpical slice sampling kernel.</span>
 
 <span class="sd">        The algorithm samples a latent parameter, traces an ellipse connecting the</span>
 <span class="sd">        initial position and the latent parameter and does slice sampling on this</span>
@@ -965,7 +965,7 @@ information about the transition.</p>
 <span class="sd">        of the chain and that returns a new state of the chain along with</span>
 <span class="sd">        information about the transition.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">num_el</span> <span class="o">=</span> <span class="n">d</span><span class="o">*</span><span class="n">nu</span>
         <span class="n">mean</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="n">num_el</span><span class="p">)</span>
 
@@ -989,9 +989,9 @@ information about the transition.</p>
             <span class="n">logdensity</span> <span class="o">=</span> <span class="n">logdensity_fn</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 
             <span class="k">def</span><span class="w"> </span><span class="nf">slice_fn</span><span class="p">(</span><span class="n">vals</span><span class="p">):</span>
-<span class="w">                </span><span class="sd">&quot;&quot;&quot;Perform slice sampling around the ellipsis.</span>
+<span class="w">                </span><span class="sd">"""Perform slice sampling around the ellipsis.</span>
 
-<span class="sd">                Checks if the proposed position&#39;s likelihood is larger than the slice</span>
+<span class="sd">                Checks if the proposed position's likelihood is larger than the slice</span>
 <span class="sd">                variable. Returns the position if True, shrinks the bracket for sampling</span>
 <span class="sd">                `theta` and samples a new proposal if False.</span>
 
@@ -1000,7 +1000,7 @@ information about the transition.</p>
 <span class="sd">                It is guaranteed to stop in a finite number of iterations as long as the</span>
 <span class="sd">                likelihood is continuous with respect to the parameter being sampled.</span>
 
-<span class="sd">                &quot;&quot;&quot;</span>
+<span class="sd">                """</span>
                 <span class="n">_</span><span class="p">,</span> <span class="n">subiter</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">theta_min</span><span class="p">,</span> <span class="n">theta_max</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">vals</span>
                 <span class="n">thetak</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">fold_in</span><span class="p">(</span><span class="n">key_slice</span><span class="p">,</span> <span class="n">subiter</span><span class="p">)</span>
                 <span class="n">theta</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">thetak</span><span class="p">,</span> <span class="n">minval</span><span class="o">=</span><span class="n">theta_min</span><span class="p">,</span> <span class="n">maxval</span><span class="o">=</span><span class="n">theta_max</span><span class="p">)</span>
@@ -1135,7 +1135,7 @@ cov_matrix
     <span class="n">cov</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span>
     <span class="n">nd</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implements the (basic) user interface for the Elliptical Slice sampling kernel.</span>
+<span class="w">    </span><span class="sd">"""Implements the (basic) user interface for the Elliptical Slice sampling kernel.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -1165,7 +1165,7 @@ cov_matrix
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    A ``SamplingAlgorithm``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">kernel</span> <span class="o">=</span> <span class="n">build_kernel</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">nd</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">init_fn</span><span class="p">(</span><span class="n">position</span><span class="p">:</span> <span class="n">ArrayLikeTree</span><span class="p">,</span> <span class="n">rng_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1231,14 +1231,14 @@ depending on the slice variable.</p>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ellipsis</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">momentum</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">mean</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate proposal from the ellipsis.</span>
+<span class="w">    </span><span class="sd">"""Generate proposal from the ellipsis.</span>
 
 <span class="sd">    Given a scalar theta indicating a point on the circumference of the ellipsis</span>
 <span class="sd">    and the shared mean vector for both position and momentum variables,</span>
 <span class="sd">    generate proposed position and momentum to later accept or reject</span>
 <span class="sd">    depending on the slice variable.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">position</span><span class="p">,</span> <span class="n">unravel_fn</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">flatten_util</span><span class="o">.</span><span class="n">ravel_pytree</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
     <span class="n">momentum</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">flatten_util</span><span class="o">.</span><span class="n">ravel_pytree</span><span class="p">(</span><span class="n">momentum</span><span class="p">)</span>
     <span class="n">position_centered</span> <span class="o">=</span> <span class="n">position</span> <span class="o">-</span> <span class="n">mean</span>
@@ -1326,7 +1326,7 @@ depending on the slice variable.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

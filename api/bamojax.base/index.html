@@ -17,7 +17,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -25,7 +25,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -840,15 +840,15 @@
 <span class="normal">141</span>
 <span class="normal">142</span>
 <span class="normal">143</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; The essential element of any Bayesian model is the variable, represented by a node in a DAG. </span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" The essential element of any Bayesian model is the variable, represented by a node in a DAG. </span>
 
 <span class="sd">    Nodes can consist of stochastic or deterministic variables, and can be observed or latent.</span>
 
 <span class="sd">    Hyperparameters of a model are implicitly observed, deterministic nodes.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span> 
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'root'</span><span class="p">,</span> 
                  <span class="n">observations</span><span class="p">:</span> <span class="n">Array</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                  <span class="n">distribution</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">Bijector</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                  <span class="n">parents</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
@@ -879,30 +879,30 @@
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_observed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Check if a node is an observed variable.</span>
+<span class="w">        </span><span class="sd">""" Check if a node is an observed variable.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;observations&#39;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'observations'</span><span class="p">)</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_stochastic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Check whether a node is stochastic or deterministic.</span>
+<span class="w">        </span><span class="sd">""" Check whether a node is stochastic or deterministic.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;distribution&#39;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'distribution'</span><span class="p">)</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_root</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Check whether a node is a root node.</span>
+<span class="w">        </span><span class="sd">""" Check whether a node is a root node.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;parents&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'parents'</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Add a parent node.</span>
+<span class="w">        </span><span class="sd">""" Add a parent node.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Node</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
 
@@ -916,14 +916,14 @@
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_leaf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Check whether a node is observed and has parents.</span>
+<span class="w">        </span><span class="sd">""" Check whether a node is observed and has parents.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;parents&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_observed</span><span class="p">()</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'parents'</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_observed</span><span class="p">()</span>
 
     <span class="c1">#    </span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">minibatch</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Distribution</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Derives the parametrized distribution p(node | Parents=x), where x is derived from the state object.</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Derives the parametrized distribution p(node | Parents=x), where x is derived from the state object.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            state: Current assignment of (parent) values.</span>
@@ -931,7 +931,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            An instantiated distrax distribution object.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Root-level nodes can be defined as instantiated numpyro distributions.</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">Distribution</span><span class="p">):</span>
@@ -952,14 +952,14 @@
                     <span class="n">parent_values</span><span class="p">[</span><span class="n">parent_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="n">parent_name</span><span class="p">]</span><span class="o">.</span><span class="n">observations</span>
 
         <span class="n">transformed_parents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">link_fn</span><span class="p">(</span><span class="o">**</span><span class="n">parent_values</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;bijector&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'bijector'</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">TransformedDistribution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">(</span><span class="o">**</span><span class="n">transformed_parents</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">bijector</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">(</span><span class="o">**</span><span class="n">transformed_parents</span><span class="p">)</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">'</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1007,10 +1007,10 @@
 <span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_observed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Check if a node is an observed variable.</span>
+<span class="w">    </span><span class="sd">""" Check if a node is an observed variable.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;observations&#39;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'observations'</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1038,10 +1038,10 @@
 <span class="normal">61</span>
 <span class="normal">62</span>
 <span class="normal">63</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_stochastic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Check whether a node is stochastic or deterministic.</span>
+<span class="w">    </span><span class="sd">""" Check whether a node is stochastic or deterministic.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;distribution&#39;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'distribution'</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1069,10 +1069,10 @@
 <span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_root</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Check whether a node is a root node.</span>
+<span class="w">    </span><span class="sd">""" Check whether a node is a root node.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;parents&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'parents'</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1101,9 +1101,9 @@
 <span class="normal">76</span>
 <span class="normal">77</span>
 <span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Add a parent node.</span>
+<span class="w">    </span><span class="sd">""" Add a parent node.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Node</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
 </code></pre></div></td></tr></table></div>
@@ -1133,10 +1133,10 @@
 <span class="normal">91</span>
 <span class="normal">92</span>
 <span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_leaf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Check whether a node is observed and has parents.</span>
+<span class="w">    </span><span class="sd">""" Check whether a node is observed and has parents.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;parents&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_observed</span><span class="p">()</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'parents'</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_observed</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1242,7 +1242,7 @@
 <span class="normal">127</span>
 <span class="normal">128</span>
 <span class="normal">129</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">minibatch</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Distribution</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Derives the parametrized distribution p(node | Parents=x), where x is derived from the state object.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Derives the parametrized distribution p(node | Parents=x), where x is derived from the state object.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        state: Current assignment of (parent) values.</span>
@@ -1250,7 +1250,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        An instantiated distrax distribution object.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Root-level nodes can be defined as instantiated numpyro distributions.</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">Distribution</span><span class="p">):</span>
@@ -1271,7 +1271,7 @@
                 <span class="n">parent_values</span><span class="p">[</span><span class="n">parent_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="n">parent_name</span><span class="p">]</span><span class="o">.</span><span class="n">observations</span>
 
     <span class="n">transformed_parents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">link_fn</span><span class="p">(</span><span class="o">**</span><span class="n">parent_values</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;bijector&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'bijector'</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">TransformedDistribution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">(</span><span class="o">**</span><span class="n">transformed_parents</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">bijector</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">(</span><span class="o">**</span><span class="n">transformed_parents</span><span class="p">)</span>
@@ -1651,16 +1651,16 @@ _ = model.add_node('x', observations=...)
 <span class="normal">477</span>
 <span class="normal">478</span>
 <span class="normal">479</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Model</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; A Bayesian model is represented as a directed acyclic graph, in which nodes are associated with random variables.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" A Bayesian model is represented as a directed acyclic graph, in which nodes are associated with random variables.</span>
 
 <span class="sd">    Typical use:</span>
 
-<span class="sd">        model = Model(&#39;model name&#39;)</span>
-<span class="sd">        _ = model.add_node(&#39;x&#39;, observations=...)</span>
+<span class="sd">        model = Model('model name')</span>
+<span class="sd">        _ = model.add_node('x', observations=...)</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Bayesian model&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'Bayesian model'</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
@@ -1671,14 +1671,14 @@ _ = model.add_node('x', observations=...)
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
-                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span> 
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'root'</span><span class="p">,</span> 
                  <span class="n">distribution</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">Bijector</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                  <span class="n">observations</span><span class="p">:</span> <span class="n">Array</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                  <span class="n">parents</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                  <span class="n">link_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">shape</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">bijector</span><span class="p">:</span> <span class="n">Bijector</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Node</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Adds a node to the Bayesian model DAG</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Adds a node to the Bayesian model DAG</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">          name: The name of the variable.</span>
@@ -1691,20 +1691,20 @@ _ = model.add_node('x', observations=...)
 <span class="sd">        Returns:</span>
 <span class="sd">          New node</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">parents</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">new_parents</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">parent_name</span><span class="p">,</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">parents</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">Node</span><span class="p">):</span>
                     <span class="c1"># Parent is numeric</span>
-                    <span class="n">parent_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">parent_name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">observations</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+                    <span class="n">parent_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">parent_name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="n">observations</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
                     <span class="n">new_parents</span><span class="p">[</span><span class="n">parent_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_node</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">new_parents</span><span class="p">[</span><span class="n">parent_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent</span>
             <span class="n">parents</span> <span class="o">=</span> <span class="n">new_parents</span>
         <span class="n">new_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">,</span> <span class="n">observations</span><span class="o">=</span><span class="n">observations</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="n">parents</span><span class="p">,</span> <span class="n">link_fn</span><span class="o">=</span><span class="n">link_fn</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">bijector</span><span class="o">=</span><span class="n">bijector</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_node</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Adding node (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Adding node (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">)'</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">parents</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">parents</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">new_node</span><span class="p">)</span>
@@ -1716,14 +1716,14 @@ _ = model.add_node('x', observations=...)
 
     <span class="c1">#    </span>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_node</span><span class="p">,</span> <span class="n">to_node</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Store the dependency between two nodes.</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Store the dependency between two nodes.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            from_node: source node</span>
 <span class="sd">            to_node: target node</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Add edge (</span><span class="si">{</span><span class="n">from_node</span><span class="si">}</span><span class="s1">) -&gt; (</span><span class="si">{</span><span class="n">to_node</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Add edge (</span><span class="si">{</span><span class="n">from_node</span><span class="si">}</span><span class="s1">) -&gt; (</span><span class="si">{</span><span class="n">to_node</span><span class="si">}</span><span class="s1">)'</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">from_node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">from_node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">from_node</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">to_node</span><span class="p">)</span>
@@ -1733,55 +1733,55 @@ _ = model.add_node('x', observations=...)
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns the children of a node.</span>
+<span class="w">        </span><span class="sd">""" Returns the children of a node.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">[]</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_parents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns the parents of a node.</span>
+<span class="w">        </span><span class="sd">""" Returns the parents of a node.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">[]</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_root_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return all nodes that are roots.</span>
+<span class="w">        </span><span class="sd">""" Return all nodes that are roots.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_nodes</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_leaf_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns all nodes that are leaves.</span>
+<span class="w">        </span><span class="sd">""" Returns all nodes that are leaves.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_stochastic_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns all stochastic nodes.</span>
+<span class="w">        </span><span class="sd">""" Returns all stochastic nodes.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">is_stochastic</span><span class="p">()}</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_latent_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns all latent nodes.</span>
+<span class="w">        </span><span class="sd">""" Returns all latent nodes.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">is_stochastic</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">v</span><span class="o">.</span><span class="n">is_observed</span><span class="p">()}</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">logprior_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Returns a callable function that provides the log prior of the model given the current state of assigned variables.</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Returns a callable function that provides the log prior of the model given the current state of assigned variables.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">logprior_fn_</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
             <span class="n">sorted_free_variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node_order</span><span class="p">()</span> <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_stochastic</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">node</span><span class="o">.</span><span class="n">is_observed</span><span class="p">()]</span>
@@ -1798,16 +1798,16 @@ _ = model.add_node('x', observations=...)
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">loglikelihood_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Returns a callable function that provides the log likelihood of the model given the current state of assigned variables.</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Returns a callable function that provides the log likelihood of the model given the current state of assigned variables.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">loglikelihood_fn_</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
             <span class="n">logprob</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_leaf_nodes</span><span class="p">():</span>
-                <span class="k">if</span> <span class="s1">&#39;__mask&#39;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">'__mask'</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
                     <span class="n">element_wise_logp</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="n">state</span><span class="p">)</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
-                    <span class="n">logprob</span> <span class="o">+=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">element_wise_logp</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span><span class="o">*</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;__mask&#39;</span><span class="p">])</span>
+                    <span class="n">logprob</span> <span class="o">+=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">element_wise_logp</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span><span class="o">*</span><span class="n">state</span><span class="p">[</span><span class="s1">'__mask'</span><span class="p">])</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">logprob</span> <span class="o">+=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="n">state</span><span class="p">)</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">observations</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">logprob</span>
@@ -1817,11 +1817,11 @@ _ = model.add_node('x', observations=...)
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">batched_loglikelihood_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Batched loglikelihood function for stochastic-gradient methods.</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Batched loglikelihood function for stochastic-gradient methods.</span>
 
 <span class="sd">        Assumes `minibatch` is a dictionary containing a subset of observations for each observed leaf node.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">loglikelihood_fn_</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">minibatch</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
             <span class="n">logprob</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -1834,11 +1834,11 @@ _ = model.add_node('x', observations=...)
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_model_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Returns the total dimensions of the model. </span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Returns the total dimensions of the model. </span>
 
 <span class="sd">        As node.distribution can be abstract, we create a concrete instantiation by drawing a sample from the prior and deriving the shape from this sample.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">draw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_prior</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">jrnd</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> 
         <span class="n">size</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">jnp</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">draw</span><span class="o">.</span><span class="n">values</span><span class="p">()]))</span>
@@ -1846,21 +1846,21 @@ _ = model.add_node('x', observations=...)
 
     <span class="c1">#  </span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_node_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Returns the latent variables in topological order; child nodes are always listed after their parents.</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Returns the latent variables in topological order; child nodes are always listed after their parents.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;node_order&#39;</span><span class="p">):</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'node_order'</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">node_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_topological_order</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_order</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">__get_topological_order</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Traverses the directed acyclic graph that defines the Bayesian model and returns its nodes in topological order</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Traverses the directed acyclic graph that defines the Bayesian model and returns its nodes in topological order</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list of sorted nodes.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">traverse_dag_backwards</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">visited_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">visited_</span><span class="p">:</span>
                 <span class="k">return</span>
@@ -1882,14 +1882,14 @@ _ = model.add_node('x', observations=...)
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Samples from the (hierarchical) prior distribution of the model.</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Samples from the (hierarchical) prior distribution of the model.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            key: Random seed</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            A state dictionary with one random value for each node.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">state</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">sorted_free_variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node_order</span><span class="p">()</span> <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_stochastic</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">node</span><span class="o">.</span><span class="n">is_observed</span><span class="p">()]</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">sorted_free_variables</span><span class="p">:</span>
@@ -1903,7 +1903,7 @@ _ = model.add_node('x', observations=...)
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample_predictive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">input_variables</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Sample stochastic observed nodes</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Sample stochastic observed nodes</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            key: PRNGKey</span>
@@ -1911,9 +1911,9 @@ _ = model.add_node('x', observations=...)
 <span class="sd">            input_variables: a dictionary with values for observed non-stochastic nodes</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A dictionary which is the same as &#39;state&#39; but appended with sampled values.</span>
+<span class="sd">            A dictionary which is the same as 'state' but appended with sampled values.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_leaf_nodes</span><span class="p">():</span>
             <span class="n">key</span><span class="p">,</span> <span class="n">key_obs</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -1922,7 +1922,7 @@ _ = model.add_node('x', observations=...)
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">sample_prior_predictive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">prediction_options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Sample from the (hierarchical) prior predictive distribution of the model.</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Sample from the (hierarchical) prior predictive distribution of the model.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            key: Random seed</span>
@@ -1931,14 +1931,14 @@ _ = model.add_node('x', observations=...)
 <span class="sd">        Returns:</span>
 <span class="sd">            A dictionary with a random value for all stochastic observed nodes.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">key</span><span class="p">,</span> <span class="n">key_latent</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_prior</span><span class="p">(</span><span class="n">key_latent</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_predictive</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">prediction_options</span><span class="p">)</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample_posterior_predictive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">input_variables</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Sample from the posterior predictive</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Sample from the posterior predictive</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            key: Random key</span>
@@ -1948,26 +1948,26 @@ _ = model.add_node('x', observations=...)
 <span class="sd">        Returns:</span>
 <span class="sd">            A dictionary containing values for all stochastic observed nodes, conditioned on the observations.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_predictive</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">input_variables</span><span class="p">)</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">print_gibbs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Print the structure of conditional distributions. </span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Print the structure of conditional distributions. </span>
 
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Gibbs structure:&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Gibbs structure:'</span><span class="p">)</span>
         <span class="n">sorted_free_variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node_order</span><span class="p">()</span> <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_stochastic</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">node</span><span class="o">.</span><span class="n">is_observed</span><span class="p">()]</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">sorted_free_variables</span><span class="p">:</span>
             <span class="c1"># get prior density        </span>
             <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_root</span><span class="p">():</span>
-                <span class="n">prior</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;p(</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s1">)&#39;</span>
+                <span class="n">prior</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'p(</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s1">)'</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">parents</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_parents</span><span class="p">(</span><span class="n">node</span><span class="p">)}</span>
-                <span class="n">prior</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;p(</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">parents</span><span class="p">])</span><span class="si">}</span><span class="s1">)&#39;</span>
+                <span class="n">prior</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'p(</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">parents</span><span class="p">])</span><span class="si">}</span><span class="s1">)'</span>
 
             <span class="c1"># get conditional density</span>
             <span class="n">conditionals</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1978,10 +1978,10 @@ _ = model.add_node('x', observations=...)
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span> <span class="o">==</span> <span class="n">node</span> <span class="ow">or</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">co_parents</span><span class="p">:</span>
                         <span class="n">co_parents</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>        
                 <span class="n">co_parents</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-                <span class="n">conditional</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;p(</span><span class="si">{</span><span class="n">child</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">co_parents</span><span class="p">])</span><span class="si">}</span><span class="s1">)&#39;</span>
+                <span class="n">conditional</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'p(</span><span class="si">{</span><span class="n">child</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">co_parents</span><span class="p">])</span><span class="si">}</span><span class="s1">)'</span>
                 <span class="n">conditionals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conditional</span><span class="p">)</span>
 
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="si">:</span><span class="s1">20s</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conditionals</span><span class="p">)</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">prior</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="si">:</span><span class="s1">20s</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conditionals</span><span class="p">)</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">prior</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -2002,7 +2002,7 @@ _ = model.add_node('x', observations=...)
 
 
 <h3 id="bamojax.base.Model.add_node" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">add_node</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">observations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">link_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bijector</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">add_node</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'root'</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">observations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">link_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bijector</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 <a href="#bamojax.base.Model.add_node" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -2186,14 +2186,14 @@ _ = model.add_node('x', observations=...)
 <span class="normal">208</span>
 <span class="normal">209</span>
 <span class="normal">210</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
-             <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span> 
+             <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'root'</span><span class="p">,</span> 
              <span class="n">distribution</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">Bijector</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
              <span class="n">observations</span><span class="p">:</span> <span class="n">Array</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
              <span class="n">parents</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
              <span class="n">link_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">shape</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">bijector</span><span class="p">:</span> <span class="n">Bijector</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Node</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Adds a node to the Bayesian model DAG</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Adds a node to the Bayesian model DAG</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">      name: The name of the variable.</span>
@@ -2206,20 +2206,20 @@ _ = model.add_node('x', observations=...)
 <span class="sd">    Returns:</span>
 <span class="sd">      New node</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">parents</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">new_parents</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">parent_name</span><span class="p">,</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">parents</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">Node</span><span class="p">):</span>
                 <span class="c1"># Parent is numeric</span>
-                <span class="n">parent_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">parent_name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">observations</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+                <span class="n">parent_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">parent_name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="n">observations</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
                 <span class="n">new_parents</span><span class="p">[</span><span class="n">parent_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_node</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">new_parents</span><span class="p">[</span><span class="n">parent_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent</span>
         <span class="n">parents</span> <span class="o">=</span> <span class="n">new_parents</span>
     <span class="n">new_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="n">distribution</span><span class="p">,</span> <span class="n">observations</span><span class="o">=</span><span class="n">observations</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="n">parents</span><span class="p">,</span> <span class="n">link_fn</span><span class="o">=</span><span class="n">link_fn</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">bijector</span><span class="o">=</span><span class="n">bijector</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_node</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Adding node (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Adding node (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">)'</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">parents</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">parents</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">new_node</span><span class="p">)</span>
@@ -2310,14 +2310,14 @@ _ = model.add_node('x', observations=...)
 <span class="normal">225</span>
 <span class="normal">226</span>
 <span class="normal">227</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_node</span><span class="p">,</span> <span class="n">to_node</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Store the dependency between two nodes.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Store the dependency between two nodes.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        from_node: source node</span>
 <span class="sd">        to_node: target node</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Add edge (</span><span class="si">{</span><span class="n">from_node</span><span class="si">}</span><span class="s1">) -&gt; (</span><span class="si">{</span><span class="n">to_node</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Add edge (</span><span class="si">{</span><span class="n">from_node</span><span class="si">}</span><span class="s1">) -&gt; (</span><span class="si">{</span><span class="n">to_node</span><span class="si">}</span><span class="s1">)'</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">from_node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">from_node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">from_node</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">to_node</span><span class="p">)</span>
@@ -2353,9 +2353,9 @@ _ = model.add_node('x', observations=...)
 <span class="normal">234</span>
 <span class="normal">235</span>
 <span class="normal">236</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns the children of a node.</span>
+<span class="w">    </span><span class="sd">""" Returns the children of a node.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
     <span class="k">return</span> <span class="p">[]</span>
@@ -2388,9 +2388,9 @@ _ = model.add_node('x', observations=...)
 <span class="normal">243</span>
 <span class="normal">244</span>
 <span class="normal">245</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_parents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns the parents of a node.</span>
+<span class="w">    </span><span class="sd">""" Returns the parents of a node.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
     <span class="k">return</span> <span class="p">[]</span>
@@ -2421,9 +2421,9 @@ _ = model.add_node('x', observations=...)
 <span class="normal">250</span>
 <span class="normal">251</span>
 <span class="normal">252</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_root_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Return all nodes that are roots.</span>
+<span class="w">    </span><span class="sd">""" Return all nodes that are roots.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_nodes</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2452,9 +2452,9 @@ _ = model.add_node('x', observations=...)
 <span class="normal">257</span>
 <span class="normal">258</span>
 <span class="normal">259</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_leaf_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns all nodes that are leaves.</span>
+<span class="w">    </span><span class="sd">""" Returns all nodes that are leaves.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2483,9 +2483,9 @@ _ = model.add_node('x', observations=...)
 <span class="normal">264</span>
 <span class="normal">265</span>
 <span class="normal">266</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_stochastic_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns all stochastic nodes.</span>
+<span class="w">    </span><span class="sd">""" Returns all stochastic nodes.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">is_stochastic</span><span class="p">()}</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2514,9 +2514,9 @@ _ = model.add_node('x', observations=...)
 <span class="normal">271</span>
 <span class="normal">272</span>
 <span class="normal">273</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_latent_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns all latent nodes.</span>
+<span class="w">    </span><span class="sd">""" Returns all latent nodes.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">is_stochastic</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">v</span><span class="o">.</span><span class="n">is_observed</span><span class="p">()}</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2557,9 +2557,9 @@ _ = model.add_node('x', observations=...)
 <span class="normal">290</span>
 <span class="normal">291</span>
 <span class="normal">292</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">logprior_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Returns a callable function that provides the log prior of the model given the current state of assigned variables.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Returns a callable function that provides the log prior of the model given the current state of assigned variables.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">logprior_fn_</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">sorted_free_variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node_order</span><span class="p">()</span> <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_stochastic</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">node</span><span class="o">.</span><span class="n">is_observed</span><span class="p">()]</span>
@@ -2612,16 +2612,16 @@ _ = model.add_node('x', observations=...)
 <span class="normal">309</span>
 <span class="normal">310</span>
 <span class="normal">311</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">loglikelihood_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Returns a callable function that provides the log likelihood of the model given the current state of assigned variables.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Returns a callable function that provides the log likelihood of the model given the current state of assigned variables.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">loglikelihood_fn_</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">logprob</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_leaf_nodes</span><span class="p">():</span>
-            <span class="k">if</span> <span class="s1">&#39;__mask&#39;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">'__mask'</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
                 <span class="n">element_wise_logp</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="n">state</span><span class="p">)</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
-                <span class="n">logprob</span> <span class="o">+=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">element_wise_logp</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span><span class="o">*</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;__mask&#39;</span><span class="p">])</span>
+                <span class="n">logprob</span> <span class="o">+=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">element_wise_logp</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span><span class="o">*</span><span class="n">state</span><span class="p">[</span><span class="s1">'__mask'</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">logprob</span> <span class="o">+=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="n">state</span><span class="p">)</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">observations</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">logprob</span>
@@ -2666,11 +2666,11 @@ _ = model.add_node('x', observations=...)
 <span class="normal">326</span>
 <span class="normal">327</span>
 <span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">batched_loglikelihood_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Batched loglikelihood function for stochastic-gradient methods.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Batched loglikelihood function for stochastic-gradient methods.</span>
 
 <span class="sd">    Assumes `minibatch` is a dictionary containing a subset of observations for each observed leaf node.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">loglikelihood_fn_</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">minibatch</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">logprob</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -2713,11 +2713,11 @@ _ = model.add_node('x', observations=...)
 <span class="normal">338</span>
 <span class="normal">339</span>
 <span class="normal">340</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_model_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Returns the total dimensions of the model. </span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Returns the total dimensions of the model. </span>
 
 <span class="sd">    As node.distribution can be abstract, we create a concrete instantiation by drawing a sample from the prior and deriving the shape from this sample.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">draw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_prior</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">jrnd</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> 
     <span class="n">size</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">jnp</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">draw</span><span class="o">.</span><span class="n">values</span><span class="p">()]))</span>
@@ -2751,10 +2751,10 @@ _ = model.add_node('x', observations=...)
 <span class="normal">347</span>
 <span class="normal">348</span>
 <span class="normal">349</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_node_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Returns the latent variables in topological order; child nodes are always listed after their parents.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Returns the latent variables in topological order; child nodes are always listed after their parents.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;node_order&#39;</span><span class="p">):</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'node_order'</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_topological_order</span><span class="p">()</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_order</span>
 </code></pre></div></td></tr></table></div>
@@ -2830,14 +2830,14 @@ _ = model.add_node('x', observations=...)
 <span class="normal">395</span>
 <span class="normal">396</span>
 <span class="normal">397</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Samples from the (hierarchical) prior distribution of the model.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Samples from the (hierarchical) prior distribution of the model.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        key: Random seed</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        A state dictionary with one random value for each node.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">state</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="n">sorted_free_variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node_order</span><span class="p">()</span> <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_stochastic</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">node</span><span class="o">.</span><span class="n">is_observed</span><span class="p">()]</span>
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">sorted_free_variables</span><span class="p">:</span>
@@ -2972,7 +2972,7 @@ _ = model.add_node('x', observations=...)
 <span class="normal">414</span>
 <span class="normal">415</span>
 <span class="normal">416</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_predictive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">input_variables</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Sample stochastic observed nodes</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Sample stochastic observed nodes</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        key: PRNGKey</span>
@@ -2980,9 +2980,9 @@ _ = model.add_node('x', observations=...)
 <span class="sd">        input_variables: a dictionary with values for observed non-stochastic nodes</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A dictionary which is the same as &#39;state&#39; but appended with sampled values.</span>
+<span class="sd">        A dictionary which is the same as 'state' but appended with sampled values.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_leaf_nodes</span><span class="p">():</span>
         <span class="n">key</span><span class="p">,</span> <span class="n">key_obs</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -3093,7 +3093,7 @@ _ = model.add_node('x', observations=...)
 <span class="normal">430</span>
 <span class="normal">431</span>
 <span class="normal">432</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_prior_predictive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">prediction_options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Sample from the (hierarchical) prior predictive distribution of the model.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Sample from the (hierarchical) prior predictive distribution of the model.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        key: Random seed</span>
@@ -3102,7 +3102,7 @@ _ = model.add_node('x', observations=...)
 <span class="sd">    Returns:</span>
 <span class="sd">        A dictionary with a random value for all stochastic observed nodes.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">key</span><span class="p">,</span> <span class="n">key_latent</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
     <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_prior</span><span class="p">(</span><span class="n">key_latent</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_predictive</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">prediction_options</span><span class="p">)</span>
@@ -3227,7 +3227,7 @@ _ = model.add_node('x', observations=...)
 <span class="normal">446</span>
 <span class="normal">447</span>
 <span class="normal">448</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_posterior_predictive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">input_variables</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Sample from the posterior predictive</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Sample from the posterior predictive</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        key: Random key</span>
@@ -3237,7 +3237,7 @@ _ = model.add_node('x', observations=...)
 <span class="sd">    Returns:</span>
 <span class="sd">        A dictionary containing values for all stochastic observed nodes, conditioned on the observations.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_predictive</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">input_variables</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -3291,20 +3291,20 @@ _ = model.add_node('x', observations=...)
 <span class="normal">477</span>
 <span class="normal">478</span>
 <span class="normal">479</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">print_gibbs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Print the structure of conditional distributions. </span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Print the structure of conditional distributions. </span>
 
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Gibbs structure:&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Gibbs structure:'</span><span class="p">)</span>
     <span class="n">sorted_free_variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node_order</span><span class="p">()</span> <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_stochastic</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">node</span><span class="o">.</span><span class="n">is_observed</span><span class="p">()]</span>
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">sorted_free_variables</span><span class="p">:</span>
         <span class="c1"># get prior density        </span>
         <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_root</span><span class="p">():</span>
-            <span class="n">prior</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;p(</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s1">)&#39;</span>
+            <span class="n">prior</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'p(</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s1">)'</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">parents</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_parents</span><span class="p">(</span><span class="n">node</span><span class="p">)}</span>
-            <span class="n">prior</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;p(</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">parents</span><span class="p">])</span><span class="si">}</span><span class="s1">)&#39;</span>
+            <span class="n">prior</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'p(</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">parents</span><span class="p">])</span><span class="si">}</span><span class="s1">)'</span>
 
         <span class="c1"># get conditional density</span>
         <span class="n">conditionals</span> <span class="o">=</span> <span class="p">[]</span>
@@ -3315,10 +3315,10 @@ _ = model.add_node('x', observations=...)
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span> <span class="o">==</span> <span class="n">node</span> <span class="ow">or</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">co_parents</span><span class="p">:</span>
                     <span class="n">co_parents</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>        
             <span class="n">co_parents</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-            <span class="n">conditional</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;p(</span><span class="si">{</span><span class="n">child</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">co_parents</span><span class="p">])</span><span class="si">}</span><span class="s1">)&#39;</span>
+            <span class="n">conditional</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'p(</span><span class="si">{</span><span class="n">child</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">co_parents</span><span class="p">])</span><span class="si">}</span><span class="s1">)'</span>
             <span class="n">conditionals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conditional</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="si">:</span><span class="s1">20s</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conditionals</span><span class="p">)</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">prior</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="si">:</span><span class="s1">20s</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conditionals</span><span class="p">)</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">prior</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3473,8 +3473,8 @@ _ = model.add_node('x', observations=...)
 <span class="normal">595</span>
 <span class="normal">596</span>
 <span class="normal">597</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MetaModel</span><span class="p">():</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; A meta-model is a collection of Bayesian models, which can be used for reversible jump MCMC.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" A meta-model is a collection of Bayesian models, which can be used for reversible jump MCMC.</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                  <span class="n">model_list</span><span class="p">):</span>
@@ -3494,11 +3494,11 @@ _ = model.add_node('x', observations=...)
                     <span class="bp">self</span><span class="o">.</span><span class="n">num_auxiliary</span> <span class="o">=</span> <span class="n">max_diff</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">latent_variables</span> <span class="o">=</span> <span class="nb">set</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">indiv_latent_nodes</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">auxiliary_variables</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;u_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_auxiliary</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auxiliary_variables</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">'u_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">'</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_auxiliary</span><span class="p">)]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">meta_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">latent_variables</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">auxiliary_variables</span><span class="p">))</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">make_model_sample_prior_fn</span><span class="p">(</span><span class="n">model_index</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Creates a function that samples from the prior of the specified model index.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""Creates a function that samples from the prior of the specified model index."""</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">fn</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
                 <span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">[</span><span class="n">model_index</span><span class="p">]</span><span class="o">.</span><span class="n">sample_prior</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="n">all_latents</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nan</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">latent_variables</span><span class="p">}</span>
@@ -3510,7 +3510,7 @@ _ = model.add_node('x', observations=...)
         <span class="bp">self</span><span class="o">.</span><span class="n">model_sample_prior_fns</span> <span class="o">=</span> <span class="p">[</span><span class="n">make_model_sample_prior_fn</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">)]</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">make_model_sample_predictive_fn</span><span class="p">(</span><span class="n">model_index</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Creates a function that samples from the predictive distribution of the specified model index.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""Creates a function that samples from the predictive distribution of the specified model index."""</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">fn</span><span class="p">(</span><span class="nb">input</span><span class="p">):</span>
                 <span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">input_variables</span> <span class="o">=</span> <span class="nb">input</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">[</span><span class="n">model_index</span><span class="p">]</span><span class="o">.</span><span class="n">sample_predictive</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">input_variables</span><span class="p">)</span>
@@ -3522,7 +3522,7 @@ _ = model.add_node('x', observations=...)
         <span class="bp">self</span><span class="o">.</span><span class="n">model_sample_predictive_fns</span> <span class="o">=</span> <span class="p">[</span><span class="n">make_model_sample_predictive_fn</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">)]</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">make_logprior_fn</span><span class="p">(</span><span class="n">model_index</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Creates a function that computes the log prior of the specified model index.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""Creates a function that computes the log prior of the specified model index."""</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">fn</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">[</span><span class="n">model_index</span><span class="p">]</span><span class="o">.</span><span class="n">logprior_fn</span><span class="p">()(</span><span class="n">state</span><span class="p">)</span>
 
@@ -3533,7 +3533,7 @@ _ = model.add_node('x', observations=...)
         <span class="bp">self</span><span class="o">.</span><span class="n">model_logprior_fns</span> <span class="o">=</span> <span class="p">[</span><span class="n">make_logprior_fn</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">)]</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">make_loglikelihood_fn</span><span class="p">(</span><span class="n">model_index</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Creates a function that computes the log likelihood of the specified model index.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""Creates a function that computes the log likelihood of the specified model index."""</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">fn</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">[</span><span class="n">model_index</span><span class="p">]</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">()(</span><span class="n">state</span><span class="p">)</span>
 
@@ -3548,12 +3548,12 @@ _ = model.add_node('x', observations=...)
         <span class="n">key_model</span><span class="p">,</span> <span class="n">key_sample</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="n">model_index</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">key_model</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(),</span> <span class="n">minval</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">maxval</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">)</span>
         <span class="n">sample</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">switch</span><span class="p">(</span><span class="n">model_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_sample_prior_fns</span><span class="p">,</span> <span class="n">operand</span><span class="o">=</span><span class="n">key_sample</span><span class="p">)</span>
-        <span class="n">auxiliary_values</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s1">&#39;u_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nan</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_auxiliary</span><span class="p">)}</span>  <span class="c1"># to keep the same pytree structure across models in reversible jump MCMC</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;model_index&#39;</span><span class="p">:</span> <span class="n">model_index</span><span class="p">,</span> <span class="o">**</span><span class="n">sample</span><span class="p">,</span> <span class="o">**</span><span class="n">auxiliary_values</span><span class="p">}</span>
+        <span class="n">auxiliary_values</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s1">'u_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">'</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nan</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_auxiliary</span><span class="p">)}</span>  <span class="c1"># to keep the same pytree structure across models in reversible jump MCMC</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">'model_index'</span><span class="p">:</span> <span class="n">model_index</span><span class="p">,</span> <span class="o">**</span><span class="n">sample</span><span class="p">,</span> <span class="o">**</span><span class="n">auxiliary_values</span><span class="p">}</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample_predictive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">input_variables</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">switch</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;model_index&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_sample_predictive_fns</span><span class="p">,</span> 
+        <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">switch</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s1">'model_index'</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_sample_predictive_fns</span><span class="p">,</span> 
                               <span class="n">operand</span><span class="o">=</span><span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">input_variables</span><span class="p">])</span>
 
     <span class="c1">#</span>
@@ -3570,8 +3570,8 @@ _ = model.add_node('x', observations=...)
     <span class="k">def</span><span class="w"> </span><span class="nf">logprior_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">fn</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Computes the log prior of the state.&quot;&quot;&quot;</span>
-            <span class="n">model_index</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;model_index&#39;</span><span class="p">]</span>
+<span class="w">            </span><span class="sd">"""Computes the log prior of the state."""</span>
+            <span class="n">model_index</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">'model_index'</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">switch</span><span class="p">(</span><span class="n">model_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_logprior_fns</span><span class="p">,</span> <span class="n">operand</span><span class="o">=</span><span class="n">state</span><span class="p">)</span>
 
         <span class="c1">#</span>
@@ -3581,8 +3581,8 @@ _ = model.add_node('x', observations=...)
     <span class="k">def</span><span class="w"> </span><span class="nf">loglikelihood_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">fn</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>   
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Computes the log likelihood of the state.&quot;&quot;&quot;</span>
-            <span class="n">model_index</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;model_index&#39;</span><span class="p">]</span>
+<span class="w">            </span><span class="sd">"""Computes the log likelihood of the state."""</span>
+            <span class="n">model_index</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">'model_index'</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">switch</span><span class="p">(</span><span class="n">model_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_loglikelihood_fns</span><span class="p">,</span> <span class="n">operand</span><span class="o">=</span><span class="n">state</span><span class="p">)</span>
         <span class="c1">#</span>
         <span class="k">return</span> <span class="n">fn</span>   
@@ -3676,7 +3676,7 @@ _ = model.add_node('x', observations=...)
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       

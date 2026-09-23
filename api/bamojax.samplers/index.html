@@ -17,7 +17,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -25,7 +25,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -661,10 +661,16 @@
 <span class="normal">183</span>
 <span class="normal">184</span>
 <span class="normal">185</span>
-<span class="normal">186</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gibbs_sampler</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gibbs_sampler</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
                   <span class="n">step_fns</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                   <span class="n">step_fn_params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Constructs a Gibbs sampler as a Blackjax SamplingAlgorithm.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Constructs a Gibbs sampler as a Blackjax SamplingAlgorithm.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model: The bamojax definition of a Bayesian model.</span>
@@ -674,15 +680,15 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        A SamplingAlgorithm object. This can be used to call the respective .init and .step functions in the inference routines.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">set_step_fns_defaults</span><span class="p">(</span><span class="n">step_fns</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">step_fn_params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Set the step function of each node if not specified. Defaults to a Gaussian random walk with a stepsize of 0.01.</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Set the step function of each node if not specified. Defaults to a Gaussian random walk with a stepsize of 0.01.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">step_fns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">step_fns</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No step functions found; setting defaults.&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'No step functions found; setting defaults.'</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">step_fn_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">step_fn_params</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -702,22 +708,22 @@
                                    <span class="n">loglikelihood_fn</span><span class="p">,</span> 
                                    <span class="n">step_fns</span><span class="p">,</span> 
                                    <span class="n">step_fn_params</span><span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; The Blackjax SamplingAlgorithm is not parametrized in entirely the same way for different algorithms. To not clutter the gibbs_fn, exception cases are handled here.</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" The Blackjax SamplingAlgorithm is not parametrized in entirely the same way for different algorithms. To not clutter the gibbs_fn, exception cases are handled here.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">mean</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="n">position</span><span class="p">)</span><span class="o">.</span><span class="n">get_mean</span><span class="p">()</span>
         <span class="n">cov</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="n">position</span><span class="p">)</span><span class="o">.</span><span class="n">get_cov</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;elliptical_slice&#39;</span><span class="p">:</span>                    
+        <span class="k">if</span> <span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'elliptical_slice'</span><span class="p">:</span>                    
             <span class="n">step_kernel</span> <span class="o">=</span> <span class="n">step_fns</span><span class="p">[</span><span class="n">node</span><span class="p">](</span><span class="n">loglikelihood_fn</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">cov</span><span class="p">)</span>
             <span class="n">step_substate</span> <span class="o">=</span> <span class="n">step_kernel</span><span class="o">.</span><span class="n">init</span><span class="p">({</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">position</span><span class="p">[</span><span class="n">node</span><span class="p">]})</span>  
-        <span class="k">elif</span> <span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;elliptical_slice_nd&#39;</span><span class="p">:</span>                     
-            <span class="n">nd</span> <span class="o">=</span> <span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">&#39;nd&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'elliptical_slice_nd'</span><span class="p">:</span>                     
+            <span class="n">nd</span> <span class="o">=</span> <span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">'nd'</span><span class="p">]</span>
             <span class="n">step_kernel</span> <span class="o">=</span> <span class="n">step_fns</span><span class="p">[</span><span class="n">node</span><span class="p">](</span><span class="n">loglikelihood_fn</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">cov</span><span class="p">,</span> <span class="n">nd</span><span class="o">=</span><span class="n">nd</span><span class="p">)</span>
             <span class="n">step_substate</span> <span class="o">=</span> <span class="n">step_kernel</span><span class="o">.</span><span class="n">init</span><span class="p">({</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">position</span><span class="p">[</span><span class="n">node</span><span class="p">]})</span>  
-        <span class="k">elif</span> <span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;mgrad_gaussian&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'mgrad_gaussian'</span><span class="p">:</span>
             <span class="c1"># see issue https://github.com/blackjax-devs/blackjax/issues/237,mgrad does not seem robust yet</span>
             <span class="n">loglikelihood_fn_mgrad</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">state</span><span class="p">:</span> <span class="n">loglikelihood_fn</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>
-            <span class="n">step_kernel</span> <span class="o">=</span> <span class="n">step_fns</span><span class="p">[</span><span class="n">node</span><span class="p">](</span><span class="n">logdensity_fn</span><span class="o">=</span><span class="n">loglikelihood_fn_mgrad</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">covariance</span><span class="o">=</span><span class="n">cov</span><span class="p">,</span> <span class="o">**</span><span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">&#39;params&#39;</span><span class="p">])</span>
+            <span class="n">step_kernel</span> <span class="o">=</span> <span class="n">step_fns</span><span class="p">[</span><span class="n">node</span><span class="p">](</span><span class="n">logdensity_fn</span><span class="o">=</span><span class="n">loglikelihood_fn_mgrad</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">covariance</span><span class="o">=</span><span class="n">cov</span><span class="p">,</span> <span class="o">**</span><span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">'params'</span><span class="p">])</span>
             <span class="n">step_substate</span> <span class="o">=</span> <span class="n">step_kernel</span><span class="o">.</span><span class="n">init</span><span class="p">({</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">position</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">]})</span> 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
@@ -729,7 +735,7 @@
                  <span class="n">state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> 
                  <span class="o">*</span><span class="n">args</span><span class="p">,</span> 
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Updates each latent variable given the current assignment of all other latent variables, according to the assigned step functions.</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Updates each latent variable given the current assignment of all other latent variables, according to the assigned step functions.</span>
 
 <span class="sd">        The signature of the Gibbs function is (key, state, temperature) -&gt; (state, info)</span>
 
@@ -747,10 +753,10 @@
 <span class="sd">            state: The updated assignment of all latent variables.</span>
 <span class="sd">            info: Additional information regarding the updates for every latent variable, such as acceptance rates.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># In case we apply likelihood tempering</span>
-        <span class="n">temperature</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">temperature</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'temperature'</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
         <span class="n">position</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
@@ -767,18 +773,24 @@
                 <span class="c1"># Values for co-parents are either taken from the position (if latent), or from their respective observations (if observed)</span>
                 <span class="n">co_parent_arguments</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">position</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">position</span> <span class="k">else</span> <span class="n">k</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">co_parents</span><span class="p">}</span>
 
-                <span class="k">def</span><span class="w"> </span><span class="nf">loglikelihood_fn_</span><span class="p">(</span><span class="n">substate</span><span class="p">):</span>
+                <span class="k">def</span><span class="w"> </span><span class="nf">loglikelihood_fn_</span><span class="p">(</span><span class="n">substate</span><span class="p">,</span> <span class="n">child</span><span class="o">=</span><span class="n">child</span><span class="p">,</span> <span class="n">co_parent_arguments</span><span class="o">=</span><span class="n">co_parent_arguments</span><span class="p">):</span>
                     <span class="n">dynamic_state</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">co_parent_arguments</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">substate</span><span class="p">[</span><span class="n">node</span><span class="p">]}</span>
                     <span class="n">child_value</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">observations</span> <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">is_leaf</span><span class="p">()</span> <span class="k">else</span> <span class="n">position</span><span class="p">[</span><span class="n">child</span><span class="p">]</span>
                     <span class="k">return</span> <span class="n">child</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="n">dynamic_state</span><span class="p">)</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">child_value</span><span class="p">)</span>
 
                 <span class="c1">#            </span>
                 <span class="n">co_parents</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-                <span class="n">conditionals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loglikelihood_fn_</span><span class="p">)</span>
+                <span class="c1"># conditionals.append(loglikelihood_fn_)</span>
 
-            <span class="n">loglikelihood_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">val</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">temperature</span><span class="o">*</span><span class="n">ll_fn</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">ll_fn</span> <span class="ow">in</span> <span class="n">conditionals</span><span class="p">]))</span>
+                <span class="c1"># Fix tempering in Gibbs updates</span>
+                <span class="n">child_temperature</span> <span class="o">=</span> <span class="n">temperature</span> <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">is_observed</span><span class="p">()</span> <span class="k">else</span> <span class="mf">1.0</span>
+                <span class="n">conditionals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">child_temperature</span><span class="p">,</span> <span class="n">loglikelihood_fn_</span><span class="p">))</span>
 
-            <span class="k">if</span> <span class="s1">&#39;implied_mvn_prior&#39;</span> <span class="ow">in</span> <span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+            <span class="n">loglikelihood_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">val</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">t</span><span class="o">*</span><span class="n">ll_fn</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">ll_fn</span> <span class="ow">in</span> <span class="n">conditionals</span><span class="p">]))</span>
+
+            <span class="c1"># loglikelihood_fn = lambda val: jnp.sum(jnp.asarray([temperature*ll_fn(val).sum() for ll_fn in conditionals]))</span>
+
+            <span class="k">if</span> <span class="s1">'implied_mvn_prior'</span> <span class="ow">in</span> <span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
                 <span class="c1"># Some Blackjax step functions are tailored to multivariate Gaussian priors.</span>
                 <span class="n">step_kernel</span><span class="p">,</span> <span class="n">step_substate</span> <span class="o">=</span> <span class="n">get_nonstandard_gibbs_step</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">loglikelihood_fn</span><span class="p">,</span> <span class="n">step_fns</span><span class="p">,</span> <span class="n">step_fn_params</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -813,7 +825,7 @@
         <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">info</span>
 
     <span class="c1">#</span>
-    <span class="n">step_fn</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="s1">&#39;gibbs_step_fn&#39;</span>
+    <span class="n">step_fn</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="s1">'gibbs_step_fn'</span>
     <span class="k">return</span> <span class="n">SamplingAlgorithm</span><span class="p">(</span><span class="n">init_fn</span><span class="p">,</span> <span class="n">step_fn</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -904,13 +916,7 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/samplers.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">189</span>
-<span class="normal">190</span>
-<span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">195</span>
 <span class="normal">196</span>
 <span class="normal">197</span>
 <span class="normal">198</span>
@@ -958,12 +964,22 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 <span class="normal">240</span>
 <span class="normal">241</span>
 <span class="normal">242</span>
-<span class="normal">243</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mcmc_sampler</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mcmc_sampler</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
                  <span class="n">mcmc_kernel</span><span class="p">:</span> <span class="n">SamplingAlgorithm</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                  <span class="n">mcmc_parameters</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Constructs an MCMC sampler from a given Blackjax algorithm.</span>
+<span class="w">    </span><span class="sd">""" Constructs an MCMC sampler from a given Blackjax algorithm.</span>
 
-<span class="sd">    This lightweight wrapper ensures the (optional) tempering parameter &#39;temperature&#39;,</span>
+<span class="sd">    This lightweight wrapper ensures the (optional) tempering parameter 'temperature',</span>
 <span class="sd">    as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.</span>
 
 <span class="sd">    Args:</span>
@@ -973,11 +989,15 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 <span class="sd">    Returns:</span>
 <span class="sd">        A Blackjax SamplingAlgorithm object with methods `init_fn` and `step_fn`.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">mcmc_parameters</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mcmc_kernel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">mcmc_kernel</span> <span class="o">=</span> <span class="n">nuts</span>
         <span class="n">m</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_model_size</span><span class="p">()</span>
         <span class="n">mcmc_parameters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">step_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">inverse_mass_matrix</span><span class="o">=</span><span class="mf">0.0001</span><span class="o">*</span><span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>  <span class="c1"># these will be overriden by the window adaptation</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">mcmc_parameters</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mcmc_kernel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">mcmc_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mcmc_kernel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Both mcmc_kernel and mcmc_parameters must be specified, or neither.'</span><span class="p">)</span>
+
 
     <span class="k">def</span><span class="w"> </span><span class="nf">mcmc_fn</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
                 <span class="n">key</span><span class="p">,</span> 
@@ -985,7 +1005,7 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
                 <span class="o">*</span><span class="n">args</span><span class="p">,</span> 
                 <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 
-        <span class="n">temperature</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">temperature</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'temperature'</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
         <span class="n">position</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="n">loglikelihood_fn_</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">()</span>
@@ -1158,17 +1178,7 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/samplers.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">246</span>
-<span class="normal">247</span>
-<span class="normal">248</span>
-<span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span>
-<span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span>
-<span class="normal">255</span>
-<span class="normal">256</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">256</span>
 <span class="normal">257</span>
 <span class="normal">258</span>
 <span class="normal">259</span>
@@ -1333,14 +1343,24 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 <span class="normal">418</span>
 <span class="normal">419</span>
 <span class="normal">420</span>
-<span class="normal">421</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reversible_jump_mcmc</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Model</span><span class="p">],</span> 
+<span class="normal">421</span>
+<span class="normal">422</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span>
+<span class="normal">429</span>
+<span class="normal">430</span>
+<span class="normal">431</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reversible_jump_mcmc</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Model</span><span class="p">],</span> 
                          <span class="n">auxiliary_proposal_dist</span><span class="p">:</span> <span class="n">Distribution</span><span class="p">,</span>
                          <span class="n">jump_functions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">],</span>
                          <span class="n">jacobians</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">],</span>
                          <span class="n">projections</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">],</span>
                          <span class="n">within_model_kernels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
                          <span class="n">model_move_prob</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a reversible jump MCMC algorithm for the given models.</span>
+<span class="w">    </span><span class="sd">"""Constructs a reversible jump MCMC algorithm for the given models.</span>
 
 <span class="sd">    Implementation follows the reversible jump MCMC algorithm described by Hastie &amp; Green (2012).</span>
 
@@ -1357,15 +1377,15 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 <span class="sd">    References:</span>
 <span class="sd">        Hastie, T., &amp; Green, P. J. (2012). Model choice using reversible jump Markov chain Monte Carlo</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Reversible jump MCMC currently only supports two models.&#39;</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">jump_functions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Reversible jump MCMC requires two jump functions for the two models.&#39;</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">jacobians</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Reversible jump MCMC requires two Jacobian determinant functions for the two models.&#39;</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">within_model_kernels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Reversible jump MCMC requires within-model sampling algorithms for each models.&#39;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'Reversible jump MCMC currently only supports two models.'</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">jump_functions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'Reversible jump MCMC requires two jump functions for the two models.'</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">jacobians</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'Reversible jump MCMC requires two Jacobian determinant functions for the two models.'</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">within_model_kernels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'Reversible jump MCMC requires within-model sampling algorithms for each models.'</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">make_within_model_kernel</span><span class="p">(</span><span class="n">model_index</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a within-model kernel for the specified model index.</span>
+<span class="w">        </span><span class="sd">"""Creates a within-model kernel for the specified model index.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            model_index: Index of the model for which to create the within-model kernel.</span>
@@ -1373,14 +1393,14 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 <span class="sd">        Returns:</span>
 <span class="sd">            A SamplingAlgorithm that performs within-model sampling for the specified model.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">mcmc_sampler</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="n">model_index</span><span class="p">],</span> 
-                            <span class="n">mcmc_kernel</span><span class="o">=</span><span class="n">within_model_kernels</span><span class="p">[</span><span class="n">model_index</span><span class="p">][</span><span class="s1">&#39;mcmc_kernel&#39;</span><span class="p">],</span> 
-                            <span class="n">mcmc_parameters</span><span class="o">=</span><span class="n">within_model_kernels</span><span class="p">[</span><span class="n">model_index</span><span class="p">][</span><span class="s1">&#39;mcmc_parameters&#39;</span><span class="p">])</span>
+                            <span class="n">mcmc_kernel</span><span class="o">=</span><span class="n">within_model_kernels</span><span class="p">[</span><span class="n">model_index</span><span class="p">][</span><span class="s1">'mcmc_kernel'</span><span class="p">],</span> 
+                            <span class="n">mcmc_parameters</span><span class="o">=</span><span class="n">within_model_kernels</span><span class="p">[</span><span class="n">model_index</span><span class="p">][</span><span class="s1">'mcmc_parameters'</span><span class="p">])</span>
 
     <span class="c1">#    </span>
     <span class="k">def</span><span class="w"> </span><span class="nf">make_within_model_fn</span><span class="p">(</span><span class="n">model_index</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">RJState</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a function that performs a within-model move for the specified model index.</span>
+<span class="w">        </span><span class="sd">"""Creates a function that performs a within-model move for the specified model index.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            model_index: Index of the model for which to create the within-model move function.</span>
@@ -1389,31 +1409,31 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 <span class="sd">            A function that takes a key, position, and optional arguments, and returns a new RJState and info dictionary.</span>
 <span class="sd">            The info dictionary imputes nan values for log probabilities and Jacobian determinants, as they are not used in within-model moves.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">fn</span><span class="p">(</span> <span class="n">key</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
             <span class="n">temperature</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">1.0</span>
             <span class="n">kernel</span> <span class="o">=</span> <span class="n">mcmc_samplers</span><span class="p">[</span><span class="n">model_index</span><span class="p">]</span>
             <span class="n">initial_position</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">position</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">models</span><span class="p">[</span><span class="n">model_index</span><span class="p">]</span><span class="o">.</span><span class="n">get_latent_nodes</span><span class="p">()}</span>            
             <span class="n">within_move_initial_state</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">initial_position</span><span class="p">)</span>
             <span class="n">new_state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">within_move_initial_state</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">)</span>
-            <span class="n">new_position</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">position</span><span class="p">,</span> <span class="o">**</span><span class="n">new_state</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="s1">&#39;model_index&#39;</span><span class="p">:</span> <span class="n">model_index</span><span class="p">}</span>  
-            <span class="k">return</span> <span class="n">RJState</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">new_position</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;within_model_move&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
-                                                    <span class="s1">&#39;is_accepted&#39;</span><span class="p">:</span> <span class="n">info</span><span class="o">.</span><span class="n">is_accepted</span><span class="p">,</span>
-                                                    <span class="s1">&#39;log_accept_ratio&#39;</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">acceptance_rate</span><span class="p">),</span>
-                                                    <span class="s1">&#39;step_info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;log_p_current&#39;</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
-                                                                  <span class="s1">&#39;log_p_proposed&#39;</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
-                                                                  <span class="s1">&#39;logq&#39;</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
-                                                                  <span class="s1">&#39;jacobian_det&#39;</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nan</span><span class="p">}}</span>
+            <span class="n">new_position</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">position</span><span class="p">,</span> <span class="o">**</span><span class="n">new_state</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="s1">'model_index'</span><span class="p">:</span> <span class="n">model_index</span><span class="p">}</span>  
+            <span class="k">return</span> <span class="n">RJState</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">new_position</span><span class="p">),</span> <span class="p">{</span><span class="s1">'within_model_move'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
+                                                    <span class="s1">'is_accepted'</span><span class="p">:</span> <span class="n">info</span><span class="o">.</span><span class="n">is_accepted</span><span class="p">,</span>
+                                                    <span class="s1">'log_accept_ratio'</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">acceptance_rate</span><span class="p">),</span>
+                                                    <span class="s1">'step_info'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'log_p_current'</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                                                                  <span class="s1">'log_p_proposed'</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                                                                  <span class="s1">'logq'</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                                                                  <span class="s1">'jacobian_det'</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">nan</span><span class="p">}}</span>
         <span class="k">return</span> <span class="n">fn</span>
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">make_model_logprob</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a function that computes the log probability of the model given a position.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Creates a function that computes the log probability of the model given a position."""</span>
 
         <span class="n">latent_keys</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_latent_nodes</span><span class="p">()</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">fn</span><span class="p">(</span><span class="n">position</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Position might contain auxiliary variables and variables from other models, so we extract only the correct latent variables.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""Position might contain auxiliary variables and variables from other models, so we extract only the correct latent variables."""</span>
             <span class="n">model_variables</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">position</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">latent_keys</span><span class="p">}</span>
             <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">()(</span><span class="n">model_variables</span><span class="p">)</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">logprior_fn</span><span class="p">()(</span><span class="n">model_variables</span><span class="p">)</span>
 
@@ -1421,7 +1441,7 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 
     <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">reversible_jump_fn</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RJState</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs a reversible jump MCMC step.</span>
+<span class="w">        </span><span class="sd">"""Performs a reversible jump MCMC step.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            key: Random key for sampling.</span>
@@ -1432,27 +1452,27 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 <span class="sd">        Returns:</span>
 <span class="sd">            A tuple containing the next state and an info dictionary with details about the move.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">position</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">position</span>
-        <span class="n">model_index</span> <span class="o">=</span> <span class="n">position</span><span class="p">[</span><span class="s1">&#39;model_index&#39;</span><span class="p">]</span>
+        <span class="n">model_index</span> <span class="o">=</span> <span class="n">position</span><span class="p">[</span><span class="s1">'model_index'</span><span class="p">]</span>
         <span class="n">key</span><span class="p">,</span> <span class="n">subkey</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="n">move_type</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">subkey</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">model_move_prob</span><span class="p">)</span>
         <span class="n">jacobian_det_up</span><span class="p">,</span> <span class="n">jacobian_det_down</span> <span class="o">=</span> <span class="n">jacobians</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">do_within_model</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Perform a standard bamojax within-model move.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""Perform a standard bamojax within-model move."""</span>
 
-            <span class="n">temperature</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">temperature</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'temperature'</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">switch</span><span class="p">(</span><span class="n">model_index</span><span class="p">,</span> <span class="n">within_model_fns</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
 
         <span class="c1">#</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">do_between_model</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Perform a reversible jump between models.</span>
+<span class="w">            </span><span class="sd">"""Perform a reversible jump between models.</span>
 
 <span class="sd">            Currently, there is only support for RJMCMC between two models.</span>
 
-<span class="sd">            &quot;&quot;&quot;</span>
+<span class="sd">            """</span>
             <span class="n">new_model_index</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">model_index</span>
             <span class="n">key_aux</span><span class="p">,</span> <span class="n">key_accept</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>            
 
@@ -1466,13 +1486,13 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
             <span class="c1">#</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">down_branch</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
                 <span class="n">new_position</span> <span class="o">=</span> <span class="n">jump_functions</span><span class="p">[</span><span class="mi">1</span><span class="p">](</span><span class="n">position</span><span class="p">)</span> <span class="c1"># discard auxiliary variable and kappa</span>
-                <span class="n">jac_det</span> <span class="o">=</span> <span class="n">jacobian_det_down</span><span class="p">(</span><span class="n">new_position</span><span class="p">[</span><span class="s1">&#39;kappa&#39;</span><span class="p">])</span>
+                <span class="n">jac_det</span> <span class="o">=</span> <span class="n">jacobian_det_down</span><span class="p">(</span><span class="n">new_position</span><span class="p">[</span><span class="s1">'kappa'</span><span class="p">])</span>
                 <span class="n">logq</span> <span class="o">=</span> <span class="n">auxiliary_proposal_dist</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">projections</span><span class="p">[</span><span class="mi">1</span><span class="p">](</span><span class="n">new_position</span><span class="p">))</span> <span class="c1"># log(kappa / mu) where mu is the mean of the auxiliary proposal</span>
                 <span class="k">return</span> <span class="n">new_position</span><span class="p">,</span> <span class="n">jac_det</span><span class="p">,</span> <span class="n">logq</span>
 
             <span class="c1">#</span>
             <span class="n">new_position</span><span class="p">,</span> <span class="n">jac_det</span><span class="p">,</span> <span class="n">logq</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">model_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">up_branch</span><span class="p">,</span> <span class="n">down_branch</span><span class="p">,</span> <span class="n">operand</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-            <span class="n">new_position</span><span class="p">[</span><span class="s1">&#39;model_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_model_index</span>  <span class="c1"># update model index in the new position</span>
+            <span class="n">new_position</span><span class="p">[</span><span class="s1">'model_index'</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_model_index</span>  <span class="c1"># update model index in the new position</span>
             <span class="n">log_p_current</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">switch</span><span class="p">(</span><span class="n">model_index</span><span class="p">,</span> <span class="n">model_logprobs</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span>
             <span class="n">log_p_proposed</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">switch</span><span class="p">(</span><span class="n">new_model_index</span><span class="p">,</span> <span class="n">model_logprobs</span><span class="p">,</span> <span class="n">new_position</span><span class="p">)</span>
             <span class="n">log_accept_ratio</span> <span class="o">=</span> <span class="n">log_p_proposed</span> <span class="o">-</span> <span class="n">log_p_current</span> <span class="o">+</span> <span class="n">logq</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">jac_det</span><span class="p">)</span> 
@@ -1480,13 +1500,13 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
             <span class="n">accept</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">jrnd</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">key_accept</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">log_accept_ratio</span>
             <span class="n">next_state</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">accept</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="n">RJState</span><span class="p">(</span><span class="n">new_position</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="n">state</span><span class="p">,</span> <span class="n">operand</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>       
 
-            <span class="k">return</span> <span class="n">next_state</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;within_model_move&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> 
-                                <span class="s1">&#39;is_accepted&#39;</span><span class="p">:</span> <span class="n">accept</span><span class="p">,</span> 
-                                <span class="s1">&#39;log_accept_ratio&#39;</span><span class="p">:</span> <span class="n">log_accept_ratio</span><span class="p">,</span>
-                                <span class="s1">&#39;step_info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;log_p_current&#39;</span><span class="p">:</span> <span class="n">log_p_current</span><span class="p">,</span>
-                                              <span class="s1">&#39;log_p_proposed&#39;</span><span class="p">:</span> <span class="n">log_p_proposed</span><span class="p">,</span>
-                                              <span class="s1">&#39;logq&#39;</span><span class="p">:</span> <span class="n">logq</span><span class="p">,</span>
-                                              <span class="s1">&#39;jacobian_det&#39;</span><span class="p">:</span> <span class="n">jac_det</span><span class="p">}}</span>
+            <span class="k">return</span> <span class="n">next_state</span><span class="p">,</span> <span class="p">{</span><span class="s1">'within_model_move'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> 
+                                <span class="s1">'is_accepted'</span><span class="p">:</span> <span class="n">accept</span><span class="p">,</span> 
+                                <span class="s1">'log_accept_ratio'</span><span class="p">:</span> <span class="n">log_accept_ratio</span><span class="p">,</span>
+                                <span class="s1">'step_info'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'log_p_current'</span><span class="p">:</span> <span class="n">log_p_current</span><span class="p">,</span>
+                                              <span class="s1">'log_p_proposed'</span><span class="p">:</span> <span class="n">log_p_proposed</span><span class="p">,</span>
+                                              <span class="s1">'logq'</span><span class="p">:</span> <span class="n">logq</span><span class="p">,</span>
+                                              <span class="s1">'jacobian_det'</span><span class="p">:</span> <span class="n">jac_det</span><span class="p">}}</span>
 
         <span class="c1">#</span>
         <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="n">move_type</span><span class="p">,</span> <span class="n">do_within_model</span><span class="p">,</span> <span class="n">do_between_model</span><span class="p">,</span> <span class="n">operand</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -1507,7 +1527,7 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
     <span class="n">model_logprobs</span> <span class="o">=</span> <span class="p">[</span><span class="n">make_model_logprob</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">]</span>
     <span class="n">mcmc_samplers</span> <span class="o">=</span> <span class="p">[</span><span class="n">make_within_model_kernel</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">))]</span>
 
-    <span class="n">step_fn</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="s1">&#39;reversible_jump_fn&#39;</span>
+    <span class="n">step_fn</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="s1">'reversible_jump_fn'</span>
     <span class="k">return</span> <span class="n">SamplingAlgorithm</span><span class="p">(</span><span class="n">init_fn</span><span class="p">,</span> <span class="n">step_fn</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1580,7 +1600,7 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
