@@ -611,6 +611,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#bamojax.inference.LaplaceInference.sample_from_laplace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sample_from_laplace
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#bamojax.inference.LaplaceInference.run" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3764,7 +3775,35 @@ that we effective thin by a factor N.</p>
 <span class="normal">693</span>
 <span class="normal">694</span>
 <span class="normal">695</span>
-<span class="normal">696</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LaplaceInference</span><span class="p">(</span><span class="n">InferenceEngine</span><span class="p">):</span>
+<span class="normal">696</span>
+<span class="normal">697</span>
+<span class="normal">698</span>
+<span class="normal">699</span>
+<span class="normal">700</span>
+<span class="normal">701</span>
+<span class="normal">702</span>
+<span class="normal">703</span>
+<span class="normal">704</span>
+<span class="normal">705</span>
+<span class="normal">706</span>
+<span class="normal">707</span>
+<span class="normal">708</span>
+<span class="normal">709</span>
+<span class="normal">710</span>
+<span class="normal">711</span>
+<span class="normal">712</span>
+<span class="normal">713</span>
+<span class="normal">714</span>
+<span class="normal">715</span>
+<span class="normal">716</span>
+<span class="normal">717</span>
+<span class="normal">718</span>
+<span class="normal">719</span>
+<span class="normal">720</span>
+<span class="normal">721</span>
+<span class="normal">722</span>
+<span class="normal">723</span>
+<span class="normal">724</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LaplaceInference</span><span class="p">(</span><span class="n">InferenceEngine</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" The Laplace approximate inference class</span>
 
 <span class="sd">    """</span>
@@ -3788,12 +3827,21 @@ that we effective thin by a factor N.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">backward_bijectors</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">_inverse</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">bijectors</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">is_leaf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_leaf_fn</span><span class="p">)</span>
 
         <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">logdensity_fn</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
-            <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_bijectors</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
-            <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">()(</span><span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">logprior_fn</span><span class="p">()(</span><span class="n">z</span><span class="p">))</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">neg_logdensity_unconstrained_fn</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
+<span class="w">            </span><span class="sa">r</span><span class="sd">""" Negative log joint density in unconstrained space.</span>
+
+<span class="sd">            With theta = f(z), the density of z is p(y | f(z)) p(f(z)) |det J_f(z)|, so the</span>
+<span class="sd">            log-Jacobian must be included for the Gaussian approximation in z to integrate correctly.</span>
+<span class="sd">            For untransformed variables f is the identity and the Jacobian term is zero.</span>
+
+<span class="sd">            """</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_bijectors</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+            <span class="n">log_jacobian</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">log_abs_det_jacobian</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">theta</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bijectors</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">()(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">logprior_fn</span><span class="p">()(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">log_jacobian</span><span class="p">)</span>
 
         <span class="c1">#</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">obj_fun</span> <span class="o">=</span> <span class="n">logdensity_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obj_fun</span> <span class="o">=</span> <span class="n">neg_logdensity_unconstrained_fn</span>
+
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">optimizer</span> <span class="o">=</span> <span class="n">jaxopt</span><span class="o">.</span><span class="n">ScipyBoundedMinimize</span><span class="p">(</span><span class="n">fun</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">obj_fun</span><span class="p">,</span> <span class="o">**</span><span class="n">optimizer_args</span><span class="p">)</span>
@@ -3822,37 +3870,56 @@ that we effective thin by a factor N.</p>
         <span class="c1"># \hat{\theta} = \argmax_\theta p(\theta \mid y)</span>
         <span class="c1"># \Sigma^-1 is the Hessian of -\log p(\theta \mid y) at \theta=\hat{\theta}</span>
 
-        <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_bijectors</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
-        <span class="n">H</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj_fun</span><span class="p">)(</span><span class="n">mode</span><span class="p">)</span>
-        <span class="n">theta_hat_flat</span><span class="p">,</span> <span class="n">unravel_fn</span> <span class="o">=</span> <span class="n">ravel_pytree</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+        <span class="c1"># The optimiser works in unconstrained space z, and so does the Gaussian approximation:</span>
+        <span class="c1"># it is centred at z_hat with covariance Sigma = H^{-1}, where H is the Hessian of</span>
+        <span class="c1"># -log p(y, z) at z_hat. Everything below is evaluated at z_hat; it is mapped to the</span>
+        <span class="c1"># constrained space only for reporting the mode.</span>
+        <span class="n">z_hat</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">params</span>
+        <span class="n">z_hat_flat</span><span class="p">,</span> <span class="n">unravel_fn</span> <span class="o">=</span> <span class="n">ravel_pytree</span><span class="p">(</span><span class="n">z_hat</span><span class="p">)</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">flat_obj_fn</span><span class="p">(</span><span class="n">flat_params</span><span class="p">):</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="n">unravel_fn</span><span class="p">(</span><span class="n">flat_params</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_fun</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_fun</span><span class="p">(</span><span class="n">unravel_fn</span><span class="p">(</span><span class="n">flat_params</span><span class="p">))</span>
 
-        <span class="n">H</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="n">flat_obj_fn</span><span class="p">)(</span><span class="n">theta_hat_flat</span><span class="p">)</span>
-
+        <span class="n">H</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="n">flat_obj_fn</span><span class="p">)(</span><span class="n">z_hat_flat</span><span class="p">)</span>
         <span class="n">Sigma</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">theta_hat_flat</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">()</span> <span class="ow">or</span> <span class="n">theta_hat_flat</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,):</span>  <span class="c1"># Univariate case</span>
-            <span class="n">laplace_dist</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">theta_hat_flat</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Sigma</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">z_hat_flat</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">()</span> <span class="ow">or</span> <span class="n">z_hat_flat</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,):</span>  <span class="c1"># Univariate case</span>
+            <span class="n">laplace_dist</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">z_hat_flat</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Sigma</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">laplace_dist</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">MultivariateNormal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">theta_hat_flat</span><span class="p">,</span> <span class="n">covariance_matrix</span><span class="o">=</span><span class="n">Sigma</span><span class="p">)</span>
+            <span class="n">laplace_dist</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">MultivariateNormal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">z_hat_flat</span><span class="p">,</span> <span class="n">covariance_matrix</span><span class="o">=</span><span class="n">Sigma</span><span class="p">)</span>
 
         <span class="n">_</span><span class="p">,</span> <span class="n">logdet</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">slogdet</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span>
-
-        <span class="n">log_posterior</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_fun</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
-        <span class="n">lml</span> <span class="o">=</span> <span class="n">log_posterior</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">logdet</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">jnp</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>        
+        <span class="n">log_joint_at_mode</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">flat_obj_fn</span><span class="p">(</span><span class="n">z_hat_flat</span><span class="p">)</span>
+        <span class="n">lml</span> <span class="o">=</span> <span class="n">log_joint_at_mode</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">logdet</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">jnp</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">distribution</span><span class="o">=</span><span class="n">laplace_dist</span><span class="p">,</span>
-            <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
-            <span class="n">flat_mode</span><span class="o">=</span><span class="n">theta_hat_flat</span><span class="p">,</span>
-            <span class="n">covariance</span><span class="o">=</span><span class="n">Sigma</span><span class="p">,</span>
-            <span class="n">hessian</span><span class="o">=</span><span class="n">H</span><span class="p">,</span>
+            <span class="n">distribution</span><span class="o">=</span><span class="n">laplace_dist</span><span class="p">,</span>               <span class="c1"># Gaussian over the flat, unconstrained parameters</span>
+            <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">forward_bijectors</span><span class="p">(</span><span class="n">z_hat</span><span class="p">),</span>      <span class="c1"># mode mapped to the constrained space</span>
+            <span class="n">unconstrained_mode</span><span class="o">=</span><span class="n">z_hat</span><span class="p">,</span>
+            <span class="n">flat_mode</span><span class="o">=</span><span class="n">z_hat_flat</span><span class="p">,</span>                    <span class="c1"># unconstrained; matches `distribution` and `unravel_fn`</span>
+            <span class="n">covariance</span><span class="o">=</span><span class="n">Sigma</span><span class="p">,</span>                        <span class="c1"># unconstrained</span>
+            <span class="n">hessian</span><span class="o">=</span><span class="n">H</span><span class="p">,</span>                               <span class="c1"># unconstrained</span>
             <span class="n">unravel_fn</span><span class="o">=</span><span class="n">unravel_fn</span><span class="p">,</span>
             <span class="n">lml</span><span class="o">=</span><span class="n">lml</span>
         <span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_from_laplace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">laplace_result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">num_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" Draw samples from the Laplace approximation, mapped back to the constrained space.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key: PRNGKey</span>
+<span class="sd">            laplace_result: the dictionary returned by `run` (single chain).</span>
+<span class="sd">            num_draws: number of samples.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dictionary with `num_draws` samples per model variable, in the model's own (constrained) space.</span>
+
+<span class="sd">        """</span>
+        <span class="n">flat_draws</span> <span class="o">=</span> <span class="n">laplace_result</span><span class="p">[</span><span class="s1">'distribution'</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">sample_shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_draws</span><span class="p">,</span> <span class="p">))</span>
+        <span class="n">flat_draws</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">flat_draws</span><span class="p">,</span> <span class="p">(</span><span class="n">num_draws</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">unconstrained</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">laplace_result</span><span class="p">[</span><span class="s1">'unravel_fn'</span><span class="p">])(</span><span class="n">flat_draws</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward_bijectors</span><span class="p">)(</span><span class="n">unconstrained</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -3868,6 +3935,145 @@ that we effective thin by a factor N.</p>
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="bamojax.inference.LaplaceInference.sample_from_laplace" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">sample_from_laplace</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">laplace_result</span><span class="p">,</span> <span class="n">num_draws</span><span class="p">)</span></code>
+
+<a href="#bamojax.inference.LaplaceInference.sample_from_laplace" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Draw samples from the Laplace approximation, mapped back to the constrained space.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>key</code>
+            </td>
+            <td>
+                  <code><span title="blackjax.types.PRNGKey">PRNGKey</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>PRNGKey</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>laplace_result</code>
+            </td>
+            <td>
+                  <code><span title="dict">dict</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the dictionary returned by <code>run</code> (single chain).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>num_draws</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>number of samples.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="dict">dict</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A dictionary with <code>num_draws</code> samples per model variable, in the model's own (constrained) space.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>bamojax/inference.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">709</span>
+<span class="normal">710</span>
+<span class="normal">711</span>
+<span class="normal">712</span>
+<span class="normal">713</span>
+<span class="normal">714</span>
+<span class="normal">715</span>
+<span class="normal">716</span>
+<span class="normal">717</span>
+<span class="normal">718</span>
+<span class="normal">719</span>
+<span class="normal">720</span>
+<span class="normal">721</span>
+<span class="normal">722</span>
+<span class="normal">723</span>
+<span class="normal">724</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_from_laplace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">laplace_result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">num_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Draw samples from the Laplace approximation, mapped back to the constrained space.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        key: PRNGKey</span>
+<span class="sd">        laplace_result: the dictionary returned by `run` (single chain).</span>
+<span class="sd">        num_draws: number of samples.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dictionary with `num_draws` samples per model variable, in the model's own (constrained) space.</span>
+
+<span class="sd">    """</span>
+    <span class="n">flat_draws</span> <span class="o">=</span> <span class="n">laplace_result</span><span class="p">[</span><span class="s1">'distribution'</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">sample_shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_draws</span><span class="p">,</span> <span class="p">))</span>
+    <span class="n">flat_draws</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">flat_draws</span><span class="p">,</span> <span class="p">(</span><span class="n">num_draws</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">unconstrained</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">laplace_result</span><span class="p">[</span><span class="s1">'unravel_fn'</span><span class="p">])(</span><span class="n">flat_draws</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward_bijectors</span><span class="p">)(</span><span class="n">unconstrained</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 <div class="doc doc-object doc-function">
 
