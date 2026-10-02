@@ -629,12 +629,21 @@ class LaplaceInference(InferenceEngine):
         self.backward_bijectors = lambda x: jax.tree.map(lambda b, v: b._inverse(v), self.bijectors, x, is_leaf=self.is_leaf_fn)
 
         @jax.jit
-        def logdensity_fn(z):
-            z = self.forward_bijectors(z)
-            return -1.0 * (self.temperature * model.loglikelihood_fn()(z) + model.logprior_fn()(z))
+        def neg_logdensity_unconstrained_fn(z):
+            r""" Negative log joint density in unconstrained space.
+
+            With theta = f(z), the density of z is p(y | f(z)) p(f(z)) |det J_f(z)|, so the
+            log-Jacobian must be included for the Gaussian approximation in z to integrate correctly.
+            For untransformed variables f is the identity and the Jacobian term is zero.
+
+            """
+            theta = self.forward_bijectors(z)
+            log_jacobian = sum(jnp.sum(b.log_abs_det_jacobian(z[k], theta[k])) for k, b in self.bijectors.items())
+            return -1.0 * (self.temperature * model.loglikelihood_fn()(theta) + model.logprior_fn()(theta) + log_jacobian)
 
         #
-        self.obj_fun = logdensity_fn
+        self.obj_fun = neg_logdensity_unconstrained_fn
+
 
         if self.bounds is not None:
             optimizer = jaxopt.ScipyBoundedMinimize(fun=self.obj_fun, **optimizer_args)
@@ -663,37 +672,56 @@ class LaplaceInference(InferenceEngine):
         # \hat{\theta} = \argmax_\theta p(\theta \mid y)
         # \Sigma^-1 is the Hessian of -\log p(\theta \mid y) at \theta=\hat{\theta}
 
-        mode = self.forward_bijectors(sol.params)
-        H = jax.hessian(self.obj_fun)(mode)
-        theta_hat_flat, unravel_fn = ravel_pytree(mode)
+        # The optimiser works in unconstrained space z, and so does the Gaussian approximation:
+        # it is centred at z_hat with covariance Sigma = H^{-1}, where H is the Hessian of
+        # -log p(y, z) at z_hat. Everything below is evaluated at z_hat; it is mapped to the
+        # constrained space only for reporting the mode.
+        z_hat = sol.params
+        z_hat_flat, unravel_fn = ravel_pytree(z_hat)
 
         def flat_obj_fn(flat_params):
-            params = unravel_fn(flat_params)
-            return self.obj_fun(params)
+            return self.obj_fun(unravel_fn(flat_params))
 
-        H = jax.hessian(flat_obj_fn)(theta_hat_flat)
-
+        H = jax.hessian(flat_obj_fn)(z_hat_flat)
         Sigma = jnp.linalg.inv(H)
 
-        if theta_hat_flat.shape == () or theta_hat_flat.shape == (1,):  # Univariate case
-            laplace_dist = dist.Normal(loc=theta_hat_flat, scale=jnp.sqrt(Sigma))
+        if z_hat_flat.shape == () or z_hat_flat.shape == (1,):  # Univariate case
+            laplace_dist = dist.Normal(loc=z_hat_flat, scale=jnp.sqrt(Sigma))
         else:
-            laplace_dist = dist.MultivariateNormal(loc=theta_hat_flat, covariance_matrix=Sigma)
+            laplace_dist = dist.MultivariateNormal(loc=z_hat_flat, covariance_matrix=Sigma)
 
         _, logdet = jnp.linalg.slogdet(Sigma)
-
-        log_posterior = -1.0 * self.obj_fun(mode)
-        lml = log_posterior + 1/2*logdet + self.D/2 * jnp.log(2*jnp.pi)        
+        log_joint_at_mode = -1.0 * flat_obj_fn(z_hat_flat)
+        lml = log_joint_at_mode + 1/2*logdet + self.D/2 * jnp.log(2*jnp.pi)
 
         return dict(
-            distribution=laplace_dist,
-            mode=mode,
-            flat_mode=theta_hat_flat,
-            covariance=Sigma,
-            hessian=H,
+            distribution=laplace_dist,               # Gaussian over the flat, unconstrained parameters
+            mode=self.forward_bijectors(z_hat),      # mode mapped to the constrained space
+            unconstrained_mode=z_hat,
+            flat_mode=z_hat_flat,                    # unconstrained; matches `distribution` and `unravel_fn`
+            covariance=Sigma,                        # unconstrained
+            hessian=H,                               # unconstrained
             unravel_fn=unravel_fn,
             lml=lml
         )
+
+    #
+    def sample_from_laplace(self, key: PRNGKey, laplace_result: dict, num_draws: int) -> dict:
+        r""" Draw samples from the Laplace approximation, mapped back to the constrained space.
+
+        Args:
+            key: PRNGKey
+            laplace_result: the dictionary returned by `run` (single chain).
+            num_draws: number of samples.
+
+        Returns:
+            A dictionary with `num_draws` samples per model variable, in the model's own (constrained) space.
+
+        """
+        flat_draws = laplace_result['distribution'].sample(key, sample_shape=(num_draws, ))
+        flat_draws = jnp.reshape(flat_draws, (num_draws, -1))
+        unconstrained = jax.vmap(laplace_result['unravel_fn'])(flat_draws)
+        return jax.vmap(self.forward_bijectors)(unconstrained)
     
     #
 #
