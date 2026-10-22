@@ -29,6 +29,7 @@ dependencies = [
   "blackjax>=1.2",
   "numpyro>=0.14",
   "jaxtyping",  
+  "jaxopt>=0.8.3",
 ]
 
 # === Dev/test extras so contributors can do: pip install -e ".[dev]" ===
