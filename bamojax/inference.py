@@ -398,6 +398,26 @@ class SMCInference(InferenceEngine):
                                      update_particles_fn=self.temperature_aware_update_fn())
     
     #    
+    def create_final_move_kernel(self) -> SamplingAlgorithm:
+        r""" A (non-adaptive) tempered SMC kernel used for one last step at temperature 1.
+
+        Blackjax's tempered SMC step is resample -> mutate at the *current* temperature -> reweight
+        towards the next one. When the adaptive loop stops at lambda = 1, the particles were therefore
+        last moved at the previous temperature and carry importance weights for lambda = 1. Calling this
+        kernel once with tempering_param = 1.0 (delta = 0) resamples according to those weights and mutates
+        at the posterior, so that `final_state.particles` are unweighted posterior draws.
+
+        """
+        return tempered_smc(logprior_fn=self.model.logprior_fn(),
+                            loglikelihood_fn=self.model.loglikelihood_fn(),
+                            mcmc_step_fn=self.mcmc_kernel.step,
+                            mcmc_init_fn=self.mcmc_kernel.init,
+                            mcmc_parameters=self.mcmc_parameters,
+                            resampling_fn=self.resampling_fn,
+                            num_mcmc_steps=self.num_mutations,
+                            update_particles_fn=self.temperature_aware_update_fn())
+
+    
     def tempering_condition(self):
         r""" Checks whether the SMC procedure terminates.
 
@@ -471,8 +491,9 @@ class SMCInference(InferenceEngine):
         smc_kernel = self.create_smc_kernel()
         smc_cycle = self.smc_cycle(smc_kernel)
         cond = self.tempering_condition()
+        final_move = jax.jit(lambda key, state: self.create_final_move_kernel().step(key, state, 1.0)[0])
 
-        key, key_init = jrnd.split(key)        
+        key, key_init, key_final = jrnd.split(key, 3)        
         keys = jrnd.split(key_init, self.num_particles)
         initial_particles = smc_kernel.init(jax.vmap(self.model.sample_prior)(keys))
 
@@ -489,28 +510,16 @@ class SMCInference(InferenceEngine):
             trace = jax.tree_util.tree_map(lambda arr, val: arr.at[0].set(val), trace, initial_particles)
             n_iter, final_state, _, lml, trace = jax.lax.while_loop(cond, smc_cycle, (1, initial_particles, key_smc, initial_log_likelihood, trace))
             trace = tree_map(lambda x: x[:n_iter], trace)
-            return dict(
-                n_iter=n_iter, 
-                final_state=final_state, 
-                lml=lml, 
-                trace=trace
-            )
+            final_state = final_move(key_final, final_state)
+            return dict(n_iter=n_iter, final_state=final_state, lml=lml, trace=trace)
         if self.return_diagnostics:            
             n_iter, final_state, _, lml, final_info = jax.lax.while_loop(cond, smc_cycle, (1, initial_particles, key_smc, initial_log_likelihood, initial_info))
-            return dict(
-                n_iter=n_iter, 
-                final_state=final_state, 
-                lml=lml, 
-                final_info=final_info
-            )            
+            final_state = final_move(key_final, final_state)
+            return dict(n_iter=n_iter, final_state=final_state, lml=lml, final_info=final_info)            
         else:
             n_iter, final_state, _, lml, = jax.lax.while_loop(cond, smc_cycle, (0, initial_particles, key, 0))
-            return dict(
-                n_iter=n_iter, 
-                final_state=final_state, 
-                lml=lml
-            )  
-        
+            final_state = final_move(key_final, final_state)
+            return dict(n_iter=n_iter, final_state=final_state, lml=lml)  
     #
 
 #
