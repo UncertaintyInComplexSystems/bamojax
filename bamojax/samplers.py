@@ -143,7 +143,6 @@ def gibbs_sampler(model: Model,
                 
                 #            
                 co_parents.add(node)
-                # conditionals.append(loglikelihood_fn_)
 
                 # Fix tempering in Gibbs updates
                 child_temperature = temperature if child.is_observed() else 1.0
