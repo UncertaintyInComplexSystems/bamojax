@@ -500,6 +500,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#bamojax.inference.SMCInference.create_final_move_kernel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create_final_move_kernel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#bamojax.inference.SMCInference.tempering_condition" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2422,7 +2433,17 @@ that we effective thin by a factor N.</p>
 <span class="normal">509</span>
 <span class="normal">510</span>
 <span class="normal">511</span>
-<span class="normal">512</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SMCInference</span><span class="p">(</span><span class="n">InferenceEngine</span><span class="p">):</span>
+<span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SMCInference</span><span class="p">(</span><span class="n">InferenceEngine</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" The SMC approximate inference class</span>
 
 <span class="sd">    """</span>
@@ -2488,6 +2509,26 @@ that we effective thin by a factor N.</p>
                                      <span class="n">update_particles_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature_aware_update_fn</span><span class="p">())</span>
 
     <span class="c1">#    </span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_final_move_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" A (non-adaptive) tempered SMC kernel used for one last step at temperature 1.</span>
+
+<span class="sd">        Blackjax's tempered SMC step is resample -&gt; mutate at the *current* temperature -&gt; reweight</span>
+<span class="sd">        towards the next one. When the adaptive loop stops at lambda = 1, the particles were therefore</span>
+<span class="sd">        last moved at the previous temperature and carry importance weights for lambda = 1. Calling this</span>
+<span class="sd">        kernel once with tempering_param = 1.0 (delta = 0) resamples according to those weights and mutates</span>
+<span class="sd">        at the posterior, so that `final_state.particles` are unweighted posterior draws.</span>
+
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">tempered_smc</span><span class="p">(</span><span class="n">logprior_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">logprior_fn</span><span class="p">(),</span>
+                            <span class="n">loglikelihood_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">(),</span>
+                            <span class="n">mcmc_step_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">step</span><span class="p">,</span>
+                            <span class="n">mcmc_init_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
+                            <span class="n">mcmc_parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_parameters</span><span class="p">,</span>
+                            <span class="n">resampling_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">resampling_fn</span><span class="p">,</span>
+                            <span class="n">num_mcmc_steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_mutations</span><span class="p">,</span>
+                            <span class="n">update_particles_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature_aware_update_fn</span><span class="p">())</span>
+
+
     <span class="k">def</span><span class="w"> </span><span class="nf">tempering_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">""" Checks whether the SMC procedure terminates.</span>
 
@@ -2561,8 +2602,9 @@ that we effective thin by a factor N.</p>
         <span class="n">smc_kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_smc_kernel</span><span class="p">()</span>
         <span class="n">smc_cycle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">smc_cycle</span><span class="p">(</span><span class="n">smc_kernel</span><span class="p">)</span>
         <span class="n">cond</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tempering_condition</span><span class="p">()</span>
+        <span class="n">final_move</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_final_move_kernel</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="n">key</span><span class="p">,</span> <span class="n">key_init</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>        
+        <span class="n">key</span><span class="p">,</span> <span class="n">key_init</span><span class="p">,</span> <span class="n">key_final</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>        
         <span class="n">keys</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key_init</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)</span>
         <span class="n">initial_particles</span> <span class="o">=</span> <span class="n">smc_kernel</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">sample_prior</span><span class="p">)(</span><span class="n">keys</span><span class="p">))</span>
 
@@ -2579,27 +2621,16 @@ that we effective thin by a factor N.</p>
             <span class="n">trace</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">arr</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">arr</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">val</span><span class="p">),</span> <span class="n">trace</span><span class="p">,</span> <span class="n">initial_particles</span><span class="p">)</span>
             <span class="n">n_iter</span><span class="p">,</span> <span class="n">final_state</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">lml</span><span class="p">,</span> <span class="n">trace</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">while_loop</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">smc_cycle</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">initial_particles</span><span class="p">,</span> <span class="n">key_smc</span><span class="p">,</span> <span class="n">initial_log_likelihood</span><span class="p">,</span> <span class="n">trace</span><span class="p">))</span>
             <span class="n">trace</span> <span class="o">=</span> <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[:</span><span class="n">n_iter</span><span class="p">],</span> <span class="n">trace</span><span class="p">)</span>
-            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-                <span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span> 
-                <span class="n">final_state</span><span class="o">=</span><span class="n">final_state</span><span class="p">,</span> 
-                <span class="n">lml</span><span class="o">=</span><span class="n">lml</span><span class="p">,</span> 
-                <span class="n">trace</span><span class="o">=</span><span class="n">trace</span>
-            <span class="p">)</span>
+            <span class="n">final_state</span> <span class="o">=</span> <span class="n">final_move</span><span class="p">(</span><span class="n">key_final</span><span class="p">,</span> <span class="n">final_state</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span> <span class="n">final_state</span><span class="o">=</span><span class="n">final_state</span><span class="p">,</span> <span class="n">lml</span><span class="o">=</span><span class="n">lml</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span><span class="p">:</span>            
             <span class="n">n_iter</span><span class="p">,</span> <span class="n">final_state</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">lml</span><span class="p">,</span> <span class="n">final_info</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">while_loop</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">smc_cycle</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">initial_particles</span><span class="p">,</span> <span class="n">key_smc</span><span class="p">,</span> <span class="n">initial_log_likelihood</span><span class="p">,</span> <span class="n">initial_info</span><span class="p">))</span>
-            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-                <span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span> 
-                <span class="n">final_state</span><span class="o">=</span><span class="n">final_state</span><span class="p">,</span> 
-                <span class="n">lml</span><span class="o">=</span><span class="n">lml</span><span class="p">,</span> 
-                <span class="n">final_info</span><span class="o">=</span><span class="n">final_info</span>
-            <span class="p">)</span>            
+            <span class="n">final_state</span> <span class="o">=</span> <span class="n">final_move</span><span class="p">(</span><span class="n">key_final</span><span class="p">,</span> <span class="n">final_state</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span> <span class="n">final_state</span><span class="o">=</span><span class="n">final_state</span><span class="p">,</span> <span class="n">lml</span><span class="o">=</span><span class="n">lml</span><span class="p">,</span> <span class="n">final_info</span><span class="o">=</span><span class="n">final_info</span><span class="p">)</span>            
         <span class="k">else</span><span class="p">:</span>
             <span class="n">n_iter</span><span class="p">,</span> <span class="n">final_state</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">lml</span><span class="p">,</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">while_loop</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">smc_cycle</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">initial_particles</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-                <span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span> 
-                <span class="n">final_state</span><span class="o">=</span><span class="n">final_state</span><span class="p">,</span> 
-                <span class="n">lml</span><span class="o">=</span><span class="n">lml</span>
-            <span class="p">)</span>  
+            <span class="n">final_state</span> <span class="o">=</span> <span class="n">final_move</span><span class="p">(</span><span class="n">key_final</span><span class="p">,</span> <span class="n">final_state</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span> <span class="n">final_state</span><span class="o">=</span><span class="n">final_state</span><span class="p">,</span> <span class="n">lml</span><span class="o">=</span><span class="n">lml</span><span class="p">)</span>  
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -2700,6 +2731,68 @@ that we effective thin by a factor N.</p>
 <div class="doc doc-object doc-function">
 
 
+<h3 id="bamojax.inference.SMCInference.create_final_move_kernel" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">create_final_move_kernel</span><span class="p">()</span></code>
+
+<a href="#bamojax.inference.SMCInference.create_final_move_kernel" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>A (non-adaptive) tempered SMC kernel used for one last step at temperature 1.</p>
+<p>Blackjax's tempered SMC step is resample -&gt; mutate at the <em>current</em> temperature -&gt; reweight
+towards the next one. When the adaptive loop stops at lambda = 1, the particles were therefore
+last moved at the previous temperature and carry importance weights for lambda = 1. Calling this
+kernel once with tempering_param = 1.0 (delta = 0) resamples according to those weights and mutates
+at the posterior, so that <code>final_state.particles</code> are unweighted posterior draws.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>bamojax/inference.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span>
+<span class="normal">418</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_final_move_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" A (non-adaptive) tempered SMC kernel used for one last step at temperature 1.</span>
+
+<span class="sd">    Blackjax's tempered SMC step is resample -&gt; mutate at the *current* temperature -&gt; reweight</span>
+<span class="sd">    towards the next one. When the adaptive loop stops at lambda = 1, the particles were therefore</span>
+<span class="sd">    last moved at the previous temperature and carry importance weights for lambda = 1. Calling this</span>
+<span class="sd">    kernel once with tempering_param = 1.0 (delta = 0) resamples according to those weights and mutates</span>
+<span class="sd">    at the posterior, so that `final_state.particles` are unweighted posterior draws.</span>
+
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">tempered_smc</span><span class="p">(</span><span class="n">logprior_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">logprior_fn</span><span class="p">(),</span>
+                        <span class="n">loglikelihood_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">(),</span>
+                        <span class="n">mcmc_step_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">step</span><span class="p">,</span>
+                        <span class="n">mcmc_init_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
+                        <span class="n">mcmc_parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_parameters</span><span class="p">,</span>
+                        <span class="n">resampling_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">resampling_fn</span><span class="p">,</span>
+                        <span class="n">num_mcmc_steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_mutations</span><span class="p">,</span>
+                        <span class="n">update_particles_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature_aware_update_fn</span><span class="p">())</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="bamojax.inference.SMCInference.tempering_condition" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">tempering_condition</span><span class="p">()</span></code>
 
@@ -2735,21 +2828,21 @@ that we effective thin by a factor N.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">401</span>
-<span class="normal">402</span>
-<span class="normal">403</span>
-<span class="normal">404</span>
-<span class="normal">405</span>
-<span class="normal">406</span>
-<span class="normal">407</span>
-<span class="normal">408</span>
-<span class="normal">409</span>
-<span class="normal">410</span>
-<span class="normal">411</span>
-<span class="normal">412</span>
-<span class="normal">413</span>
-<span class="normal">414</span>
-<span class="normal">415</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tempering_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">421</span>
+<span class="normal">422</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span>
+<span class="normal">429</span>
+<span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tempering_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Checks whether the SMC procedure terminates.</span>
 
 <span class="sd">    Returns:</span>
@@ -2818,27 +2911,7 @@ that we effective thin by a factor N.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">418</span>
-<span class="normal">419</span>
-<span class="normal">420</span>
-<span class="normal">421</span>
-<span class="normal">422</span>
-<span class="normal">423</span>
-<span class="normal">424</span>
-<span class="normal">425</span>
-<span class="normal">426</span>
-<span class="normal">427</span>
-<span class="normal">428</span>
-<span class="normal">429</span>
-<span class="normal">430</span>
-<span class="normal">431</span>
-<span class="normal">432</span>
-<span class="normal">433</span>
-<span class="normal">434</span>
-<span class="normal">435</span>
-<span class="normal">436</span>
-<span class="normal">437</span>
-<span class="normal">438</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">438</span>
 <span class="normal">439</span>
 <span class="normal">440</span>
 <span class="normal">441</span>
@@ -2846,7 +2919,27 @@ that we effective thin by a factor N.</p>
 <span class="normal">443</span>
 <span class="normal">444</span>
 <span class="normal">445</span>
-<span class="normal">446</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">smc_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smc_kernel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="normal">446</span>
+<span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span>
+<span class="normal">457</span>
+<span class="normal">458</span>
+<span class="normal">459</span>
+<span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">smc_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smc_kernel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" One iteration of the adaptive-tempered SMC algorithm.</span>
 
 <span class="sd">    Args:</span>
@@ -2932,27 +3025,7 @@ that we effective thin by a factor N.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">450</span>
-<span class="normal">451</span>
-<span class="normal">452</span>
-<span class="normal">453</span>
-<span class="normal">454</span>
-<span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span>
-<span class="normal">458</span>
-<span class="normal">459</span>
-<span class="normal">460</span>
-<span class="normal">461</span>
-<span class="normal">462</span>
-<span class="normal">463</span>
-<span class="normal">464</span>
-<span class="normal">465</span>
-<span class="normal">466</span>
-<span class="normal">467</span>
-<span class="normal">468</span>
-<span class="normal">469</span>
-<span class="normal">470</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">470</span>
 <span class="normal">471</span>
 <span class="normal">472</span>
 <span class="normal">473</span>
@@ -2994,7 +3067,17 @@ that we effective thin by a factor N.</p>
 <span class="normal">509</span>
 <span class="normal">510</span>
 <span class="normal">511</span>
-<span class="normal">512</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_single_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_single_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Run one chain of Sequential Monte Carlo.</span>
 
 <span class="sd">    This returns SMC particles in different ways, depending on user provided settings.</span>
@@ -3018,8 +3101,9 @@ that we effective thin by a factor N.</p>
     <span class="n">smc_kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_smc_kernel</span><span class="p">()</span>
     <span class="n">smc_cycle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">smc_cycle</span><span class="p">(</span><span class="n">smc_kernel</span><span class="p">)</span>
     <span class="n">cond</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tempering_condition</span><span class="p">()</span>
+    <span class="n">final_move</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_final_move_kernel</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
-    <span class="n">key</span><span class="p">,</span> <span class="n">key_init</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>        
+    <span class="n">key</span><span class="p">,</span> <span class="n">key_init</span><span class="p">,</span> <span class="n">key_final</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>        
     <span class="n">keys</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key_init</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)</span>
     <span class="n">initial_particles</span> <span class="o">=</span> <span class="n">smc_kernel</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">sample_prior</span><span class="p">)(</span><span class="n">keys</span><span class="p">))</span>
 
@@ -3036,27 +3120,16 @@ that we effective thin by a factor N.</p>
         <span class="n">trace</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">arr</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">arr</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">val</span><span class="p">),</span> <span class="n">trace</span><span class="p">,</span> <span class="n">initial_particles</span><span class="p">)</span>
         <span class="n">n_iter</span><span class="p">,</span> <span class="n">final_state</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">lml</span><span class="p">,</span> <span class="n">trace</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">while_loop</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">smc_cycle</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">initial_particles</span><span class="p">,</span> <span class="n">key_smc</span><span class="p">,</span> <span class="n">initial_log_likelihood</span><span class="p">,</span> <span class="n">trace</span><span class="p">))</span>
         <span class="n">trace</span> <span class="o">=</span> <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[:</span><span class="n">n_iter</span><span class="p">],</span> <span class="n">trace</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span> 
-            <span class="n">final_state</span><span class="o">=</span><span class="n">final_state</span><span class="p">,</span> 
-            <span class="n">lml</span><span class="o">=</span><span class="n">lml</span><span class="p">,</span> 
-            <span class="n">trace</span><span class="o">=</span><span class="n">trace</span>
-        <span class="p">)</span>
+        <span class="n">final_state</span> <span class="o">=</span> <span class="n">final_move</span><span class="p">(</span><span class="n">key_final</span><span class="p">,</span> <span class="n">final_state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span> <span class="n">final_state</span><span class="o">=</span><span class="n">final_state</span><span class="p">,</span> <span class="n">lml</span><span class="o">=</span><span class="n">lml</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">)</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span><span class="p">:</span>            
         <span class="n">n_iter</span><span class="p">,</span> <span class="n">final_state</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">lml</span><span class="p">,</span> <span class="n">final_info</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">while_loop</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">smc_cycle</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">initial_particles</span><span class="p">,</span> <span class="n">key_smc</span><span class="p">,</span> <span class="n">initial_log_likelihood</span><span class="p">,</span> <span class="n">initial_info</span><span class="p">))</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span> 
-            <span class="n">final_state</span><span class="o">=</span><span class="n">final_state</span><span class="p">,</span> 
-            <span class="n">lml</span><span class="o">=</span><span class="n">lml</span><span class="p">,</span> 
-            <span class="n">final_info</span><span class="o">=</span><span class="n">final_info</span>
-        <span class="p">)</span>            
+        <span class="n">final_state</span> <span class="o">=</span> <span class="n">final_move</span><span class="p">(</span><span class="n">key_final</span><span class="p">,</span> <span class="n">final_state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span> <span class="n">final_state</span><span class="o">=</span><span class="n">final_state</span><span class="p">,</span> <span class="n">lml</span><span class="o">=</span><span class="n">lml</span><span class="p">,</span> <span class="n">final_info</span><span class="o">=</span><span class="n">final_info</span><span class="p">)</span>            
     <span class="k">else</span><span class="p">:</span>
         <span class="n">n_iter</span><span class="p">,</span> <span class="n">final_state</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">lml</span><span class="p">,</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">while_loop</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">smc_cycle</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">initial_particles</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span> 
-            <span class="n">final_state</span><span class="o">=</span><span class="n">final_state</span><span class="p">,</span> 
-            <span class="n">lml</span><span class="o">=</span><span class="n">lml</span>
-        <span class="p">)</span>  
+        <span class="n">final_state</span> <span class="o">=</span> <span class="n">final_move</span><span class="p">(</span><span class="n">key_final</span><span class="p">,</span> <span class="n">final_state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span> <span class="n">final_state</span><span class="o">=</span><span class="n">final_state</span><span class="p">,</span> <span class="n">lml</span><span class="o">=</span><span class="n">lml</span><span class="p">)</span>  
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3136,16 +3209,7 @@ that we effective thin by a factor N.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>bamojax/inference.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">517</span>
-<span class="normal">518</span>
-<span class="normal">519</span>
-<span class="normal">520</span>
-<span class="normal">521</span>
-<span class="normal">522</span>
-<span class="normal">523</span>
-<span class="normal">524</span>
-<span class="normal">525</span>
-<span class="normal">526</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">526</span>
 <span class="normal">527</span>
 <span class="normal">528</span>
 <span class="normal">529</span>
@@ -3236,7 +3300,16 @@ that we effective thin by a factor N.</p>
 <span class="normal">614</span>
 <span class="normal">615</span>
 <span class="normal">616</span>
-<span class="normal">617</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">VIInference</span><span class="p">(</span><span class="n">InferenceEngine</span><span class="p">):</span>
+<span class="normal">617</span>
+<span class="normal">618</span>
+<span class="normal">619</span>
+<span class="normal">620</span>
+<span class="normal">621</span>
+<span class="normal">622</span>
+<span class="normal">623</span>
+<span class="normal">624</span>
+<span class="normal">625</span>
+<span class="normal">626</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">VIInference</span><span class="p">(</span><span class="n">InferenceEngine</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" The VI approximate inference class</span>
 
 <span class="sd">    """</span>
@@ -3455,16 +3528,7 @@ that we effective thin by a factor N.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">552</span>
-<span class="normal">553</span>
-<span class="normal">554</span>
-<span class="normal">555</span>
-<span class="normal">556</span>
-<span class="normal">557</span>
-<span class="normal">558</span>
-<span class="normal">559</span>
-<span class="normal">560</span>
-<span class="normal">561</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">561</span>
 <span class="normal">562</span>
 <span class="normal">563</span>
 <span class="normal">564</span>
@@ -3491,7 +3555,16 @@ that we effective thin by a factor N.</p>
 <span class="normal">585</span>
 <span class="normal">586</span>
 <span class="normal">587</span>
-<span class="normal">588</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_from_variational</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">vi_result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">num_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="normal">588</span>
+<span class="normal">589</span>
+<span class="normal">590</span>
+<span class="normal">591</span>
+<span class="normal">592</span>
+<span class="normal">593</span>
+<span class="normal">594</span>
+<span class="normal">595</span>
+<span class="normal">596</span>
+<span class="normal">597</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_from_variational</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">vi_result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">num_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Draw samples x ~ q(x | mu, rho)</span>
 
 <span class="sd">    Args:</span>
@@ -3583,16 +3656,7 @@ that we effective thin by a factor N.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">591</span>
-<span class="normal">592</span>
-<span class="normal">593</span>
-<span class="normal">594</span>
-<span class="normal">595</span>
-<span class="normal">596</span>
-<span class="normal">597</span>
-<span class="normal">598</span>
-<span class="normal">599</span>
-<span class="normal">600</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">600</span>
 <span class="normal">601</span>
 <span class="normal">602</span>
 <span class="normal">603</span>
@@ -3609,7 +3673,16 @@ that we effective thin by a factor N.</p>
 <span class="normal">614</span>
 <span class="normal">615</span>
 <span class="normal">616</span>
-<span class="normal">617</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_single_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="normal">617</span>
+<span class="normal">618</span>
+<span class="normal">619</span>
+<span class="normal">620</span>
+<span class="normal">621</span>
+<span class="normal">622</span>
+<span class="normal">623</span>
+<span class="normal">624</span>
+<span class="normal">625</span>
+<span class="normal">626</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_single_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Run variational inference.</span>
 
 <span class="sd">    Args: </span>
@@ -3715,16 +3788,7 @@ that we effective thin by a factor N.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>bamojax/inference.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">622</span>
-<span class="normal">623</span>
-<span class="normal">624</span>
-<span class="normal">625</span>
-<span class="normal">626</span>
-<span class="normal">627</span>
-<span class="normal">628</span>
-<span class="normal">629</span>
-<span class="normal">630</span>
-<span class="normal">631</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">631</span>
 <span class="normal">632</span>
 <span class="normal">633</span>
 <span class="normal">634</span>
@@ -3884,7 +3948,16 @@ that we effective thin by a factor N.</p>
 <span class="normal">788</span>
 <span class="normal">789</span>
 <span class="normal">790</span>
-<span class="normal">791</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LaplaceInference</span><span class="p">(</span><span class="n">InferenceEngine</span><span class="p">):</span>
+<span class="normal">791</span>
+<span class="normal">792</span>
+<span class="normal">793</span>
+<span class="normal">794</span>
+<span class="normal">795</span>
+<span class="normal">796</span>
+<span class="normal">797</span>
+<span class="normal">798</span>
+<span class="normal">799</span>
+<span class="normal">800</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LaplaceInference</span><span class="p">(</span><span class="n">InferenceEngine</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" The Laplace approximate inference class</span>
 
 <span class="sd">    """</span>
@@ -4087,16 +4160,16 @@ that we effective thin by a factor N.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">759</span>
-<span class="normal">760</span>
-<span class="normal">761</span>
-<span class="normal">762</span>
-<span class="normal">763</span>
-<span class="normal">764</span>
-<span class="normal">765</span>
-<span class="normal">766</span>
-<span class="normal">767</span>
-<span class="normal">768</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">768</span>
+<span class="normal">769</span>
+<span class="normal">770</span>
+<span class="normal">771</span>
+<span class="normal">772</span>
+<span class="normal">773</span>
+<span class="normal">774</span>
+<span class="normal">775</span>
+<span class="normal">776</span>
+<span class="normal">777</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Run the Laplace approximation, vmapped over `num_chains` starting points.</span>
 
 <span class="sd">    With several chains, array outputs get a leading chain axis and `distribution` is batched over chains.</span>
@@ -4224,16 +4297,7 @@ that we effective thin by a factor N.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">771</span>
-<span class="normal">772</span>
-<span class="normal">773</span>
-<span class="normal">774</span>
-<span class="normal">775</span>
-<span class="normal">776</span>
-<span class="normal">777</span>
-<span class="normal">778</span>
-<span class="normal">779</span>
-<span class="normal">780</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">780</span>
 <span class="normal">781</span>
 <span class="normal">782</span>
 <span class="normal">783</span>
@@ -4244,7 +4308,16 @@ that we effective thin by a factor N.</p>
 <span class="normal">788</span>
 <span class="normal">789</span>
 <span class="normal">790</span>
-<span class="normal">791</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_from_laplace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">laplace_result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">num_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="normal">791</span>
+<span class="normal">792</span>
+<span class="normal">793</span>
+<span class="normal">794</span>
+<span class="normal">795</span>
+<span class="normal">796</span>
+<span class="normal">797</span>
+<span class="normal">798</span>
+<span class="normal">799</span>
+<span class="normal">800</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_from_laplace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">laplace_result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">num_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Draw samples from the Laplace approximation, mapped back to the constrained space.</span>
 
 <span class="sd">    Args:</span>
