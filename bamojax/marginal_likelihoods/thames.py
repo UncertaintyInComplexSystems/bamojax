@@ -106,7 +106,6 @@ def thames(key, model: Model, posterior_samples, M=100, adjust_volume=True):
     log_Z = jnp.log(N) + logV - log_sum
 
     if adjust_volume:
-        M = 100
         samples_ellipse = sample_ellipsoid(key, n=M, Sigma=cov, c=jnp.sqrt(d+1), mu=mu)
 
         logliks_ellipse = jax.vmap(flat_loglikelihood_fn)(samples_ellipse)

@@ -1,99 +1,40 @@
-import jax
-import jax.numpy as jnp
-from jax.tree_util import tree_flatten, tree_map
 
-import jaxopt
-from typing import Callable
-
-
+from jaxtyping import Float
+from bamojax.inference import LaplaceInference  # local import avoids a circular import at package load
 from bamojax.base import Model
-
-
-def iid_likelihood(L: Callable):
-    r"""
-    
-    We typically have multiple observations and assume the likelihood factorizes 
-    as: 
-
-    $$    
-        \log p\left(Y \mid \theta\right) = \sum_{i=1}^N \log p\left(y_i \mid \theta\right) \enspace.
-    $$
-
-    """
-    return lambda x: jnp.sum(L()(x))
-
-#
-
 
 def laplace_approximation(key,
                           model: Model,
-                          iid_obs: bool= True,
-                          **opt_args):
+                          iid_obs: bool = True,
+                          bounds: tuple = None,
+                          **engine_args) -> Float:
+    r"""Compute the Laplace approximation of the log marginal likelihood of `model`.
 
-    r"""Compute the Laplace approximation of the log marginal likelihood of model
+    The Laplace approximation replaces the posterior by a Gaussian centred at the mode, with the
+    curvature of the negative log posterior as precision. The normalising constant of that Gaussian
+    is known in closed form and serves as the marginal likelihood estimate.
 
-    The Laplace approximation approximates the posterior density of the model 
-    with a Gaussian, centered at the mode of the density and with its curvature
-    determined by the Hessian matrix of the negative log posterior density.
+    This is a thin functional wrapper around `bamojax.inference.LaplaceInference`, which performs the
+    optimisation with optax (L-BFGS by default) in unconstrained space, so latent variables with
+    transformed priors are handled correctly.
 
-    The marginal likelihood of this proxy distribution is known in closed-form,
-    and is used to approximate the actual marginal likelihood.
+    Args:
+        key: PRNGKey, used to draw the starting point of the optimisation from the prior.
+        model: A bamojax model.
+        iid_obs: Kept for backwards compatibility; `Model.loglikelihood_fn` already sums over observations.
+        bounds: Optional (lower, upper) tuple of dicts with box constraints (see `LaplaceInference`).
+        **engine_args: Passed on to `LaplaceInference` (e.g. `max_iter`, `tol`, `optimizer`).
+
+    Returns:
+        The log marginal likelihood estimate.
 
     See https://en.wikipedia.org/wiki/Laplace%27s_approximation
 
-
     """
+    del iid_obs   
 
-    # The objective function is the unnormalized posterior
-    @jax.jit
-    def fun(x):
-        return -1.0 * (loglikelihood_fn(x) + logprior_fn(x))
-
-    #
-    if iid_obs:
-        loglikelihood_fn = iid_likelihood(model.loglikelihood_fn)
-    else:
-        loglikelihood_fn = model.loglikelihood_fn
-    logprior_fn = model.logprior_fn()
-
-    # Get initial values in the same PyTree structure as the model expects
-    init_params = tree_map(jnp.asarray, 
-                           model.sample_prior(key))
-
-    # For some models, the parameters are bounded
-    if 'bounds' in opt_args:
-        solver = jaxopt.ScipyBoundedMinimize(fun=fun)
-    else:
-        solver = jaxopt.ScipyMinimize(fun=fun)
-        
-    
-    # Derive the number of parameters
-    D = 0
-    vars_flattened, _ = tree_flatten(init_params)
-    for varval in vars_flattened:
-        D += varval.shape[0] if varval.shape else 1
-
-    # Compute MAP
-    sol = solver.run(init_params, **opt_args)   
-
-    # We fit a Gaussian(\hat{\theta}, \Sigma) with 
-    # \hat{\theta} = \argmax_\theta p(\theta \mid y)
-    # \Sigma^-1 is the Hessian of -\log p(\theta \mid y) at \theta=\hat{\theta}
-
-    mode = sol.params
-    H = jax.hessian(fun)(mode)
-    h, _ = tree_flatten(H)
-    if D > 1:
-        S = jnp.squeeze(jnp.linalg.inv(jnp.reshape(jnp.asarray(h), 
-                                                   shape=(D, D))))
-        _, logdet = jnp.linalg.slogdet(S)
-    else: 
-        S = 1.0 / jnp.squeeze(jnp.asarray(h))
-        logdet = jnp.log(S)
-
-    log_posterior = -1.0 * sol.state.fun_val
-    lml = log_posterior + 1/2*logdet + D/2 * jnp.log(2*jnp.pi)
-    return lml
+    engine = LaplaceInference(model, bounds=bounds, **engine_args)
+    return engine.run(key)['lml']
 
 #
 

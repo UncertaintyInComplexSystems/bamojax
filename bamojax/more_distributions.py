@@ -84,12 +84,10 @@ def GaussianProcessFactory(cov_fn: Callable, mean_fn: Callable = Zero(),  nd: Tu
             mu = self._get_mean()
             cov = self._get_cov()
             L = jnp.linalg.cholesky(cov)
-            z = jrnd.normal(key, shape=output_shape).T
-            V = jnp.tensordot(L, z, axes=(1, 0))
-            f = jnp.add(mu, jnp.moveaxis(V, 0, -1))
-            # if jnp.ndim(f) == 1:
-            #     f = f[jnp.newaxis, :]
-            return f
+            # output_shape = sample_shape + nd + (m, ); correlate along the last (input) axis only,
+            # so all leading axes keep their order.
+            z = jrnd.normal(key, shape=output_shape)
+            return mu + jnp.einsum('ij,...j->...i', L, z)
         
         #
         def log_prob(self, value):
@@ -289,17 +287,13 @@ def AutoRegressionFactory(ar_fn: Callable):
             r""" Construct $y$, and up to order shifts of it.
             
             """
-            order = 1 if jnp.isscalar(y_init) else y_init.shape[0]
+            y_init = jnp.atleast_1d(y_init)
+            order = y_init.shape[0]
 
-            @jax.jit
-            def update_fn(carry, i):
-                y_shifted = jnp.roll(carry, shift=1)  
-                y_shifted = y_shifted.at[0].set(y_init[i])  
-                return y_shifted, y_shifted  
-            
-            #
-            _, columns = jax.lax.scan(update_fn, y, jnp.arange(order))
-            return columns
+            T = y.shape[0]
+            padded = jnp.concatenate([y_init, y])
+            # row j, column t: padded[t + j] = y_{t + j - order}, i.e. lag (order - j)
+            return jnp.stack([jax.lax.dynamic_slice(padded, (j, ), (T, )) for j in range(order)])
         
         #
         def log_prob(self, value):
@@ -356,7 +350,19 @@ def AutoRegressionFactory(ar_fn: Callable):
         #
         @property
         def event_shape(self):
-            return (self.T, )
+            if 'T' not in self.parameters:
+                raise AttributeError('The length T of the AR series is unknown; pass T as a parameter.')
+            return (self.parameters['T'], )
+
+        #
+        def sample(self, key, sample_shape=()):
+            r""" Sample complete series, in the numpyro convention: output shape is sample_shape + (T, ).
+
+            """
+            if sample_shape == () or sample_shape is None:
+                return self._sample_predictive(key)
+            num_draws = int(jnp.prod(jnp.asarray(sample_shape)))
+            return self._sample_n(key, num_draws).reshape(tuple(sample_shape) + (-1, ))
 
         #
 

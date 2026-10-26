@@ -2,7 +2,6 @@ import jax
 jax.config.update("jax_enable_x64", True)
 import jax.numpy as jnp
 import jax.random as jrnd
-import jaxkern as jk
 
 import numpyro as npr
 import numpyro.distributions as dist
@@ -13,6 +12,13 @@ from bamojax.inference import SMCInference, MCMCInference, VIInference, SGMCMCIn
 from bamojax.samplers import gibbs_sampler, mcmc_sampler
 from bamojax.more_distributions import GaussianProcessFactory
 import blackjax
+
+
+def rbf(params, x, y):
+    """Minimal RBF kernel with the (params, x, y) signature GaussianProcessFactory expects."""
+    d = x[:, None] - y[None, :]
+    return params["variance"] * jnp.exp(-0.5 * d**2 / params["lengthscale"]**2)
+
 
  
 def guk_lml(y, sd, mu0, tau):
@@ -129,7 +135,7 @@ def test_sginference():
     true_variance = 3.0
     true_noise = 0.1
 
-    cov_fn = jk.RBF().cross_covariance
+    cov_fn = rbf
 
     f = GaussianProcessFactory(cov_fn=cov_fn)(input=x, lengthscale=true_lengthscale, variance=true_variance).sample(key=jrnd.PRNGKey(0))
     y = f + 0.1 * jax.random.normal(jrnd.PRNGKey(0), shape=(n, ))
@@ -143,7 +149,7 @@ def test_sginference():
 
     #
 
-    cov_fn = jk.RBF().cross_covariance
+    cov_fn = rbf
 
     mgpmodel = Model('Marginal GP')
     lengthscale = mgpmodel.add_node('lengthscale', distribution=dist.TransformedDistribution(dist.Normal(loc=0., scale=1.), nprb.ExpTransform()))

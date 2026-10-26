@@ -3,28 +3,30 @@ from abc import ABC, abstractmethod
 from blackjax.base import SamplingAlgorithm
 from blackjax.types import PRNGKey
 from blackjax.smc.resampling import systematic
-from blackjax import window_adaptation, nuts, generate_top_level_api_from, meanfield_vi
+from blackjax import window_adaptation, nuts, meanfield_vi, generate_top_level_api_from
+import blackjax.smc.adaptive_tempered as adaptive_tempered
+import blackjax.smc.tempered as tempered
+import blackjax.smc.from_mcmc as smc_from_mcmc
+tempered_smc = generate_top_level_api_from(tempered)
+adaptive_tempered_smc = generate_top_level_api_from(adaptive_tempered)
 
-import numpyro
 import numpyro.distributions as dist
 import numpyro.distributions.transforms as nprb
 
 from bamojax.base import Model
 from bamojax.samplers import mcmc_sampler
-from .modified_blackjax import modified_adaptive_tempered, modified_tempered
 
-tempered_smc = generate_top_level_api_from(modified_tempered)
-adaptive_tempered_smc = generate_top_level_api_from(modified_adaptive_tempered)
 
-from typing import Tuple, Callable
+from typing import Callable
 import optax
-import jaxopt
+# import jaxopt
 
 import jax
 import jax.random as jrnd
 import jax.numpy as jnp
 from jax.tree_util import tree_map, tree_flatten, tree_unflatten
 from jax.flatten_util import ravel_pytree
+
 
 def run_window_adaptation(model, key: PRNGKey, num_warmup_steps):
     r""" Find optimized parameters for HMC-based inference.
@@ -365,6 +367,18 @@ class SMCInference(InferenceEngine):
         assert not (return_diagnostics and return_trace), 'Returning both the trace and diagnostics is not supported.'
 
     #
+    def temperature_aware_update_fn(self) -> Callable:
+        inner = smc_from_mcmc.build_kernel(self.mcmc_kernel.step, self.mcmc_kernel.init, self.resampling_fn)
+
+        def update_fn(rng_key, state, num_mcmc_steps, mcmc_parameters, logposterior_fn, log_weights_fn):
+            mcmc_parameters = {**mcmc_parameters,
+                            'temperature': state.tempering_param * jnp.ones((1,))}
+            return inner(rng_key, state, num_mcmc_steps, mcmc_parameters,
+                        logposterior_fn, log_weights_fn)
+
+        return update_fn
+
+    #
     def create_smc_kernel(self) -> SamplingAlgorithm:
         r""" Creates an SMC kernel
 
@@ -374,14 +388,15 @@ class SMCInference(InferenceEngine):
             A blackjax SMC `SamplingAlgorithm`
         
         """
-        return adaptive_tempered_smc(logprior_fn=self.model.logprior_fn(),
+        return adaptive_tempered_smc(logprior_fn=self.model.logprior_fn(),             
                                      loglikelihood_fn=self.model.loglikelihood_fn(),
                                      mcmc_step_fn=self.mcmc_kernel.step,
                                      mcmc_init_fn=self.mcmc_kernel.init,
                                      mcmc_parameters=self.mcmc_parameters,
                                      resampling_fn=self.resampling_fn,
                                      target_ess=self.target_ess,
-                                     num_mcmc_steps=self.num_mutations)
+                                     num_mcmc_steps=self.num_mutations,
+                                     update_particles_fn=self.temperature_aware_update_fn())
     
     #    
     def tempering_condition(self):
@@ -394,8 +409,8 @@ class SMCInference(InferenceEngine):
         def cond(carry):
             i, state, *_ = carry
             if self.return_trace:
-                return jnp.logical_and(state.lmbda < 1, i < self.max_iter)
-            return state.lmbda < 1
+                return jnp.logical_and(state.tempering_param < 1, i < self.max_iter)
+            return state.tempering_param < 1
 
         #
         return cond
@@ -613,13 +628,16 @@ class LaplaceInference(InferenceEngine):
     def __init__(self, 
                  model: Model,   
                  num_chains: int = 1,
-                 optimizer: Callable = jaxopt.ScipyMinimize,
-                 optimizer_args: dict = None,
-                 bounds: dict = None,
+                 optimizer: optax.GradientTransformation = None,
+                 max_iter: int = 500,
+                 tol: float = 1e-6,
+                 bounds: tuple = None,
                  temperature: float = 1.0):
         super().__init__(model, num_chains)
-        if optimizer_args is None:
-            optimizer_args = {}
+
+        self.optimizer = optax.lbfgs() if optimizer is None else optimizer
+        self.max_iter = max_iter
+        self.tol = tol        
         self.bounds = bounds
         self.temperature = temperature
 
@@ -643,85 +661,135 @@ class LaplaceInference(InferenceEngine):
 
         #
         self.obj_fun = neg_logdensity_unconstrained_fn
-
-
-        if self.bounds is not None:
-            optimizer = jaxopt.ScipyBoundedMinimize(fun=self.obj_fun, **optimizer_args)
-        else:
-            optimizer = optimizer(fun=self.obj_fun, **optimizer_args)
-        self.optimizer = optimizer
-        self.optimizer_args = optimizer_args if optimizer_args is not None else {}        
         self.D = model.get_model_size()
 
     #
-    def run_single_chain(self, key):
-        def get_unconstrained_init(model, key):
-            constrained = tree_map(jnp.asarray, model.sample_prior(key))
-            unconstrained = {k: self.bijectors[k]._inverse(v) for k, v in constrained.items()}
-            return unconstrained
-        
-        #
+    def _project(self, z):
 
-        init_params = get_unconstrained_init(self.model, key)
-        if self.bounds is not None:
-            sol = self.optimizer.run(init_params, bounds=self.bounds)   
+        if self.bounds is None:
+            return z
+        lower, upper = self.bounds
+        return {k: jnp.clip(v, lower.get(k, -jnp.inf), upper.get(k, jnp.inf)) for k, v in z.items()}
+
+    #
+    def _minimize(self, z0: dict):
+        r""" Minimise `obj_fun` from `z0` with the optax optimizer.
+ 
+        Uses `optax.value_and_grad_from_state` so that line-search based optimizers (L-BFGS) can reuse
+        function evaluations; this is a no-op for other optimizers. Runs inside `lax.while_loop`, so the
+        whole Laplace approximation stays jittable and vmappable over chains.
+ 
+        Returns:
+            (z_hat, info) with info a dict holding the number of iterations, the final objective value and
+            the final gradient norm.
+ 
+        """
+        # Line-search optimizers (L-BFGS) store the last value and gradient in their state, which
+        # `value_and_grad_from_state` reuses. Other optimizers do not, so evaluate directly.
+        probe_state = self.optimizer.init(z0)
+        if optax.tree_utils.tree_get(probe_state, 'value') is not None:
+            value_and_grad = optax.value_and_grad_from_state(self.obj_fun)
         else:
-            sol = self.optimizer.run(init_params)   
-
-        # We fit a Gaussian(\hat{\theta}, \Sigma) with 
-        # \hat{\theta} = \argmax_\theta p(\theta \mid y)
-        # \Sigma^-1 is the Hessian of -\log p(\theta \mid y) at \theta=\hat{\theta}
-
-        # The optimiser works in unconstrained space z, and so does the Gaussian approximation:
-        # it is centred at z_hat with covariance Sigma = H^{-1}, where H is the Hessian of
-        # -log p(y, z) at z_hat. Everything below is evaluated at z_hat; it is mapped to the
-        # constrained space only for reporting the mode.
-        z_hat = sol.params
+            value_and_grad = lambda z, state: jax.value_and_grad(self.obj_fun)(z)
+ 
+        def cond_fn(carry):
+            z, state, it, grad_norm = carry
+            return jnp.logical_and(it < self.max_iter, grad_norm > self.tol)
+ 
+        def body_fn(carry):
+            z, state, it, _ = carry
+            value, grad = value_and_grad(z, state=state)
+            updates, state = self.optimizer.update(grad, state, z, value=value, grad=grad, value_fn=self.obj_fun)
+            z = self._project(optax.apply_updates(z, updates))
+            grad_norm = optax.tree_utils.tree_norm(grad)
+            return z, state, it + 1, grad_norm
+ 
+        z0 = self._project(z0)
+        state0 = self.optimizer.init(z0)
+        z_hat, state, n_iter, grad_norm = jax.lax.while_loop(cond_fn, body_fn, (z0, state0, 0, jnp.inf))
+        return z_hat, dict(num_iterations=n_iter, final_value=self.obj_fun(z_hat), final_grad_norm=grad_norm)
+ 
+    #
+    def _fit(self, key):
+        r""" The numeric core: optimise, then evaluate the Hessian at the optimum. Pure arrays in, arrays out,
+        so it can be vmapped over chains.
+ 
+        """
+        constrained_init = jax.tree.map(jnp.asarray, self.model.sample_prior(key))
+        z0 = {k: self.bijectors[k]._inverse(v) for k, v in constrained_init.items()}
+        z_hat, opt_info = self._minimize(z0)
+ 
+        # The Gaussian approximation lives in unconstrained space: centred at z_hat with covariance
+        # Sigma = H^{-1}, where H is the Hessian of -log p(y, z) at z_hat. It is mapped to the constrained
+        # space only for reporting the mode (and in `sample_from_laplace`).
         z_hat_flat, unravel_fn = ravel_pytree(z_hat)
-
+ 
         def flat_obj_fn(flat_params):
             return self.obj_fun(unravel_fn(flat_params))
-
+ 
         H = jax.hessian(flat_obj_fn)(z_hat_flat)
         Sigma = jnp.linalg.inv(H)
-
-        if z_hat_flat.shape == () or z_hat_flat.shape == (1,):  # Univariate case
-            laplace_dist = dist.Normal(loc=z_hat_flat, scale=jnp.sqrt(Sigma))
-        else:
-            laplace_dist = dist.MultivariateNormal(loc=z_hat_flat, covariance_matrix=Sigma)
-
         _, logdet = jnp.linalg.slogdet(Sigma)
         log_joint_at_mode = -1.0 * flat_obj_fn(z_hat_flat)
         lml = log_joint_at_mode + 1/2*logdet + self.D/2 * jnp.log(2*jnp.pi)
-
-        return dict(
-            distribution=laplace_dist,               # Gaussian over the flat, unconstrained parameters
-            mode=self.forward_bijectors(z_hat),      # mode mapped to the constrained space
-            unconstrained_mode=z_hat,
-            flat_mode=z_hat_flat,                    # unconstrained; matches `distribution` and `unravel_fn`
-            covariance=Sigma,                        # unconstrained
-            hessian=H,                               # unconstrained
-            unravel_fn=unravel_fn,
-            lml=lml
-        )
-
+ 
+        return dict(mode=self.forward_bijectors(z_hat),      # mode mapped to the constrained space
+                    unconstrained_mode=z_hat,
+                    flat_mode=z_hat_flat,                    # unconstrained; matches `distribution` and `unravel_fn`
+                    covariance=Sigma,                        # unconstrained
+                    hessian=H,                               # unconstrained
+                    lml=lml,
+                    optimizer_info=opt_info)
+ 
+    #
+    def _decorate(self, fit: dict) -> dict:
+        """ Add the non-array outputs: the Gaussian (batched over chains if needed) and the unravel function. """
+        _, unravel_fn = ravel_pytree(self.model.sample_prior(jrnd.PRNGKey(0)))
+        flat_mode, Sigma = fit['flat_mode'], fit['covariance']
+        if self.D == 1:
+            distribution = dist.Normal(loc=flat_mode[..., 0], scale=jnp.sqrt(Sigma[..., 0, 0]))
+        else:
+            distribution = dist.MultivariateNormal(loc=flat_mode, covariance_matrix=Sigma)
+        return dict(distribution=distribution, unravel_fn=unravel_fn, **fit)
+ 
+    #
+    def run_single_chain(self, key):
+        return self._decorate(self._fit(key))
+ 
+    #
+    def run(self, key):
+        r""" Run the Laplace approximation, vmapped over `num_chains` starting points.
+ 
+        With several chains, array outputs get a leading chain axis and `distribution` is batched over chains.
+ 
+        """
+        if self.num_chains > 1:
+            keys = jrnd.split(key, self.num_chains)
+            return self._decorate(jax.vmap(self._fit)(keys))
+        return self.run_single_chain(key)
+ 
     #
     def sample_from_laplace(self, key: PRNGKey, laplace_result: dict, num_draws: int) -> dict:
         r""" Draw samples from the Laplace approximation, mapped back to the constrained space.
-
+ 
         Args:
             key: PRNGKey
-            laplace_result: the dictionary returned by `run` (single chain).
-            num_draws: number of samples.
-
+            laplace_result: the dictionary returned by `run`.
+            num_draws: number of samples (per chain).
+ 
         Returns:
-            A dictionary with `num_draws` samples per model variable, in the model's own (constrained) space.
-
+            A dictionary with `num_draws` samples per model variable, in the model's own (constrained) space;
+            with several chains the arrays have shape (num_chains, num_draws, ...).
+ 
         """
         flat_draws = laplace_result['distribution'].sample(key, sample_shape=(num_draws, ))
-        flat_draws = jnp.reshape(flat_draws, (num_draws, -1))
-        unconstrained = jax.vmap(laplace_result['unravel_fn'])(flat_draws)
-        return jax.vmap(self.forward_bijectors)(unconstrained)
-    
+        if self.D == 1:
+            flat_draws = flat_draws[..., None]                      # (num_draws, [chains,] 1)
+        if self.num_chains > 1:
+            flat_draws = jnp.swapaxes(flat_draws, 0, 1)            # (chains, num_draws, D)
+        unravel = lambda draws: jax.vmap(laplace_result['unravel_fn'])(draws)
+        unconstrained = jax.vmap(unravel)(flat_draws) if self.num_chains > 1 else unravel(flat_draws)
+        return jax.tree.map(lambda b, v: b(v), self.bijectors, unconstrained, is_leaf=self.is_leaf_fn)
+ 
     #
 #
