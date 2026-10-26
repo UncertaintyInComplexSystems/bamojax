@@ -19,7 +19,6 @@ from bamojax.samplers import mcmc_sampler
 
 from typing import Callable
 import optax
-# import jaxopt
 
 import jax
 import jax.random as jrnd
