@@ -258,7 +258,8 @@ def reversible_jump_mcmc(models: list[Model],
                          jacobians: list[Callable],
                          projections: list[Callable],
                          within_model_kernels: list[dict],
-                         model_move_prob: float = 0.5) -> SamplingAlgorithm:
+                         model_move_prob: float = 0.5,
+                         jump_variable: str = 'kappa') -> SamplingAlgorithm:
     """Constructs a reversible jump MCMC algorithm for the given models.
     
     Implementation follows the reversible jump MCMC algorithm described by Hastie & Green (2012).
@@ -269,6 +270,8 @@ def reversible_jump_mcmc(models: list[Model],
         jump_functions: List of functions to transform the position when jumping between models.
         jacobians: List of Jacobian determinant functions for the jump functions
         within_model_kernel: List of within-model sampling algorithms, one for each model.
+        model_move_prob: Probability of a within-model move (otherwise we do a between-model move)
+        jump_variable: Name of the additional variable of the larger model. 
 
     Returns:
         SamplingAlgorithm: A sampling algorithm that implements the reversible jump MCMC.
@@ -385,7 +388,7 @@ def reversible_jump_mcmc(models: list[Model],
             #
             def down_branch(_):
                 new_position = jump_functions[1](position) # discard auxiliary variable and kappa
-                jac_det = jacobian_det_down(new_position['kappa'])
+                jac_det = jacobian_det_down(new_position[jump_variable])
                 logq = auxiliary_proposal_dist.log_prob(projections[1](new_position)) # log(kappa / mu) where mu is the mean of the auxiliary proposal
                 return new_position, jac_det, logq
 

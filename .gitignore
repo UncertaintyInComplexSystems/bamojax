@@ -7,6 +7,7 @@ bamojax/examples/cognitive_models/DataBusemeyerNoNA.rdata
 build/
 site/
 dist/
+.venv/
 *.egg-info/
 __pycache__/
 *.egg

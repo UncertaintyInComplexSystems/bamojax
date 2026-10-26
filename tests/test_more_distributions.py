@@ -3,13 +3,18 @@ jax.config.update("jax_enable_x64", True)
 import jax.numpy as jnp
 import jax.random as jrnd
 
-import jaxkern as jk
-
 from bamojax.more_distributions import GaussianProcessFactory
+
+def rbf(params, x, y):
+    """Minimal RBF kernel with the (params, x, y) signature GaussianProcessFactory expects."""
+    d = x[:, None] - y[None, :]
+    return params["variance"] * jnp.exp(-0.5 * d**2 / params["lengthscale"]**2)
+
+
 
 def test_gaussian_processes():
 
-    cov_fn = jk.RBF().cross_covariance
+    cov_fn = rbf  # can be drawn from e.g. GPJax; we now use the old jaxkern syntax
     n = 100
     x = jnp.linspace(0, 1, num=n)
 

@@ -38,7 +38,7 @@ def naive_monte_carlo(key,
     if iid_obs:
         loglikelihood_fn = iid_likelihood(model.loglikelihood_fn)
     else:
-        loglikelihood_fn = model.loglikelihood_fn
+        loglikelihood_fn = model.loglikelihood_fn()
 
     loglikelihoods = jnp.zeros((num_prior_draws, 
                                 num_chunks))

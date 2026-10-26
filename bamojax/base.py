@@ -138,9 +138,13 @@ class Node:
 
     #
     def __eq__(self, other):
+        # Nodes compare equal to other nodes, and to their own name. Because __hash__ is the
+        # hash of the name, this lets a Node look up entries in dicts keyed by variable name.
         if isinstance(other, Node):
             return self.name == other.name
-        return NotImplementedError
+        if isinstance(other, str):
+            return self.name == other
+        raise NotImplementedError
 
     #
 
@@ -409,11 +413,39 @@ class Model:
             A dictionary which is the same as 'state' but appended with sampled values.
         
         """
-        
+        state = dict(state)  # do not modify the caller's dictionary in place
         for node in self.get_leaf_nodes():
             key, key_obs = jrnd.split(key)
-            state[node.name] = node.get_distribution(state, minibatch=input_variables).sample(key=key_obs, sample_shape=node.shape)
+            distribution = node.get_distribution(state, minibatch=input_variables)
+            sample_shape = self._predictive_sample_shape(node, distribution, input_variables)
+            state[node.name] = distribution.sample(key=key_obs, sample_shape=sample_shape)
         return state
+
+    #
+    @staticmethod
+    def _predictive_sample_shape(node, distribution, input_variables=None) -> tuple:
+        r""" Determine the sample_shape that makes a predictive draw look like the observed data.
+
+        If the user gave the node an explicit `shape`, that is used. If new input variables are
+        supplied, the shape follows from those inputs (via the distribution's batch shape). Otherwise,
+        i.i.d. observations from a distribution with scalar parameters need extra leading sample
+        dimensions so that the draw has the same shape as `node.observations`.
+
+        """
+        if node.shape != ():
+            return node.shape
+        if input_variables or not node.is_observed():
+            return ()
+        try:
+            dist_shape = tuple(distribution.batch_shape) + tuple(distribution.event_shape)
+        except (AttributeError, NotImplementedError, ValueError):
+            return ()
+        obs_shape = tuple(jnp.shape(node.observations))
+        num_extra = len(obs_shape) - len(dist_shape)
+        return obs_shape[:num_extra] if num_extra > 0 else ()
+
+    #
+        
 
 
     def sample_prior_predictive(self, key, prediction_options: dict = None) -> dict:
