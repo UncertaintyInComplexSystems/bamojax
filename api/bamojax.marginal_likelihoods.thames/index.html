@@ -692,8 +692,7 @@ https://doi.org/10.1214/24-BA1422
 <span class="normal">118</span>
 <span class="normal">119</span>
 <span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">thames</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">posterior_samples</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">adjust_volume</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="normal">121</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">thames</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">posterior_samples</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">adjust_volume</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">""" Implements the Truncated Harmonic Mean Estimator (THAMES), by Metodiev et al. (2025)</span>
 
 <span class="sd">    Args:</span>
@@ -756,7 +755,6 @@ https://doi.org/10.1214/24-BA1422
     <span class="n">log_Z</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">+</span> <span class="n">logV</span> <span class="o">-</span> <span class="n">log_sum</span>
 
     <span class="k">if</span> <span class="n">adjust_volume</span><span class="p">:</span>
-        <span class="n">M</span> <span class="o">=</span> <span class="mi">100</span>
         <span class="n">samples_ellipse</span> <span class="o">=</span> <span class="n">sample_ellipsoid</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">Sigma</span><span class="o">=</span><span class="n">cov</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">)</span>
 
         <span class="n">logliks_ellipse</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">flat_loglikelihood_fn</span><span class="p">)(</span><span class="n">samples_ellipse</span><span class="p">)</span>

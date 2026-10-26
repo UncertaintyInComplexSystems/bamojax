@@ -1041,7 +1041,7 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 
 
 <h2 id="bamojax.samplers.reversible_jump_mcmc" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">reversible_jump_mcmc</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">auxiliary_proposal_dist</span><span class="p">,</span> <span class="n">jump_functions</span><span class="p">,</span> <span class="n">jacobians</span><span class="p">,</span> <span class="n">projections</span><span class="p">,</span> <span class="n">within_model_kernels</span><span class="p">,</span> <span class="n">model_move_prob</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">reversible_jump_mcmc</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">auxiliary_proposal_dist</span><span class="p">,</span> <span class="n">jump_functions</span><span class="p">,</span> <span class="n">jacobians</span><span class="p">,</span> <span class="n">projections</span><span class="p">,</span> <span class="n">within_model_kernels</span><span class="p">,</span> <span class="n">model_move_prob</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">jump_variable</span><span class="o">=</span><span class="s1">'kappa'</span><span class="p">)</span></code>
 
 <a href="#bamojax.samplers.reversible_jump_mcmc" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -1140,6 +1140,38 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
             </td>
             <td>
                 <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>model_move_prob</code>
+            </td>
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Probability of a within-model move (otherwise we do a between-model move)</p>
+              </div>
+            </td>
+            <td>
+                  <code>0.5</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>jump_variable</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Name of the additional variable of the larger model. </p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;kappa&#39;</code>
             </td>
           </tr>
       </tbody>
@@ -1351,13 +1383,17 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 <span class="normal">427</span>
 <span class="normal">428</span>
 <span class="normal">429</span>
-<span class="normal">430</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reversible_jump_mcmc</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Model</span><span class="p">],</span> 
+<span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reversible_jump_mcmc</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Model</span><span class="p">],</span> 
                          <span class="n">auxiliary_proposal_dist</span><span class="p">:</span> <span class="n">Distribution</span><span class="p">,</span>
                          <span class="n">jump_functions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">],</span>
                          <span class="n">jacobians</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">],</span>
                          <span class="n">projections</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">],</span>
                          <span class="n">within_model_kernels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
-                         <span class="n">model_move_prob</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
+                         <span class="n">model_move_prob</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+                         <span class="n">jump_variable</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'kappa'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Constructs a reversible jump MCMC algorithm for the given models.</span>
 
 <span class="sd">    Implementation follows the reversible jump MCMC algorithm described by Hastie &amp; Green (2012).</span>
@@ -1368,6 +1404,8 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 <span class="sd">        jump_functions: List of functions to transform the position when jumping between models.</span>
 <span class="sd">        jacobians: List of Jacobian determinant functions for the jump functions</span>
 <span class="sd">        within_model_kernel: List of within-model sampling algorithms, one for each model.</span>
+<span class="sd">        model_move_prob: Probability of a within-model move (otherwise we do a between-model move)</span>
+<span class="sd">        jump_variable: Name of the additional variable of the larger model. </span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        SamplingAlgorithm: A sampling algorithm that implements the reversible jump MCMC.</span>
@@ -1484,7 +1522,7 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
             <span class="c1">#</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">down_branch</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
                 <span class="n">new_position</span> <span class="o">=</span> <span class="n">jump_functions</span><span class="p">[</span><span class="mi">1</span><span class="p">](</span><span class="n">position</span><span class="p">)</span> <span class="c1"># discard auxiliary variable and kappa</span>
-                <span class="n">jac_det</span> <span class="o">=</span> <span class="n">jacobian_det_down</span><span class="p">(</span><span class="n">new_position</span><span class="p">[</span><span class="s1">'kappa'</span><span class="p">])</span>
+                <span class="n">jac_det</span> <span class="o">=</span> <span class="n">jacobian_det_down</span><span class="p">(</span><span class="n">new_position</span><span class="p">[</span><span class="n">jump_variable</span><span class="p">])</span>
                 <span class="n">logq</span> <span class="o">=</span> <span class="n">auxiliary_proposal_dist</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">projections</span><span class="p">[</span><span class="mi">1</span><span class="p">](</span><span class="n">new_position</span><span class="p">))</span> <span class="c1"># log(kappa / mu) where mu is the mean of the auxiliary proposal</span>
                 <span class="k">return</span> <span class="n">new_position</span><span class="p">,</span> <span class="n">jac_det</span><span class="p">,</span> <span class="n">logq</span>
 

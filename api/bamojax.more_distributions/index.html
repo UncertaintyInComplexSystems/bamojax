@@ -472,13 +472,7 @@
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>bamojax/more_distributions.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">367</span>
-<span class="normal">368</span>
-<span class="normal">369</span>
-<span class="normal">370</span>
-<span class="normal">371</span>
-<span class="normal">372</span>
-<span class="normal">373</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">373</span>
 <span class="normal">374</span>
 <span class="normal">375</span>
 <span class="normal">376</span>
@@ -496,7 +490,13 @@
 <span class="normal">388</span>
 <span class="normal">389</span>
 <span class="normal">390</span>
-<span class="normal">391</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">GraphBernoulli</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">Distribution</span><span class="p">):</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">GraphBernoulli</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">Distribution</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Prior over symmetric binary adjacency matrices with i.i.d. Bernoulli edges."""</span>
 
     <span class="n">support</span> <span class="o">=</span> <span class="n">constraints</span><span class="o">.</span><span class="n">independent</span><span class="p">(</span><span class="n">constraints</span><span class="o">.</span><span class="n">boolean</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
@@ -571,13 +571,7 @@
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>bamojax/more_distributions.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">396</span>
-<span class="normal">397</span>
-<span class="normal">398</span>
-<span class="normal">399</span>
-<span class="normal">400</span>
-<span class="normal">401</span>
-<span class="normal">402</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">402</span>
 <span class="normal">403</span>
 <span class="normal">404</span>
 <span class="normal">405</span>
@@ -722,7 +716,13 @@
 <span class="normal">544</span>
 <span class="normal">545</span>
 <span class="normal">546</span>
-<span class="normal">547</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">GWishart</span><span class="p">(</span><span class="n">Distribution</span><span class="p">):</span>
+<span class="normal">547</span>
+<span class="normal">548</span>
+<span class="normal">549</span>
+<span class="normal">550</span>
+<span class="normal">551</span>
+<span class="normal">552</span>
+<span class="normal">553</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">GWishart</span><span class="p">(</span><span class="n">Distribution</span><span class="p">):</span>
     <span class="n">support</span> <span class="o">=</span> <span class="n">constraints</span><span class="o">.</span><span class="n">positive_definite</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validate_args</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -953,20 +953,20 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/more_distributions.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">523</span>
-<span class="normal">524</span>
-<span class="normal">525</span>
-<span class="normal">526</span>
-<span class="normal">527</span>
-<span class="normal">528</span>
-<span class="normal">529</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">529</span>
 <span class="normal">530</span>
 <span class="normal">531</span>
 <span class="normal">532</span>
 <span class="normal">533</span>
 <span class="normal">534</span>
 <span class="normal">535</span>
-<span class="normal">536</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">sample_shape</span><span class="o">=</span><span class="p">()):</span>
+<span class="normal">536</span>
+<span class="normal">537</span>
+<span class="normal">538</span>
+<span class="normal">539</span>
+<span class="normal">540</span>
+<span class="normal">541</span>
+<span class="normal">542</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">sample_shape</span><span class="o">=</span><span class="p">()):</span>
 <span class="w">    </span><span class="sd">"""Draws samples from the G-Wishart distribution.</span>
 
 <span class="sd">    Args:</span>
@@ -1034,15 +1034,15 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/more_distributions.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">539</span>
-<span class="normal">540</span>
-<span class="normal">541</span>
-<span class="normal">542</span>
-<span class="normal">543</span>
-<span class="normal">544</span>
-<span class="normal">545</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">545</span>
 <span class="normal">546</span>
-<span class="normal">547</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">log_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="normal">547</span>
+<span class="normal">548</span>
+<span class="normal">549</span>
+<span class="normal">550</span>
+<span class="normal">551</span>
+<span class="normal">552</span>
+<span class="normal">553</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">log_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Calculates the log probability of a given value.</span>
 
 <span class="sd">    Args:</span>
@@ -1388,9 +1388,7 @@
 <span class="normal">259</span>
 <span class="normal">260</span>
 <span class="normal">261</span>
-<span class="normal">262</span>
-<span class="normal">263</span>
-<span class="normal">264</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">GaussianProcessFactory</span><span class="p">(</span><span class="n">cov_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">mean_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">Zero</span><span class="p">(),</span>  <span class="n">nd</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">jitter</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">):</span>
+<span class="normal">262</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">GaussianProcessFactory</span><span class="p">(</span><span class="n">cov_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">mean_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">Zero</span><span class="p">(),</span>  <span class="n">nd</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">jitter</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Returns an instantiated Gaussian process distribution object. </span>
 
 <span class="sd">    This is essentially a dist.MultivariateNormal object, with its mean and covariance determined by the mean and covariance functions of the GP.</span>
@@ -1438,12 +1436,10 @@
             <span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mean</span><span class="p">()</span>
             <span class="n">cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cov</span><span class="p">()</span>
             <span class="n">L</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
-            <span class="n">z</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">output_shape</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-            <span class="n">V</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-            <span class="c1"># if jnp.ndim(f) == 1:</span>
-            <span class="c1">#     f = f[jnp.newaxis, :]</span>
-            <span class="k">return</span> <span class="n">f</span>
+            <span class="c1"># output_shape = sample_shape + nd + (m, ); correlate along the last (input) axis only,</span>
+            <span class="c1"># so all leading axes keep their order.</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">output_shape</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">'ij,...j-&gt;...i'</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
 
         <span class="c1">#</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">log_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -1670,7 +1666,9 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/more_distributions.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">267</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
 <span class="normal">268</span>
 <span class="normal">269</span>
 <span class="normal">270</span>
@@ -1767,7 +1765,13 @@
 <span class="normal">361</span>
 <span class="normal">362</span>
 <span class="normal">363</span>
-<span class="normal">364</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">AutoRegressionFactory</span><span class="p">(</span><span class="n">ar_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">AutoRegressionFactory</span><span class="p">(</span><span class="n">ar_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Generates an autoregressive distribution with Gaussian emissions.</span>
 
 <span class="sd">    This is a generator function that constructs a distrax Distribution object, which can then be queried for its log probability for inference.</span>
@@ -1792,17 +1796,13 @@
 <span class="w">            </span><span class="sa">r</span><span class="sd">""" Construct $y$, and up to order shifts of it.</span>
 
 <span class="sd">            """</span>
-            <span class="n">order</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">jnp</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">y_init</span><span class="p">)</span> <span class="k">else</span> <span class="n">y_init</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">y_init</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">y_init</span><span class="p">)</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="n">y_init</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-            <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
-            <span class="k">def</span><span class="w"> </span><span class="nf">update_fn</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
-                <span class="n">y_shifted</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  
-                <span class="n">y_shifted</span> <span class="o">=</span> <span class="n">y_shifted</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">y_init</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  
-                <span class="k">return</span> <span class="n">y_shifted</span><span class="p">,</span> <span class="n">y_shifted</span>  
-
-            <span class="c1">#</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">update_fn</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">order</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">columns</span>
+            <span class="n">T</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">padded</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">y_init</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+            <span class="c1"># row j, column t: padded[t + j] = y_{t + j - order}, i.e. lag (order - j)</span>
+            <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">dynamic_slice</span><span class="p">(</span><span class="n">padded</span><span class="p">,</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="p">),</span> <span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="p">))</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)])</span>
 
         <span class="c1">#</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">log_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -1859,7 +1859,19 @@
         <span class="c1">#</span>
         <span class="nd">@property</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">event_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="s1">'T'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">'The length T of the AR series is unknown; pass T as a parameter.'</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">'T'</span><span class="p">],</span> <span class="p">)</span>
+
+        <span class="c1">#</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">sample_shape</span><span class="o">=</span><span class="p">()):</span>
+<span class="w">            </span><span class="sa">r</span><span class="sd">""" Sample complete series, in the numpyro convention: output shape is sample_shape + (T, ).</span>
+
+<span class="sd">            """</span>
+            <span class="k">if</span> <span class="n">sample_shape</span> <span class="o">==</span> <span class="p">()</span> <span class="ow">or</span> <span class="n">sample_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_predictive</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">num_draws</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sample_shape</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_n</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">num_draws</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">sample_shape</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">))</span>
 
         <span class="c1">#</span>
 

@@ -539,7 +539,7 @@ can make it easier to introduce heavy tails.</p>
     <span class="k">if</span> <span class="n">iid_obs</span><span class="p">:</span>
         <span class="n">loglikelihood_fn</span> <span class="o">=</span> <span class="n">iid_likelihood</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">loglikelihood_fn</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span>
+        <span class="n">loglikelihood_fn</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">()</span>
 
     <span class="n">logprior_fn</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">logprior_fn</span><span class="p">()</span>
 
