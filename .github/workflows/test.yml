@@ -29,10 +29,6 @@ jobs:
         environment-file: environment.yml
         activate-environment: bamojax-env
 
-    - name: Install jaxkern fork from GitHub
-      run: pip install git+https://github.com/UncertaintyInComplexSystems/JaxKern.git
-      shell: bash -l {0}
-
     - name: Install bamojax in editable mode (with dev extras)
       run: pip install -e ". [dev]"
       shell: bash -l {0}
