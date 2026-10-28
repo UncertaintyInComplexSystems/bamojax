@@ -25,16 +25,25 @@ Once a Bayesian model has been determined, the next goal is often to compare it 
 
 More comparison features are being added to the toolbox continuously.
 
+Alternatively, we can perform inference _over the models_, using for example reversible-jump MCMC [(Green, 1995)](https://academic.oup.com/biomet/article/82/4/711/252058). **bamojax** implements:
+
+- Reversible-jump MCMC, with user-provided jump proposals.
+- Reversible-jump SMC, with user-provided jump proposals.
+- Anchored recversible-jump SMC, with automated jump proposals [(Van Assen & Hinne, 2026)](https://arxiv.org/abs/2610.09930).
+
 ## Installation
 
 Install **bamojax** using:
 
 ```
-pip install git+https://github.com/UncertaintyInComplexSystems/bamojax#egg=bamojax
+pip install bamojax
 ```
 
-Please note that if you want to use hardware acceleration, such as using GPUs, you might want to install `JAX` yourself. Please see https://docs.jax.dev/en/latest/installation.html for instructions. If no JAX installation is present, **bamojax** will install it as a dependency.
+Please note that if you want to use hardware acceleration, such as using GPUs, you might want to install: 
 
+```
+pip install bamojax "jax[cuda12]"
+```
 
 ## Quick tutorial
 
@@ -210,7 +219,7 @@ The full **bamojax** API can be found here: https://uncertaintyincomplexsystems.
 
 If you use Bamojax in your work, please cite the following:
 
-    Max Hinne. (2025). Bamojax: Bayesian Modelling with JAX (Version 0.3.11). Journal of Open Source Software, 114. https://doi.org/10.21105/joss.08642.
+    Max Hinne. (2025). Bamojax: Bayesian Modelling with JAX. Journal of Open Source Software, 114. https://doi.org/10.21105/joss.08642.
 
 BibTeX:
 
@@ -222,7 +231,6 @@ BibTeX:
   volume       = 114
   year         = 2025,
   publisher    = {Open Journals},
-  version      = {0.3.11},
   doi          = {10.21105/joss.08642},
   url          = {https://joss.theoj.org/papers/10.21105/joss.08642}
 }

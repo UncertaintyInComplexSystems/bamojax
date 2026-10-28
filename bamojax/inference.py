@@ -334,6 +334,23 @@ class SGMCMCInference(InferenceEngine):
 #
 class SMCInference(InferenceEngine):
     r""" The SMC approximate inference class
+
+    Args:
+        model: the Bayesian model for which to run the approximate inference
+        mcmc_kernel: a blackjax MCMC kernel to use for the mutation step
+        num_particles: the number of SMC particles to use
+        num_mutations: the number of MCMC mutation steps to take at each tempering step 
+        num_chains: the number of independent SMC chains to run in parallel
+        mcmc_parameters: a dictionary of parameters to pass to the MCMC kernel
+        resampling_fn: a function to use for resampling the particles
+        target_ess: the target effective sample size for resampling
+        return_trace: whether to return the trace of particles over each tempering step
+        return_diagnostics: whether to return diagnostic information about the SMC run
+        num_warmup: the number of warmup steps to take for the NUTS kernel
+        max_iter: the maximum number of tempering steps to take
+        resample_final_state: whether to resample the final state of the SMC run. If False,
+        the final state will be returned with importance weights, which can be used for 
+        importance sampling or reweighting.
     
     """
 
@@ -349,7 +366,8 @@ class SMCInference(InferenceEngine):
                  return_trace: bool = False, 
                  return_diagnostics: bool = True,
                  num_warmup: int = 0,
-                 max_iter: int = 40):
+                 max_iter: int = 40,
+                 resample_final_state: bool = True):
         super().__init__(model, num_chains)
         self.mcmc_kernel = mcmc_kernel
         if mcmc_parameters is None:
@@ -363,6 +381,7 @@ class SMCInference(InferenceEngine):
         self.return_diagnostics = return_diagnostics
         self.num_warmup = num_warmup
         self.max_iter = max_iter
+        self.resample_final_state = resample_final_state
         assert not (return_diagnostics and return_trace), 'Returning both the trace and diagnostics is not supported.'
 
     #
@@ -504,22 +523,30 @@ class SMCInference(InferenceEngine):
             initial_info = tree_map(lambda x: jax.numpy.zeros_like(x), sample_info)
             initial_log_likelihood = sample_info.log_likelihood_increment
 
+
+        smc_output = dict()
         if self.return_trace:
              # Preallocate arrays for state and info history
             trace = tree_map(lambda x: jnp.zeros((self.max_iter,) + x.shape, dtype=x.dtype), initial_particles)
             trace = jax.tree_util.tree_map(lambda arr, val: arr.at[0].set(val), trace, initial_particles)
             n_iter, final_state, _, lml, trace = jax.lax.while_loop(cond, smc_cycle, (1, initial_particles, key_smc, initial_log_likelihood, trace))
             trace = tree_map(lambda x: x[:n_iter], trace)
-            final_state = final_move(key_final, final_state)
-            return dict(n_iter=n_iter, final_state=final_state, lml=lml, trace=trace)
-        if self.return_diagnostics:            
-            n_iter, final_state, _, lml, final_info = jax.lax.while_loop(cond, smc_cycle, (1, initial_particles, key_smc, initial_log_likelihood, initial_info))
-            final_state = final_move(key_final, final_state)
-            return dict(n_iter=n_iter, final_state=final_state, lml=lml, final_info=final_info)            
+            smc_output['trace'] = trace
         else:
-            n_iter, final_state, _, lml, = jax.lax.while_loop(cond, smc_cycle, (0, initial_particles, key, 0))
+            if self.return_diagnostics:            
+                n_iter, final_state, _, lml, final_info = jax.lax.while_loop(cond, smc_cycle, (1, initial_particles, key_smc, initial_log_likelihood, initial_info))
+                smc_output['final_info'] = final_info
+            else:
+                n_iter, final_state, _, lml, = jax.lax.while_loop(cond, smc_cycle, (0, initial_particles, key, 0))
+                final_state = final_move(key_final, final_state)
+
+        smc_output['n_iter'] = n_iter
+        smc_output['lml'] = lml
+        if self.resample_final_state:
             final_state = final_move(key_final, final_state)
-            return dict(n_iter=n_iter, final_state=final_state, lml=lml)  
+        smc_output['final_state'] = final_state
+                   
+        return smc_output
     #
 
 #
