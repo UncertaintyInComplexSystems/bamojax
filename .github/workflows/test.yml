@@ -11,29 +11,58 @@ on:
       - feat/**
   workflow_dispatch:  # <-- add temporarily so you can run it by hand
 
+permissions:
+  contents: read
+
 concurrency:
   group: tests-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - uses: actions/checkout@v3
+
+#     - name: Set up Conda
+#       uses: conda-incubator/setup-miniconda@v2
+#       with:
+#         environment-file: environment.yml
+#         activate-environment: bamojax-env
+
+#     - name: Install bamojax in editable mode (with dev extras)
+#       run: pip install -e ". [dev]"
+#       shell: bash -l {0}
+
+#     - name: Run tests
+#       run: |
+#         pytest tests/
+#       shell: bash -l {0}  # Correct login shell so conda env is activated
+
 jobs:
   test:
+    name: test
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Conda
-      uses: conda-incubator/setup-miniconda@v2
-      with:
-        environment-file: environment.yml
-        activate-environment: bamojax-env
+      - name: Install uv
+        uses: astral-sh/setup-uv@v9
+        with:
+          enable-cache: true
 
-    - name: Install bamojax in editable mode (with dev extras)
-      run: pip install -e ". [dev]"
-      shell: bash -l {0}
+      - name: Install Python
+        run: uv python install 3.11
 
-    - name: Run tests
-      run: |
-        pytest tests/
-      shell: bash -l {0}  # Correct login shell so conda env is activated
+      - name: Install BaMoJAX and dependencies
+        run: uv sync --locked --python 3.11
+
+      - name: Run tests
+        run: uv run --no-sync python -m pytest tests/ -v
+
+

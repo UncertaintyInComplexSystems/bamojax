@@ -79,5 +79,10 @@ include = ["bamojax*"]
 minversion = "8.0"
 addopts = "-ra"
 testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
 # Uncomment to make coverage the default:
 # addopts = "-ra --cov=bamojax --cov-report=term-missing"
