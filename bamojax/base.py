@@ -422,8 +422,7 @@ class Model:
         return state
 
     #
-    @staticmethod
-    def _predictive_sample_shape(node, distribution, input_variables=None) -> tuple:
+    def _predictive_sample_shape(self, node, distribution, input_variables=None) -> tuple:
         r""" Determine the sample_shape that makes a predictive draw look like the observed data.
 
         If the user gave the node an explicit `shape`, that is used. If new input variables are
@@ -445,9 +444,6 @@ class Model:
         return obs_shape[:num_extra] if num_extra > 0 else ()
 
     #
-        
-
-
     def sample_prior_predictive(self, key, prediction_options: dict = None) -> dict:
         r""" Sample from the (hierarchical) prior predictive distribution of the model.
 

@@ -15,6 +15,7 @@ import numpyro.distributions.transforms as nprb
 
 from bamojax.base import Model
 from bamojax.samplers import mcmc_sampler
+from bamojax.smc_tuning import get_tuner
 
 
 from typing import Callable
@@ -85,9 +86,10 @@ class InferenceEngine(ABC):
     
     """
 
-    def __init__(self, model: Model, num_chains: int = 1):
+    def __init__(self, model: Model, num_chains: int = 1, verbose: bool = True):
         self.model = model
         self.num_chains = num_chains
+        self.verbose = verbose
 
     #
     @abstractmethod
@@ -120,8 +122,9 @@ class MCMCInference(InferenceEngine):
                  num_burn: int = 10_000, 
                  num_warmup: int = 0,
                  num_thin: int = 1, 
-                 return_diagnostics: bool = True):
-        super().__init__(model, num_chains)
+                 return_diagnostics: bool = True,
+                 verbose: bool = True):
+        super().__init__(model, num_chains, verbose)
         self.mcmc_kernel = mcmc_kernel
         self.num_samples = num_samples
         self.num_burn = num_burn
@@ -189,9 +192,9 @@ class MCMCInference(InferenceEngine):
         key, key_init = jrnd.split(key)        
 
         if self.num_warmup > 0:
-            print('Adapting NUTS HMC parameters...', end=" ")
+            if self.verbose: print('Adapting NUTS HMC parameters...', end=" ")
             warm_state, adapted_parameters = run_window_adaptation(self.model, key_init, self.num_warmup) 
-            print('done.')
+            if self.verbose: print('done.')
             adapted_kernel = mcmc_sampler(model=self.model, mcmc_kernel=nuts, mcmc_parameters=adapted_parameters)
             self.mcmc_kernel = adapted_kernel
             initial_state = self.mcmc_kernel.init(warm_state.position)
@@ -230,9 +233,10 @@ class SGMCMCInference(InferenceEngine):
                  num_samples: int = 10_000, 
                  num_burn: int = 10_000, 
                  num_thin: int = 1,  
-                 sgmcmc_params: dict = None):
+                 sgmcmc_params: dict = None,
+                 verbose: bool = True):
         assert batch_size < data_size, f'Batch size must be smaller than data set size, but found batch size: {batch_size} and data size: {data_size}.'
-        super().__init__(model, num_chains)
+        super().__init__(model, num_chains, verbose)
 
         if sgmcmc_params is None:
             sgmcmc_params = {}
@@ -351,6 +355,11 @@ class SMCInference(InferenceEngine):
         resample_final_state: whether to resample the final state of the SMC run. If False,
         the final state will be returned with importance weights, which can be used for 
         importance sampling or reweighting.
+        adaptive: False (default) keeps `mcmc_parameters` fixed across temperatures. True re-tunes the
+        mutation kernel at every SMC iteration from the particles, using the default tuner for the
+        kernel (see `bamojax.smc_tuning`; currently HMC and NUTS). An `SMCKernelTuner` instance can
+        be passed for custom settings or other kernels.
+
     
     """
 
@@ -367,8 +376,10 @@ class SMCInference(InferenceEngine):
                  return_diagnostics: bool = True,
                  num_warmup: int = 0,
                  max_iter: int = 40,
-                 resample_final_state: bool = True):
-        super().__init__(model, num_chains)
+                 resample_final_state: bool = True,
+                 adaptive: bool = False,
+                 verbose: bool = True):
+        super().__init__(model, num_chains, verbose)
         self.mcmc_kernel = mcmc_kernel
         if mcmc_parameters is None:
             mcmc_parameters = {}
@@ -382,7 +393,12 @@ class SMCInference(InferenceEngine):
         self.num_warmup = num_warmup
         self.max_iter = max_iter
         self.resample_final_state = resample_final_state
+        self.adaptive = adaptive
         assert not (return_diagnostics and return_trace), 'Returning both the trace and diagnostics is not supported.'
+
+        if adaptive and num_warmup > 0:
+            raise ValueError('Use either adaptive=True (per-temperature tuning) or num_warmup > 0 (posterior window adaptation), not both.')
+        self.tuner = get_tuner(self.mcmc_kernel, adaptive, self.mcmc_parameters)
 
     #
     def temperature_aware_update_fn(self) -> Callable:
@@ -397,7 +413,7 @@ class SMCInference(InferenceEngine):
         return update_fn
 
     #
-    def create_smc_kernel(self) -> SamplingAlgorithm:
+    def create_smc_kernel(self, mcmc_parameters: dict = None) -> SamplingAlgorithm:
         r""" Creates an SMC kernel
 
         Currently a lightweight wrapper around the blackjax adaptive-tempered SMC object.
@@ -410,33 +426,29 @@ class SMCInference(InferenceEngine):
                                      loglikelihood_fn=self.model.loglikelihood_fn(),
                                      mcmc_step_fn=self.mcmc_kernel.step,
                                      mcmc_init_fn=self.mcmc_kernel.init,
-                                     mcmc_parameters=self.mcmc_parameters,
+                                     mcmc_parameters=self.mcmc_parameters if mcmc_parameters is None else mcmc_parameters,
                                      resampling_fn=self.resampling_fn,
                                      target_ess=self.target_ess,
                                      num_mcmc_steps=self.num_mutations,
                                      update_particles_fn=self.temperature_aware_update_fn())
     
     #    
-    def create_final_move_kernel(self) -> SamplingAlgorithm:
-        r""" A (non-adaptive) tempered SMC kernel used for one last step at temperature 1.
-
-        Blackjax's tempered SMC step is resample -> mutate at the *current* temperature -> reweight
-        towards the next one. When the adaptive loop stops at lambda = 1, the particles were therefore
-        last moved at the previous temperature and carry importance weights for lambda = 1. Calling this
-        kernel once with tempering_param = 1.0 (delta = 0) resamples according to those weights and mutates
-        at the posterior, so that `final_state.particles` are unweighted posterior draws.
+    def create_final_move_kernel(self, mcmc_parameters: dict = None) -> SamplingAlgorithm:
+        r""" It is often convenient to have each particle have weight 1, rather than working
+        with weighted expectations. We therefore do one more resampling step at T=1, so that 
+        afterwards we can simply compute the posterior expectation by e.g jnp.mean(param).
 
         """
         return tempered_smc(logprior_fn=self.model.logprior_fn(),
                             loglikelihood_fn=self.model.loglikelihood_fn(),
                             mcmc_step_fn=self.mcmc_kernel.step,
                             mcmc_init_fn=self.mcmc_kernel.init,
-                            mcmc_parameters=self.mcmc_parameters,
+                            mcmc_parameters=self.mcmc_parameters if mcmc_parameters is None else mcmc_parameters,
                             resampling_fn=self.resampling_fn,
                             num_mcmc_steps=self.num_mutations,
                             update_particles_fn=self.temperature_aware_update_fn())
 
-    
+    #
     def tempering_condition(self):
         r""" Checks whether the SMC procedure terminates.
 
@@ -445,41 +457,48 @@ class SMCInference(InferenceEngine):
         
         """
         def cond(carry):
-            i, state, *_ = carry
+            not_done = carry['state'].tempering_param < 1
             if self.return_trace:
-                return jnp.logical_and(state.tempering_param < 1, i < self.max_iter)
-            return state.tempering_param < 1
+                return jnp.logical_and(not_done, carry['i'] < self.max_iter)
+            return not_done
 
         #
         return cond
 
     #
-    def smc_cycle(self, smc_kernel) -> Callable:
+    def smc_cycle(self) -> Callable:
         r""" One iteration of the adaptive-tempered SMC algorithm.
 
         Args:
             smc_kernel: A Blackjax SamplingAlgorithm containing the SMC logic.
         Returns:
             A Callable step function that performs one iteration.
+
+        The carry is a dictionary with the iteration counter `i`, the SMC `state`, the mutation kernel
+        parameters `params`, the random `key`, the running log marginal likelihood `lml`, and optionally
+        the last `info`, the particle `trace` and the `tuning` history.
+
+        Returns:
+             A Callable step function that performs one iteration.
+
         
         """
         @jax.jit
-        def one_step(carry): 
-            if self.return_trace:
-                i, state, k, curr_log_likelihood, state_hist = carry
-            else:               
-                if self.return_diagnostics:
-                    i, state, k, curr_log_likelihood, _ = carry 
-                else:
-                    i, state, k, curr_log_likelihood = carry 
-            k, subk = jrnd.split(k)
-            state, info = smc_kernel.step(subk, state)    
-            base_return_tuple = (i + 1, state, k, curr_log_likelihood + info.log_likelihood_increment)
-            if self.return_trace:
-                state_hist = tree_map(lambda arr, val: arr.at[i].set(val), state_hist, state)
-                return base_return_tuple + (state_hist, )            
-            
-            return base_return_tuple + (info, ) if self.return_diagnostics else base_return_tuple
+        def one_step(carry):
+            carry = dict(carry)
+            i = carry['i']
+            key, key_step, key_tune = jrnd.split(carry['key'], 3)
+            params = carry['params']
+            state, info = self.create_smc_kernel(params).step(key_step, carry['state'])
+            if 'tuning' in carry:
+                carry['tuning'] = tree_map(lambda arr, val: arr.at[i].set(val), carry['tuning'], self.tuner.summary(params, info))
+            carry['params'] = self.tuner.update(key_tune, params, state, info)
+            carry.update(dict(i=i + 1, state=state, key=key, lml=carry['lml'] + info.log_likelihood_increment))
+            if 'trace' in carry:
+                carry['trace'] = tree_map(lambda arr, val: arr.at[i].set(val), carry['trace'], state)
+            if 'info' in carry:
+                carry['info'] = info
+            return carry
 
         #
         return one_step
@@ -501,52 +520,45 @@ class SMCInference(InferenceEngine):
 
         if self.num_warmup > 0:
             key, key_init = jrnd.split(key)
-            print('Adapting NUTS HMC parameters...', end=" ")
+            if self.verbose: print('Adapting NUTS HMC parameters...', end=" ")
             _, adapted_parameters = run_window_adaptation(self.model, key_init, self.num_warmup)
-            print('done.')
+            if self.verbose: print('done.')
             adapted_kernel = mcmc_sampler(model=self.model, mcmc_kernel=nuts, mcmc_parameters=adapted_parameters)
             self.mcmc_kernel = adapted_kernel
-        
-        smc_kernel = self.create_smc_kernel()
-        smc_cycle = self.smc_cycle(smc_kernel)
-        cond = self.tempering_condition()
-        final_move = jax.jit(lambda key, state: self.create_final_move_kernel().step(key, state, 1.0)[0])
+            self.tuner = get_tuner(self.mcmc_kernel, False, self.mcmc_parameters)
 
-        key, key_init, key_final = jrnd.split(key, 3)        
-        keys = jrnd.split(key_init, self.num_particles)
-        initial_particles = smc_kernel.init(jax.vmap(self.model.sample_prior)(keys))
+        key, key_init, key_tune, key_final, key_smc = jrnd.split(key, 5)
+        positions = jax.vmap(self.model.sample_prior)(jrnd.split(key_init, self.num_particles))
+        uniform_weights = jnp.ones(self.num_particles) / self.num_particles
+        params = self.tuner.init(key_tune, self.model, positions, uniform_weights)
+        initial_state = adaptive_tempered.init(positions)
 
-        if self.return_trace or self.return_diagnostics:
-            # Call SMC once to determine PyTree structures
-            key_smc, key_init = jrnd.split(key)
-            initial_particles, sample_info = smc_kernel.step(key_init, initial_particles)
-            initial_info = tree_map(lambda x: jax.numpy.zeros_like(x), sample_info)
-            initial_log_likelihood = sample_info.log_likelihood_increment
+        carry = dict(i=0, state=initial_state, key=key_smc, params=params, lml=0.0)
+        smc_cycle = self.smc_cycle()
 
+        if self.return_diagnostics or self.return_trace or self.adaptive:
+            state_shape, info_shape = jax.eval_shape(lambda k, s: self.create_smc_kernel(params).step(k, s), key_smc, initial_state)
+            if self.return_diagnostics:
+                carry['info'] = tree_map(lambda x: jnp.zeros(x.shape, x.dtype), info_shape)
+            if self.return_trace:
+                carry['trace'] = tree_map(lambda x: jnp.zeros((self.max_iter,) + x.shape, x.dtype), state_shape)
+            if self.adaptive:
+                summary_shape = jax.eval_shape(self.tuner.summary, params, info_shape)
+                carry['tuning'] = tree_map(lambda x: jnp.full((self.max_iter, ) + x.shape, jnp.nan, jnp.float64), summary_shape)
 
-        smc_output = dict()
+        carry = jax.lax.while_loop(self.tempering_condition(), smc_cycle, carry)
+        final_state, _ = self.create_final_move_kernel(carry['params']).step(key_final, carry['state'], 1.0)
+        result = dict(final_state=final_state, n_iter=carry['i'], lml=carry['lml'])
+
         if self.return_trace:
-             # Preallocate arrays for state and info history
-            trace = tree_map(lambda x: jnp.zeros((self.max_iter,) + x.shape, dtype=x.dtype), initial_particles)
-            trace = jax.tree_util.tree_map(lambda arr, val: arr.at[0].set(val), trace, initial_particles)
-            n_iter, final_state, _, lml, trace = jax.lax.while_loop(cond, smc_cycle, (1, initial_particles, key_smc, initial_log_likelihood, trace))
-            trace = tree_map(lambda x: x[:n_iter], trace)
-            smc_output['trace'] = trace
-        else:
-            if self.return_diagnostics:            
-                n_iter, final_state, _, lml, final_info = jax.lax.while_loop(cond, smc_cycle, (1, initial_particles, key_smc, initial_log_likelihood, initial_info))
-                smc_output['final_info'] = final_info
-            else:
-                n_iter, final_state, _, lml, = jax.lax.while_loop(cond, smc_cycle, (0, initial_particles, key, 0))
-                final_state = final_move(key_final, final_state)
-
-        smc_output['n_iter'] = n_iter
-        smc_output['lml'] = lml
-        if self.resample_final_state:
-            final_state = final_move(key_final, final_state)
-        smc_output['final_state'] = final_state
+            result['trace'] = tree_map(lambda x: x[:carry['i']], carry['trace'])
+        if self.return_diagnostics:
+            result['final_info'] = carry['info']
+        if self.adaptive:
+            result['tuning'] = carry['tuning']
+            result['final_params'] = tree_map(lambda x: x[0], carry['params'])
                    
-        return smc_output
+        return result
     #
 
 #
@@ -561,8 +573,9 @@ class VIInference(InferenceEngine):
                  num_chains: int = 1,
                  num_gradient_samples: int = 10,
                  optimizer: Callable = optax.sgd,
-                 optimizer_chain_args: list = None):
-        super().__init__(model, num_chains)
+                 optimizer_chain_args: list = None,
+                 verbose: bool = True):
+        super().__init__(model, num_chains, verbose)
         self.num_steps = num_steps
         self.num_gradient_samples = num_gradient_samples
         if optimizer_chain_args is None:
@@ -667,8 +680,9 @@ class LaplaceInference(InferenceEngine):
                  max_iter: int = 500,
                  tol: float = 1e-6,
                  bounds: tuple = None,
-                 temperature: float = 1.0):
-        super().__init__(model, num_chains)
+                 temperature: float = 1.0, 
+                 verbose: bool = True):
+        super().__init__(model, num_chains, verbose)
 
         self.optimizer = optax.lbfgs() if optimizer is None else optimizer
         self.max_iter = max_iter

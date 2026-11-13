@@ -212,17 +212,24 @@ def mcmc_sampler(model: Model,
         m = model.get_model_size()
         mcmc_parameters = dict(step_size=0.5, inverse_mass_matrix=0.0001*jnp.eye(m))  # these will be overriden by the window adaptation
 
-    if (mcmc_parameters is None and mcmc_kernel is not None) or (mcmc_parameters is not None and mcmc_kernel is None):
-        raise ValueError('Both mcmc_kernel and mcmc_parameters must be specified, or neither.')
+    if mcmc_parameters is not None and mcmc_kernel is None:
+        raise ValueError('mcmc_parameters were given without an mcmc_kernel.')
     
+    if mcmc_parameters is None:
+        # Parameters will be supplied at step time, e.g. by an SMC kernel tuner (SMCInference(..., adaptive=True)).
+        mcmc_parameters = {}
+
+    #    
 
     def mcmc_fn(model: Model, 
                 key, 
                 state: dict, 
                 *args, 
                 **kwargs) -> dict:
-        
-        temperature = kwargs.get('temperature', 1.0)
+                
+        kwargs = dict(kwargs)
+        temperature = kwargs.pop('temperature', 1.0)
+        parameters = {**mcmc_parameters, **kwargs}
         position = state.position.copy()
 
         loglikelihood_fn_ = model.loglikelihood_fn()
@@ -233,7 +240,7 @@ def mcmc_sampler(model: Model,
             return jnp.squeeze(temperature*loglikelihood_fn_(pos) + logprior_fn_(pos))
 
         #
-        kernel_instance = mcmc_kernel(logdensity_fn=tempered_logdensity_fn, **mcmc_parameters)
+        kernel_instance = mcmc_kernel(logdensity_fn=tempered_logdensity_fn, **parameters)
         state = kernel_instance.init(position)
         new_state, mcmc_info = kernel_instance.step(key, state)
         return MCMCState(position=new_state.position), mcmc_info
@@ -249,6 +256,7 @@ def mcmc_sampler(model: Model,
         return state, info
     
     #
+    step_fn.base_kernel = mcmc_kernel
     return SamplingAlgorithm(init_fn, step_fn)
 
 #
