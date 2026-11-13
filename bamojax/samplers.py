@@ -212,8 +212,6 @@ def mcmc_sampler(model: Model,
         m = model.get_model_size()
         mcmc_parameters = dict(step_size=0.5, inverse_mass_matrix=0.0001*jnp.eye(m))  # these will be overriden by the window adaptation
 
-    # if (mcmc_parameters is None and mcmc_kernel is not None) or (mcmc_parameters is not None and mcmc_kernel is None):
-    #     raise ValueError('Both mcmc_kernel and mcmc_parameters must be specified, or neither.')
     if mcmc_parameters is not None and mcmc_kernel is None:
         raise ValueError('mcmc_parameters were given without an mcmc_kernel.')
     

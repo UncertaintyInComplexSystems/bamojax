@@ -41,8 +41,9 @@ def rbf(params, x, y):
 # ---------------------------------------------------------------------------
 
 def test_mcmc_sampler_requires_kernel_and_parameters_together(guk_model):
-    with pytest.raises(ValueError):
-        mcmc_sampler(guk_model, mcmc_kernel=blackjax.normal_random_walk)
+    # Below case is now allowed, so that we can do adaptation within SMC
+    # with pytest.raises(ValueError):
+    #     mcmc_sampler(guk_model, mcmc_kernel=blackjax.normal_random_walk)
     with pytest.raises(ValueError):
         mcmc_sampler(guk_model, mcmc_parameters=dict(sigma=1.0))
 
@@ -172,16 +173,23 @@ def test_independent_chains_differ(guk_model):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.parametrize("diagnostics,trace", [(True, False), (False, False), (False, True)])
-@pytest.mark.parametrize("kernel_type", ["rmh", "gibbs"])
+@pytest.mark.parametrize("kernel_type", ["rmh", "gibbs", "hmc"])
 def test_smc_posterior_and_evidence(guk_model, guk_data, guk_posterior, diagnostics, trace, kernel_type):
     """Adaptive tempered SMC: posterior moments and log-evidence vs closed form, for all output modes,
-    with both a joint random-walk kernel and a Gibbs kernel (the Gibbs-in-SMC evidence path)."""
+    with joint random-walk kernel, a Gibbs kernel, and an adaptive HMC kernel."""
     if kernel_type == "rmh":
         kernel = mcmc_sampler(guk_model, blackjax.normal_random_walk, dict(sigma=0.5 * jnp.eye(1)))
-    else:
+    elif kernel_type == "gibbs":
         kernel = gibbs_sampler(guk_model, step_fns=dict(mu=blackjax.normal_random_walk), step_fn_params=dict(mu=dict(sigma=0.5)))
-    engine = SMCInference(guk_model, mcmc_kernel=kernel, num_particles=2_000, num_mutations=20,
-                          return_diagnostics=diagnostics, return_trace=trace)
+    elif kernel_type == "hmc":
+        kernel = mcmc_sampler(guk_model, blackjax.hmc, dict(step_size=0.05, inverse_mass_matrix=jnp.eye(1)))
+
+    if kernel_type == 'hmc':
+        engine = SMCInference(guk_model, mcmc_kernel=kernel, num_particles=2_000, num_mutations=10,
+                              return_diagnostics=diagnostics, return_trace=trace, adaptive=True)
+    else:
+        engine = SMCInference(guk_model, mcmc_kernel=kernel, num_particles=2_000, num_mutations=20,
+                            return_diagnostics=diagnostics, return_trace=trace)
     result = engine.run(jrnd.PRNGKey(0))
 
     particles = result["final_state"].particles["mu"]
@@ -210,6 +218,7 @@ def test_smc_rejects_trace_and_diagnostics_together(guk_model):
     kernel = mcmc_sampler(guk_model, blackjax.normal_random_walk, dict(sigma=0.5 * jnp.eye(1)))
     with pytest.raises(AssertionError):
         SMCInference(guk_model, mcmc_kernel=kernel, num_particles=10, num_mutations=1, return_diagnostics=True, return_trace=True)
+
 
 def test_adaptive_hmc_in_smc(guk_model, guk_posterior):
     """Adaptive HMC in SMC: posterior moments vs closed form."""
