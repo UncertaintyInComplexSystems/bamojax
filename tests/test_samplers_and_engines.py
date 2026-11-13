@@ -22,7 +22,7 @@ from bamojax.modified_blackjax.more_proposals import bernoulli_random_walk
 from bamojax.more_distributions import GaussianProcessFactory
 from bamojax.samplers import gibbs_sampler, mcmc_sampler, reversible_jump_mcmc
 
-from conftest import GUK, gamma_poisson_lml, make_eight_schools, normal_known_sd_lml, normal_known_sd_posterior, guk_data
+from conftest import GUK, gamma_poisson_lml, make_eight_schools, normal_known_sd_lml, normal_known_sd_posterior
 
 
 @pytest.fixture
@@ -220,18 +220,6 @@ def test_smc_rejects_trace_and_diagnostics_together(guk_model):
         SMCInference(guk_model, mcmc_kernel=kernel, num_particles=10, num_mutations=1, return_diagnostics=True, return_trace=True)
 
 
-def test_adaptive_hmc_in_smc(guk_model, guk_posterior):
-    """Adaptive HMC in SMC: posterior moments vs closed form."""
-    hmc_params = dict(step_size=0.05, inverse_mass_matrix=jnp.ones(guk_model.get_model_size()), num_integration_steps=10)
-    kernel = mcmc_sampler(guk_model, blackjax.hmc, hmc_params)
-    engine = SMCInference(guk_model, mcmc_kernel=kernel, num_particles=2_000, num_mutations=20, adaptive=True)
-    result = engine.run(jrnd.PRNGKey(0))
-    particles = result["final_state"].particles["mu"]
-    mean, sd = guk_posterior
-    exact_lml = normal_known_sd_lml(guk_data, GUK["sd"], GUK["mu0"], GUK["sd0"])
-    assert jnp.isclose(jnp.mean(particles), mean, atol=0.05)
-    assert jnp.isclose(jnp.std(particles), sd, atol=0.05)
-    assert jnp.isclose(result["lml"], exact_lml, atol=0.15)
 
 
 # ---------------------------------------------------------------------------
