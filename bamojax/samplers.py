@@ -60,6 +60,10 @@ def gibbs_sampler(model: Model,
             step_fns[node] = normal_random_walk
             num_elem = 1 if node.shape == () else jnp.prod(jnp.asarray(node.shape))
             step_fn_params[node] = dict(sigma=0.01*jnp.eye(num_elem))
+
+        for node in step_fns:
+            if node not in step_fn_params:
+                step_fn_params[node] = {}  # needed for tuning of some Gibbs kernels while others remain fixed (e.g. ESS)
         
         return step_fns, step_fn_params
     
@@ -158,7 +162,12 @@ def gibbs_sampler(model: Model,
             else:
                 logprior_fn = lambda substate: node.get_distribution(position).log_prob(value=substate[node]).sum() 
                 logdensity_fn = lambda substate_: loglikelihood_fn(substate_) + logprior_fn(substate_)
-                step_kernel = step_fns[node](logdensity_fn, **step_fn_params[node])   
+                # step_kernel = step_fns[node](logdensity_fn, **step_fn_params[node])   
+                # below allows us to adjust step kernel parameters for each node, e.g. for tuning of Gibbs kernels
+                prefix = node.name + '/'
+                overrides = {k[len(prefix):]: v for k, v in kwargs.items() if k.startswith(prefix)}
+                overrides = {k: v for k, v in overrides.items() if not k.startswith('_')}
+                step_kernel = step_fns[node](logdensity_fn, **{**step_fn_params[node], **overrides})
                 step_substate = step_kernel.init({node.name: position[node]})   
                 
             key, subkey = jrnd.split(key)     
@@ -188,6 +197,7 @@ def gibbs_sampler(model: Model,
     
     #
     step_fn.__name__ = 'gibbs_step_fn'
+    step_fn.step_fns = step_fns    # lets SMCInference(adaptive=True) find the kernel of each node
     return SamplingAlgorithm(init_fn, step_fn)
 
 #
@@ -229,7 +239,8 @@ def mcmc_sampler(model: Model,
                 
         kwargs = dict(kwargs)
         temperature = kwargs.pop('temperature', 1.0)
-        parameters = {**mcmc_parameters, **kwargs}
+        # take out irrelevant kwagrs such as SMC tuner arguments
+        parameters = {**mcmc_parameters, **{k: v for k, v in kwargs.items() if not k.startswith('_')}}
         position = state.position.copy()
 
         loglikelihood_fn_ = model.loglikelihood_fn()

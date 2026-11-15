@@ -13,7 +13,7 @@ kernels in the future.
 import jax
 import jax.numpy as jnp
 from jax.flatten_util import ravel_pytree
-from blackjax import hmc, nuts
+from blackjax import hmc, nuts, normal_random_walk
 
 
 def weighted_particle_moments(particles, weights, dense: bool = False):
@@ -32,8 +32,9 @@ def weighted_particle_moments(particles, weights, dense: bool = False):
 
 #
 def mean_acceptance(info) -> jnp.ndarray:
-    acc = jnp.mean(info.update_info.acceptance_rate)
-    return jnp.where(jnp.isfinite(acc), acc, 0.0)
+    acc = info.update_info.acceptance_rate
+    finite = jnp.isfinite(acc)
+    return jnp.where(finite.any(), jnp.sum(jnp.where(finite, acc, 0.0)) / jnp.maximum(finite.sum(), 1), 0.0)
 
 #
 
@@ -63,6 +64,122 @@ class StaticParameters(SMCKernelTuner):
     r""" Non-adaptive SMC: the same mutation parameters at every temperature. """
 
 #
+class GibbsFamilyTuner(SMCKernelTuner):
+    r""" Tunes the step functions of a bamojax Gibbs sampler, one variable at a time.
+ 
+    Every tuned variable gets its own tuner, which only sees the particles and the acceptance rate of
+    that variable. Its parameters are passed to the Gibbs sampler as '<variable>/<parameter>'.
+    Variables without a tuner (e.g. those updated with elliptical slice sampling) keep the fixed
+    parameters given in `step_fn_params`.
+ 
+    Args:
+        gibbs_kernel: the SamplingAlgorithm returned by `gibbs_sampler`
+        tuners: dict mapping variable names to tuners, e.g. {'lengthscale': RWTuner(dense=False)}.
+            Defaults to the default tuner of each variable's step function, where one exists
+            (currently: RWTuner for `normal_random_walk`).
+    """
+ 
+    def __init__(self, gibbs_kernel, tuners: dict = None):
+        super().__init__()
+        step_fns = {getattr(node, 'name', node): fn for node, fn in gibbs_kernel.step.step_fns.items()}
+        if tuners is None:
+            tuners = {name: default_tuner_for(fn) for name, fn in step_fns.items()}
+            tuners = {name: tuner for name, tuner in tuners.items() if tuner is not None}
+        for name in tuners:
+            if name not in step_fns:
+                raise ValueError(f'{name} is not a variable of this Gibbs sampler; available: {list(step_fns)}')
+        if not tuners:
+            raise NotImplementedError('None of the Gibbs step functions has a default SMC tuner; pass `tuners` explicitly.')
+        self.tuners = tuners
+ 
+    #
+    def init(self, key, model, particles, weights) -> dict:
+        params = {}
+        for name, tuner in self.tuners.items():
+            node_params = tuner.init(key, model, {name: particles[name]}, weights)
+            for k, v in node_params.items():
+                params[f'{name}/{k}'] = v
+        return params
+ 
+    #
+    def node_view(self, name, params, smc_info):
+        r""" The parameters and SMC info that belong to one variable.
+ 
+        Parameters are stored as '<variable>/<parameter>'; the prefix is removed here. Blackjax infos
+        are NamedTuples, so _replace gives a copy with only this variable's update info.
+        """
+        prefix = name + '/'
+        node_params = {k[len(prefix):]: v for k, v in params.items() if k.startswith(prefix)}
+        node_info = smc_info._replace(update_info=smc_info.update_info[name])
+        return node_params, node_info
+ 
+    #
+    def update(self, key, params, smc_state, smc_info) -> dict:
+        new_params = {}
+        for name, tuner in self.tuners.items():
+            node_params, node_info = self.node_view(name, params, smc_info)
+            node_state = smc_state._replace(particles={name: smc_state.particles[name]})
+            node_params = tuner.update(key, node_params, node_state, node_info)
+            for k, v in node_params.items():
+                new_params[f'{name}/{k}'] = v
+        return new_params
+ 
+    #
+    def summary(self, params, smc_info) -> dict:
+        out = {}
+        for name, tuner in self.tuners.items():
+            node_params, node_info = self.node_view(name, params, smc_info)
+            for k, v in tuner.summary(node_params, node_info).items():
+                out[f'{name}/{k}'] = v
+        return out
+ 
+    #
+#
+
+
+def default_tuner_for(kernel):
+    for k, tuner in DEFAULT_TUNERS:
+        if kernel is k:
+            return tuner()
+    return None
+
+
+class RMHFamilyTuner(SMCKernelTuner):
+
+    def __init__(self, target_acceptance: float = None, gain: float = 2.0, dense: bool = True):
+        super().__init__()
+        self.target_acceptance = target_acceptance
+        self.gain = gain
+        self.dense = dense
+
+    #
+    def _params(self, particles, weights, log_scale) -> dict:
+        D = sum(x[0].size for x in jax.tree_util.tree_leaves(particles))  # static, also under jit
+        _, cov = weighted_particle_moments(particles, weights, self.dense)
+        root = jnp.linalg.cholesky(cov) if self.dense else jnp.sqrt(cov)
+        sigma = jnp.exp(log_scale) * 2.38 / jnp.sqrt(D) * root
+        return dict(sigma=sigma[None, ...], _log_scale=jnp.reshape(log_scale, (1, )))
+
+    #
+    def init(self, key, model, particles, weights) -> dict:
+        return self._params(particles, weights, jnp.zeros(()))
+
+    #
+    def update(self, key, params, smc_state, smc_info) -> dict:
+        target = self.target_acceptance
+        if target is None:
+            D = sum(x[0].size for x in jax.tree_util.tree_leaves(smc_state.particles))  # static, also under jit
+            target = 0.44 if D == 1 else 0.234
+        log_scale = params['_log_scale'][0] + self.gain * (mean_acceptance(smc_info) - target)
+        return self._params(smc_state.particles, smc_state.weights, log_scale)
+
+    #
+    def summary(self, params, smc_info) -> dict:
+        return dict(scale=jnp.exp(params['_log_scale'][0]), mean_acceptance=mean_acceptance(smc_info))
+
+    #
+#
+
 class HMCFamilyTuner(SMCKernelTuner):
     r""" Particle-based tuning for gradient-based kernels (HMC, NUTS).
 
@@ -130,16 +247,24 @@ class HMCFamilyTuner(SMCKernelTuner):
     #
 #
 
-def HMCTuner(target_acceptance: float = 0.65, **kwargs) -> HMCFamilyTuner:
+def RMHTuner(target_acceptance: float = None, **kwargs) -> SMCKernelTuner:
+    return RMHFamilyTuner(target_acceptance, **kwargs)
+
+#
+def GibbsTuner(gibbs_kernel, tuners: dict = None) -> SMCKernelTuner:
+    return GibbsFamilyTuner(gibbs_kernel, tuners)
+
+#
+def HMCTuner(target_acceptance: float = 0.65, **kwargs) -> SMCKernelTuner:
     return HMCFamilyTuner(target_acceptance, tune_num_integration_steps=True, **kwargs)
 
 #
-def NUTSTuner(target_acceptance: float = 0.8, **kwargs) -> HMCFamilyTuner:
+def NUTSTuner(target_acceptance: float = 0.8, **kwargs) -> SMCKernelTuner:
     return HMCFamilyTuner(target_acceptance, tune_num_integration_steps=False, **kwargs)
 
 #
 # Default tuner per blackjax kernel, used for SMCInference(..., adaptive=True).
-DEFAULT_TUNERS = [(hmc, HMCTuner), (nuts, NUTSTuner)]
+DEFAULT_TUNERS = [(normal_random_walk, RMHTuner), (hmc, HMCTuner), (nuts, NUTSTuner)]
 
 
 def get_tuner(mcmc_kernel, adaptive, mcmc_parameters: dict = None) -> SMCKernelTuner:
@@ -154,6 +279,8 @@ def get_tuner(mcmc_kernel, adaptive, mcmc_parameters: dict = None) -> SMCKernelT
         return adaptive
     if not adaptive:
         return StaticParameters(mcmc_parameters)
+    if hasattr(mcmc_kernel.step, 'step_fns'):    
+        return GibbsTuner(mcmc_kernel)
     base_kernel = getattr(mcmc_kernel.step, 'base_kernel', None)
     for kernel, tuner in DEFAULT_TUNERS:
         if base_kernel is kernel:
@@ -161,3 +288,5 @@ def get_tuner(mcmc_kernel, adaptive, mcmc_parameters: dict = None) -> SMCKernelT
     name = getattr(mcmc_kernel.step, '__name__', repr(base_kernel))
     raise NotImplementedError(f'No default SMC tuner for mutation kernel {name}; '
                               f'pass an SMCKernelTuner instance as `adaptive` instead.')
+
+#                              

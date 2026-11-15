@@ -349,7 +349,10 @@ class SMCInference(InferenceEngine):
         resampling_fn: a function to use for resampling the particles
         target_ess: the target effective sample size for resampling
         return_trace: whether to return the trace of particles over each tempering step
-        return_diagnostics: whether to return diagnostic information about the SMC run
+        return_diagnostics: which diagnostics of the MCMC mutation steps to return as `final_info`:
+        'full' (everything, including state-sized arrays such as proposals, for every mutation step;
+        memory intensive), 'light' (scalars only, e.g. acceptance rates) or 'none'. True and False
+        are accepted and mean 'full' and 'none'.
         num_warmup: the number of warmup steps to take for the NUTS kernel
         max_iter: the maximum number of tempering steps to take
         resample_final_state: whether to resample the final state of the SMC run. If False,
@@ -373,11 +376,12 @@ class SMCInference(InferenceEngine):
                  resampling_fn = systematic, 
                  target_ess: float = 0.5, 
                  return_trace: bool = False, 
-                 return_diagnostics: bool = True,
+                 return_diagnostics: str = 'full',
                  num_warmup: int = 0,
                  max_iter: int = 40,
                  resample_final_state: bool = True,
                  adaptive: bool = False,
+                 light_info: bool = False,
                  verbose: bool = True):
         super().__init__(model, num_chains, verbose)
         self.mcmc_kernel = mcmc_kernel
@@ -389,26 +393,43 @@ class SMCInference(InferenceEngine):
         self.resampling_fn = resampling_fn
         self.target_ess = target_ess
         self.return_trace = return_trace
-        self.return_diagnostics = return_diagnostics
+        
         self.num_warmup = num_warmup
         self.max_iter = max_iter
         self.resample_final_state = resample_final_state
+        self.light_info = light_info
         self.adaptive = adaptive
-        assert not (return_diagnostics and return_trace), 'Returning both the trace and diagnostics is not supported.'
+        if isinstance(return_diagnostics, bool):
+            return_diagnostics = 'full' if return_diagnostics else 'none'
+        self.return_diagnostics = return_diagnostics
+        assert return_diagnostics in ('none', 'light', 'full'), "'return_diagnostics' must be 'none', 'light' or 'full'."
+        self.return_diagnostics = return_diagnostics
+        assert not (return_diagnostics != 'none' and return_trace), 'Returning both the trace and diagnostics is not supported.'
 
         if adaptive and num_warmup > 0:
             raise ValueError('Use either adaptive=True (per-temperature tuning) or num_warmup > 0 (posterior window adaptation), not both.')
         self.tuner = get_tuner(self.mcmc_kernel, adaptive, self.mcmc_parameters)
 
     #
+        #
+    def mutation_step(self, key, state, *args, **kwargs):
+        r""" One MCMC mutation step. With `light_info`, only the scalar diagnostics (e.g. acceptance
+        rates) are kept, so that the info stacked over all mutations does not hold copies of the state.
+
+        """
+        state, info = self.mcmc_kernel.step(key, state, *args, **kwargs)
+        if self.return_diagnostics != 'full':
+            info = tree_map(lambda x: x if jnp.ndim(x) == 0 else None, info)
+        return state, info
+
+    #
     def temperature_aware_update_fn(self) -> Callable:
-        inner = smc_from_mcmc.build_kernel(self.mcmc_kernel.step, self.mcmc_kernel.init, self.resampling_fn)
+        inner = smc_from_mcmc.build_kernel(self.mutation_step, self.mcmc_kernel.init, self.resampling_fn)
 
         def update_fn(rng_key, state, num_mcmc_steps, mcmc_parameters, logposterior_fn, log_weights_fn):
-            mcmc_parameters = {**mcmc_parameters,
-                            'temperature': state.tempering_param * jnp.ones((1,))}
-            return inner(rng_key, state, num_mcmc_steps, mcmc_parameters,
-                        logposterior_fn, log_weights_fn)
+            mcmc_parameters = {**mcmc_parameters, 
+                               'temperature': state.tempering_param * jnp.ones((1,))}
+            return inner(rng_key, state, num_mcmc_steps, mcmc_parameters, logposterior_fn, log_weights_fn)
 
         return update_fn
 
@@ -424,7 +445,7 @@ class SMCInference(InferenceEngine):
         """
         return adaptive_tempered_smc(logprior_fn=self.model.logprior_fn(),             
                                      loglikelihood_fn=self.model.loglikelihood_fn(),
-                                     mcmc_step_fn=self.mcmc_kernel.step,
+                                     mcmc_step_fn=self.mutation_step,
                                      mcmc_init_fn=self.mcmc_kernel.init,
                                      mcmc_parameters=self.mcmc_parameters if mcmc_parameters is None else mcmc_parameters,
                                      resampling_fn=self.resampling_fn,
@@ -441,7 +462,7 @@ class SMCInference(InferenceEngine):
         """
         return tempered_smc(logprior_fn=self.model.logprior_fn(),
                             loglikelihood_fn=self.model.loglikelihood_fn(),
-                            mcmc_step_fn=self.mcmc_kernel.step,
+                            mcmc_step_fn=self.mutation_step,
                             mcmc_init_fn=self.mcmc_kernel.init,
                             mcmc_parameters=self.mcmc_parameters if mcmc_parameters is None else mcmc_parameters,
                             resampling_fn=self.resampling_fn,
@@ -536,9 +557,9 @@ class SMCInference(InferenceEngine):
         carry = dict(i=0, state=initial_state, key=key_smc, params=params, lml=0.0)
         smc_cycle = self.smc_cycle()
 
-        if self.return_diagnostics or self.return_trace or self.adaptive:
+        if self.return_diagnostics != 'none' or self.return_trace or self.adaptive:
             state_shape, info_shape = jax.eval_shape(lambda k, s: self.create_smc_kernel(params).step(k, s), key_smc, initial_state)
-            if self.return_diagnostics:
+            if self.return_diagnostics != 'none':
                 carry['info'] = tree_map(lambda x: jnp.zeros(x.shape, x.dtype), info_shape)
             if self.return_trace:
                 carry['trace'] = tree_map(lambda x: jnp.zeros((self.max_iter,) + x.shape, x.dtype), state_shape)
@@ -552,7 +573,7 @@ class SMCInference(InferenceEngine):
 
         if self.return_trace:
             result['trace'] = tree_map(lambda x: x[:carry['i']], carry['trace'])
-        if self.return_diagnostics:
+        if self.return_diagnostics != 'none':
             result['final_info'] = carry['info']
         if self.adaptive:
             result['tuning'] = carry['tuning']
