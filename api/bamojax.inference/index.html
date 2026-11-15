@@ -489,6 +489,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#bamojax.inference.SMCInference.mutation_step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mutation_step
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#bamojax.inference.SMCInference.create_smc_kernel" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2413,15 +2424,15 @@ that we effective thin by a factor N.</p>
                 <code>return_diagnostics</code>
             </td>
             <td>
-                  <code><span title="bool">bool</span></code>
+                  <code><span title="str">str</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>whether to return diagnostic information about the SMC run</p>
+                <p>which diagnostics of the MCMC mutation steps to return as <code>final_info</code>:</p>
               </div>
             </td>
             <td>
-                  <code>True</code>
+                  <code>&#39;full&#39;</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -2722,7 +2733,28 @@ that we effective thin by a factor N.</p>
 <span class="normal">558</span>
 <span class="normal">559</span>
 <span class="normal">560</span>
-<span class="normal">561</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SMCInference</span><span class="p">(</span><span class="n">InferenceEngine</span><span class="p">):</span>
+<span class="normal">561</span>
+<span class="normal">562</span>
+<span class="normal">563</span>
+<span class="normal">564</span>
+<span class="normal">565</span>
+<span class="normal">566</span>
+<span class="normal">567</span>
+<span class="normal">568</span>
+<span class="normal">569</span>
+<span class="normal">570</span>
+<span class="normal">571</span>
+<span class="normal">572</span>
+<span class="normal">573</span>
+<span class="normal">574</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span>
+<span class="normal">579</span>
+<span class="normal">580</span>
+<span class="normal">581</span>
+<span class="normal">582</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SMCInference</span><span class="p">(</span><span class="n">InferenceEngine</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" The SMC approximate inference class</span>
 
 <span class="sd">    Args:</span>
@@ -2735,7 +2767,10 @@ that we effective thin by a factor N.</p>
 <span class="sd">        resampling_fn: a function to use for resampling the particles</span>
 <span class="sd">        target_ess: the target effective sample size for resampling</span>
 <span class="sd">        return_trace: whether to return the trace of particles over each tempering step</span>
-<span class="sd">        return_diagnostics: whether to return diagnostic information about the SMC run</span>
+<span class="sd">        return_diagnostics: which diagnostics of the MCMC mutation steps to return as `final_info`:</span>
+<span class="sd">        'full' (everything, including state-sized arrays such as proposals, for every mutation step;</span>
+<span class="sd">        memory intensive), 'light' (scalars only, e.g. acceptance rates) or 'none'. True and False</span>
+<span class="sd">        are accepted and mean 'full' and 'none'.</span>
 <span class="sd">        num_warmup: the number of warmup steps to take for the NUTS kernel</span>
 <span class="sd">        max_iter: the maximum number of tempering steps to take</span>
 <span class="sd">        resample_final_state: whether to resample the final state of the SMC run. If False,</span>
@@ -2759,11 +2794,12 @@ that we effective thin by a factor N.</p>
                  <span class="n">resampling_fn</span> <span class="o">=</span> <span class="n">systematic</span><span class="p">,</span> 
                  <span class="n">target_ess</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> 
                  <span class="n">return_trace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
-                 <span class="n">return_diagnostics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">return_diagnostics</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'full'</span><span class="p">,</span>
                  <span class="n">num_warmup</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                  <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
                  <span class="n">resample_final_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                  <span class="n">adaptive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">light_info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">num_chains</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span> <span class="o">=</span> <span class="n">mcmc_kernel</span>
@@ -2775,26 +2811,43 @@ that we effective thin by a factor N.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">resampling_fn</span> <span class="o">=</span> <span class="n">resampling_fn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_ess</span> <span class="o">=</span> <span class="n">target_ess</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">return_trace</span> <span class="o">=</span> <span class="n">return_trace</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span> <span class="o">=</span> <span class="n">return_diagnostics</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">num_warmup</span> <span class="o">=</span> <span class="n">num_warmup</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resample_final_state</span> <span class="o">=</span> <span class="n">resample_final_state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">light_info</span> <span class="o">=</span> <span class="n">light_info</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adaptive</span> <span class="o">=</span> <span class="n">adaptive</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span><span class="n">return_diagnostics</span> <span class="ow">and</span> <span class="n">return_trace</span><span class="p">),</span> <span class="s1">'Returning both the trace and diagnostics is not supported.'</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_diagnostics</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="n">return_diagnostics</span> <span class="o">=</span> <span class="s1">'full'</span> <span class="k">if</span> <span class="n">return_diagnostics</span> <span class="k">else</span> <span class="s1">'none'</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span> <span class="o">=</span> <span class="n">return_diagnostics</span>
+        <span class="k">assert</span> <span class="n">return_diagnostics</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'none'</span><span class="p">,</span> <span class="s1">'light'</span><span class="p">,</span> <span class="s1">'full'</span><span class="p">),</span> <span class="s2">"'return_diagnostics' must be 'none', 'light' or 'full'."</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span> <span class="o">=</span> <span class="n">return_diagnostics</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span><span class="n">return_diagnostics</span> <span class="o">!=</span> <span class="s1">'none'</span> <span class="ow">and</span> <span class="n">return_trace</span><span class="p">),</span> <span class="s1">'Returning both the trace and diagnostics is not supported.'</span>
 
         <span class="k">if</span> <span class="n">adaptive</span> <span class="ow">and</span> <span class="n">num_warmup</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Use either adaptive=True (per-temperature tuning) or num_warmup &gt; 0 (posterior window adaptation), not both.'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tuner</span> <span class="o">=</span> <span class="n">get_tuner</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="p">,</span> <span class="n">adaptive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcmc_parameters</span><span class="p">)</span>
 
     <span class="c1">#</span>
+        <span class="c1">#</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mutation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""" One MCMC mutation step. With `light_info`, only the scalar diagnostics (e.g. acceptance</span>
+<span class="sd">        rates) are kept, so that the info stacked over all mutations does not hold copies of the state.</span>
+
+<span class="sd">        """</span>
+        <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span> <span class="o">!=</span> <span class="s1">'full'</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="k">if</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">info</span>
+
+    <span class="c1">#</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">temperature_aware_update_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-        <span class="n">inner</span> <span class="o">=</span> <span class="n">smc_from_mcmc</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">init</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resampling_fn</span><span class="p">)</span>
+        <span class="n">inner</span> <span class="o">=</span> <span class="n">smc_from_mcmc</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mutation_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">init</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resampling_fn</span><span class="p">)</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">update_fn</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">num_mcmc_steps</span><span class="p">,</span> <span class="n">mcmc_parameters</span><span class="p">,</span> <span class="n">logposterior_fn</span><span class="p">,</span> <span class="n">log_weights_fn</span><span class="p">):</span>
-            <span class="n">mcmc_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">mcmc_parameters</span><span class="p">,</span>
-                            <span class="s1">'temperature'</span><span class="p">:</span> <span class="n">state</span><span class="o">.</span><span class="n">tempering_param</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,))}</span>
-            <span class="k">return</span> <span class="n">inner</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">num_mcmc_steps</span><span class="p">,</span> <span class="n">mcmc_parameters</span><span class="p">,</span>
-                        <span class="n">logposterior_fn</span><span class="p">,</span> <span class="n">log_weights_fn</span><span class="p">)</span>
+            <span class="n">mcmc_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">mcmc_parameters</span><span class="p">,</span> 
+                               <span class="s1">'temperature'</span><span class="p">:</span> <span class="n">state</span><span class="o">.</span><span class="n">tempering_param</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,))}</span>
+            <span class="k">return</span> <span class="n">inner</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">num_mcmc_steps</span><span class="p">,</span> <span class="n">mcmc_parameters</span><span class="p">,</span> <span class="n">logposterior_fn</span><span class="p">,</span> <span class="n">log_weights_fn</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">update_fn</span>
 
@@ -2810,7 +2863,7 @@ that we effective thin by a factor N.</p>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">adaptive_tempered_smc</span><span class="p">(</span><span class="n">logprior_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">logprior_fn</span><span class="p">(),</span>             
                                      <span class="n">loglikelihood_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">(),</span>
-                                     <span class="n">mcmc_step_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">step</span><span class="p">,</span>
+                                     <span class="n">mcmc_step_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mutation_step</span><span class="p">,</span>
                                      <span class="n">mcmc_init_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
                                      <span class="n">mcmc_parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_parameters</span> <span class="k">if</span> <span class="n">mcmc_parameters</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">mcmc_parameters</span><span class="p">,</span>
                                      <span class="n">resampling_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">resampling_fn</span><span class="p">,</span>
@@ -2827,7 +2880,7 @@ that we effective thin by a factor N.</p>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">tempered_smc</span><span class="p">(</span><span class="n">logprior_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">logprior_fn</span><span class="p">(),</span>
                             <span class="n">loglikelihood_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">(),</span>
-                            <span class="n">mcmc_step_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">step</span><span class="p">,</span>
+                            <span class="n">mcmc_step_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mutation_step</span><span class="p">,</span>
                             <span class="n">mcmc_init_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
                             <span class="n">mcmc_parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_parameters</span> <span class="k">if</span> <span class="n">mcmc_parameters</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">mcmc_parameters</span><span class="p">,</span>
                             <span class="n">resampling_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">resampling_fn</span><span class="p">,</span>
@@ -2922,9 +2975,9 @@ that we effective thin by a factor N.</p>
         <span class="n">carry</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key_smc</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">lml</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
         <span class="n">smc_cycle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">smc_cycle</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_trace</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">adaptive</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span> <span class="o">!=</span> <span class="s1">'none'</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_trace</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">adaptive</span><span class="p">:</span>
             <span class="n">state_shape</span><span class="p">,</span> <span class="n">info_shape</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">eval_shape</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_smc_kernel</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">s</span><span class="p">),</span> <span class="n">key_smc</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span> <span class="o">!=</span> <span class="s1">'none'</span><span class="p">:</span>
                 <span class="n">carry</span><span class="p">[</span><span class="s1">'info'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="n">info_shape</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_trace</span><span class="p">:</span>
                 <span class="n">carry</span><span class="p">[</span><span class="s1">'trace'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,)</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="n">state_shape</span><span class="p">)</span>
@@ -2938,7 +2991,7 @@ that we effective thin by a factor N.</p>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_trace</span><span class="p">:</span>
             <span class="n">result</span><span class="p">[</span><span class="s1">'trace'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[:</span><span class="n">carry</span><span class="p">[</span><span class="s1">'i'</span><span class="p">]],</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'trace'</span><span class="p">])</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span> <span class="o">!=</span> <span class="s1">'none'</span><span class="p">:</span>
             <span class="n">result</span><span class="p">[</span><span class="s1">'final_info'</span><span class="p">]</span> <span class="o">=</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'info'</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">adaptive</span><span class="p">:</span>
             <span class="n">result</span><span class="p">[</span><span class="s1">'tuning'</span><span class="p">]</span> <span class="o">=</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'tuning'</span><span class="p">]</span>
@@ -2960,6 +3013,46 @@ that we effective thin by a factor N.</p>
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="bamojax.inference.SMCInference.mutation_step" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">mutation_step</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+<a href="#bamojax.inference.SMCInference.mutation_step" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>One MCMC mutation step. With <code>light_info</code>, only the scalar diagnostics (e.g. acceptance
+rates) are kept, so that the info stacked over all mutations does not hold copies of the state.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>bamojax/inference.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span>
+<span class="normal">420</span>
+<span class="normal">421</span>
+<span class="normal">422</span>
+<span class="normal">423</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mutation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" One MCMC mutation step. With `light_info`, only the scalar diagnostics (e.g. acceptance</span>
+<span class="sd">    rates) are kept, so that the info stacked over all mutations does not hold copies of the state.</span>
+
+<span class="sd">    """</span>
+    <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span> <span class="o">!=</span> <span class="s1">'full'</span><span class="p">:</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="k">if</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">info</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 <div class="doc doc-object doc-function">
 
@@ -3001,24 +3094,24 @@ that we effective thin by a factor N.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">416</span>
-<span class="normal">417</span>
-<span class="normal">418</span>
-<span class="normal">419</span>
-<span class="normal">420</span>
-<span class="normal">421</span>
-<span class="normal">422</span>
-<span class="normal">423</span>
-<span class="normal">424</span>
-<span class="normal">425</span>
-<span class="normal">426</span>
-<span class="normal">427</span>
-<span class="normal">428</span>
-<span class="normal">429</span>
-<span class="normal">430</span>
-<span class="normal">431</span>
-<span class="normal">432</span>
-<span class="normal">433</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_smc_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mcmc_parameters</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span>
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span>
+<span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_smc_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mcmc_parameters</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Creates an SMC kernel</span>
 
 <span class="sd">    Currently a lightweight wrapper around the blackjax adaptive-tempered SMC object.</span>
@@ -3029,7 +3122,7 @@ that we effective thin by a factor N.</p>
 <span class="sd">    """</span>
     <span class="k">return</span> <span class="n">adaptive_tempered_smc</span><span class="p">(</span><span class="n">logprior_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">logprior_fn</span><span class="p">(),</span>             
                                  <span class="n">loglikelihood_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">(),</span>
-                                 <span class="n">mcmc_step_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">step</span><span class="p">,</span>
+                                 <span class="n">mcmc_step_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mutation_step</span><span class="p">,</span>
                                  <span class="n">mcmc_init_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
                                  <span class="n">mcmc_parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_parameters</span> <span class="k">if</span> <span class="n">mcmc_parameters</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">mcmc_parameters</span><span class="p">,</span>
                                  <span class="n">resampling_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">resampling_fn</span><span class="p">,</span>
@@ -3060,20 +3153,20 @@ afterwards we can simply compute the posterior expectation by e.g jnp.mean(param
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">436</span>
-<span class="normal">437</span>
-<span class="normal">438</span>
-<span class="normal">439</span>
-<span class="normal">440</span>
-<span class="normal">441</span>
-<span class="normal">442</span>
-<span class="normal">443</span>
-<span class="normal">444</span>
-<span class="normal">445</span>
-<span class="normal">446</span>
-<span class="normal">447</span>
-<span class="normal">448</span>
-<span class="normal">449</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_final_move_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mcmc_parameters</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">457</span>
+<span class="normal">458</span>
+<span class="normal">459</span>
+<span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_final_move_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mcmc_parameters</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" It is often convenient to have each particle have weight 1, rather than working</span>
 <span class="sd">    with weighted expectations. We therefore do one more resampling step at T=1, so that </span>
 <span class="sd">    afterwards we can simply compute the posterior expectation by e.g jnp.mean(param).</span>
@@ -3081,7 +3174,7 @@ afterwards we can simply compute the posterior expectation by e.g jnp.mean(param
 <span class="sd">    """</span>
     <span class="k">return</span> <span class="n">tempered_smc</span><span class="p">(</span><span class="n">logprior_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">logprior_fn</span><span class="p">(),</span>
                         <span class="n">loglikelihood_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">(),</span>
-                        <span class="n">mcmc_step_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">step</span><span class="p">,</span>
+                        <span class="n">mcmc_step_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mutation_step</span><span class="p">,</span>
                         <span class="n">mcmc_init_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_kernel</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
                         <span class="n">mcmc_parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mcmc_parameters</span> <span class="k">if</span> <span class="n">mcmc_parameters</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">mcmc_parameters</span><span class="p">,</span>
                         <span class="n">resampling_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">resampling_fn</span><span class="p">,</span>
@@ -3131,21 +3224,21 @@ afterwards we can simply compute the posterior expectation by e.g jnp.mean(param
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">452</span>
-<span class="normal">453</span>
-<span class="normal">454</span>
-<span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span>
-<span class="normal">458</span>
-<span class="normal">459</span>
-<span class="normal">460</span>
-<span class="normal">461</span>
-<span class="normal">462</span>
-<span class="normal">463</span>
-<span class="normal">464</span>
-<span class="normal">465</span>
-<span class="normal">466</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tempering_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">473</span>
+<span class="normal">474</span>
+<span class="normal">475</span>
+<span class="normal">476</span>
+<span class="normal">477</span>
+<span class="normal">478</span>
+<span class="normal">479</span>
+<span class="normal">480</span>
+<span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span>
+<span class="normal">484</span>
+<span class="normal">485</span>
+<span class="normal">486</span>
+<span class="normal">487</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tempering_condition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Checks whether the SMC procedure terminates.</span>
 
 <span class="sd">    Returns:</span>
@@ -3240,28 +3333,7 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">469</span>
-<span class="normal">470</span>
-<span class="normal">471</span>
-<span class="normal">472</span>
-<span class="normal">473</span>
-<span class="normal">474</span>
-<span class="normal">475</span>
-<span class="normal">476</span>
-<span class="normal">477</span>
-<span class="normal">478</span>
-<span class="normal">479</span>
-<span class="normal">480</span>
-<span class="normal">481</span>
-<span class="normal">482</span>
-<span class="normal">483</span>
-<span class="normal">484</span>
-<span class="normal">485</span>
-<span class="normal">486</span>
-<span class="normal">487</span>
-<span class="normal">488</span>
-<span class="normal">489</span>
-<span class="normal">490</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">490</span>
 <span class="normal">491</span>
 <span class="normal">492</span>
 <span class="normal">493</span>
@@ -3275,7 +3347,28 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
 <span class="normal">501</span>
 <span class="normal">502</span>
 <span class="normal">503</span>
-<span class="normal">504</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">smc_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="normal">504</span>
+<span class="normal">505</span>
+<span class="normal">506</span>
+<span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span>
+<span class="normal">511</span>
+<span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span>
+<span class="normal">523</span>
+<span class="normal">524</span>
+<span class="normal">525</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">smc_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" One iteration of the adaptive-tempered SMC algorithm.</span>
 
 <span class="sd">    Args:</span>
@@ -3368,28 +3461,7 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">508</span>
-<span class="normal">509</span>
-<span class="normal">510</span>
-<span class="normal">511</span>
-<span class="normal">512</span>
-<span class="normal">513</span>
-<span class="normal">514</span>
-<span class="normal">515</span>
-<span class="normal">516</span>
-<span class="normal">517</span>
-<span class="normal">518</span>
-<span class="normal">519</span>
-<span class="normal">520</span>
-<span class="normal">521</span>
-<span class="normal">522</span>
-<span class="normal">523</span>
-<span class="normal">524</span>
-<span class="normal">525</span>
-<span class="normal">526</span>
-<span class="normal">527</span>
-<span class="normal">528</span>
-<span class="normal">529</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">529</span>
 <span class="normal">530</span>
 <span class="normal">531</span>
 <span class="normal">532</span>
@@ -3421,7 +3493,28 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
 <span class="normal">558</span>
 <span class="normal">559</span>
 <span class="normal">560</span>
-<span class="normal">561</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_single_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="normal">561</span>
+<span class="normal">562</span>
+<span class="normal">563</span>
+<span class="normal">564</span>
+<span class="normal">565</span>
+<span class="normal">566</span>
+<span class="normal">567</span>
+<span class="normal">568</span>
+<span class="normal">569</span>
+<span class="normal">570</span>
+<span class="normal">571</span>
+<span class="normal">572</span>
+<span class="normal">573</span>
+<span class="normal">574</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span>
+<span class="normal">579</span>
+<span class="normal">580</span>
+<span class="normal">581</span>
+<span class="normal">582</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_single_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Run one chain of Sequential Monte Carlo.</span>
 
 <span class="sd">    This returns SMC particles in different ways, depending on user provided settings.</span>
@@ -3452,9 +3545,9 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
     <span class="n">carry</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key_smc</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">lml</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
     <span class="n">smc_cycle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">smc_cycle</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_trace</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">adaptive</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span> <span class="o">!=</span> <span class="s1">'none'</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_trace</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">adaptive</span><span class="p">:</span>
         <span class="n">state_shape</span><span class="p">,</span> <span class="n">info_shape</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">eval_shape</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_smc_kernel</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">s</span><span class="p">),</span> <span class="n">key_smc</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span> <span class="o">!=</span> <span class="s1">'none'</span><span class="p">:</span>
             <span class="n">carry</span><span class="p">[</span><span class="s1">'info'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="n">info_shape</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_trace</span><span class="p">:</span>
             <span class="n">carry</span><span class="p">[</span><span class="s1">'trace'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,)</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="n">state_shape</span><span class="p">)</span>
@@ -3468,7 +3561,7 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_trace</span><span class="p">:</span>
         <span class="n">result</span><span class="p">[</span><span class="s1">'trace'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[:</span><span class="n">carry</span><span class="p">[</span><span class="s1">'i'</span><span class="p">]],</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'trace'</span><span class="p">])</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_diagnostics</span> <span class="o">!=</span> <span class="s1">'none'</span><span class="p">:</span>
         <span class="n">result</span><span class="p">[</span><span class="s1">'final_info'</span><span class="p">]</span> <span class="o">=</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'info'</span><span class="p">]</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">adaptive</span><span class="p">:</span>
         <span class="n">result</span><span class="p">[</span><span class="s1">'tuning'</span><span class="p">]</span> <span class="o">=</span> <span class="n">carry</span><span class="p">[</span><span class="s1">'tuning'</span><span class="p">]</span>
@@ -3554,28 +3647,7 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>bamojax/inference.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">565</span>
-<span class="normal">566</span>
-<span class="normal">567</span>
-<span class="normal">568</span>
-<span class="normal">569</span>
-<span class="normal">570</span>
-<span class="normal">571</span>
-<span class="normal">572</span>
-<span class="normal">573</span>
-<span class="normal">574</span>
-<span class="normal">575</span>
-<span class="normal">576</span>
-<span class="normal">577</span>
-<span class="normal">578</span>
-<span class="normal">579</span>
-<span class="normal">580</span>
-<span class="normal">581</span>
-<span class="normal">582</span>
-<span class="normal">583</span>
-<span class="normal">584</span>
-<span class="normal">585</span>
-<span class="normal">586</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">586</span>
 <span class="normal">587</span>
 <span class="normal">588</span>
 <span class="normal">589</span>
@@ -3655,7 +3727,28 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
 <span class="normal">663</span>
 <span class="normal">664</span>
 <span class="normal">665</span>
-<span class="normal">666</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">VIInference</span><span class="p">(</span><span class="n">InferenceEngine</span><span class="p">):</span>
+<span class="normal">666</span>
+<span class="normal">667</span>
+<span class="normal">668</span>
+<span class="normal">669</span>
+<span class="normal">670</span>
+<span class="normal">671</span>
+<span class="normal">672</span>
+<span class="normal">673</span>
+<span class="normal">674</span>
+<span class="normal">675</span>
+<span class="normal">676</span>
+<span class="normal">677</span>
+<span class="normal">678</span>
+<span class="normal">679</span>
+<span class="normal">680</span>
+<span class="normal">681</span>
+<span class="normal">682</span>
+<span class="normal">683</span>
+<span class="normal">684</span>
+<span class="normal">685</span>
+<span class="normal">686</span>
+<span class="normal">687</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">VIInference</span><span class="p">(</span><span class="n">InferenceEngine</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" The VI approximate inference class</span>
 
 <span class="sd">    """</span>
@@ -3875,28 +3968,7 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">601</span>
-<span class="normal">602</span>
-<span class="normal">603</span>
-<span class="normal">604</span>
-<span class="normal">605</span>
-<span class="normal">606</span>
-<span class="normal">607</span>
-<span class="normal">608</span>
-<span class="normal">609</span>
-<span class="normal">610</span>
-<span class="normal">611</span>
-<span class="normal">612</span>
-<span class="normal">613</span>
-<span class="normal">614</span>
-<span class="normal">615</span>
-<span class="normal">616</span>
-<span class="normal">617</span>
-<span class="normal">618</span>
-<span class="normal">619</span>
-<span class="normal">620</span>
-<span class="normal">621</span>
-<span class="normal">622</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">622</span>
 <span class="normal">623</span>
 <span class="normal">624</span>
 <span class="normal">625</span>
@@ -3911,7 +3983,28 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
 <span class="normal">634</span>
 <span class="normal">635</span>
 <span class="normal">636</span>
-<span class="normal">637</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_from_variational</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">vi_result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">num_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="normal">637</span>
+<span class="normal">638</span>
+<span class="normal">639</span>
+<span class="normal">640</span>
+<span class="normal">641</span>
+<span class="normal">642</span>
+<span class="normal">643</span>
+<span class="normal">644</span>
+<span class="normal">645</span>
+<span class="normal">646</span>
+<span class="normal">647</span>
+<span class="normal">648</span>
+<span class="normal">649</span>
+<span class="normal">650</span>
+<span class="normal">651</span>
+<span class="normal">652</span>
+<span class="normal">653</span>
+<span class="normal">654</span>
+<span class="normal">655</span>
+<span class="normal">656</span>
+<span class="normal">657</span>
+<span class="normal">658</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_from_variational</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">vi_result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">num_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Draw samples x ~ q(x | mu, rho)</span>
 
 <span class="sd">    Args:</span>
@@ -4003,33 +4096,33 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">640</span>
-<span class="normal">641</span>
-<span class="normal">642</span>
-<span class="normal">643</span>
-<span class="normal">644</span>
-<span class="normal">645</span>
-<span class="normal">646</span>
-<span class="normal">647</span>
-<span class="normal">648</span>
-<span class="normal">649</span>
-<span class="normal">650</span>
-<span class="normal">651</span>
-<span class="normal">652</span>
-<span class="normal">653</span>
-<span class="normal">654</span>
-<span class="normal">655</span>
-<span class="normal">656</span>
-<span class="normal">657</span>
-<span class="normal">658</span>
-<span class="normal">659</span>
-<span class="normal">660</span>
-<span class="normal">661</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">661</span>
 <span class="normal">662</span>
 <span class="normal">663</span>
 <span class="normal">664</span>
 <span class="normal">665</span>
-<span class="normal">666</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_single_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="normal">666</span>
+<span class="normal">667</span>
+<span class="normal">668</span>
+<span class="normal">669</span>
+<span class="normal">670</span>
+<span class="normal">671</span>
+<span class="normal">672</span>
+<span class="normal">673</span>
+<span class="normal">674</span>
+<span class="normal">675</span>
+<span class="normal">676</span>
+<span class="normal">677</span>
+<span class="normal">678</span>
+<span class="normal">679</span>
+<span class="normal">680</span>
+<span class="normal">681</span>
+<span class="normal">682</span>
+<span class="normal">683</span>
+<span class="normal">684</span>
+<span class="normal">685</span>
+<span class="normal">686</span>
+<span class="normal">687</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_single_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Run variational inference.</span>
 
 <span class="sd">    Args: </span>
@@ -4135,28 +4228,7 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>bamojax/inference.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">671</span>
-<span class="normal">672</span>
-<span class="normal">673</span>
-<span class="normal">674</span>
-<span class="normal">675</span>
-<span class="normal">676</span>
-<span class="normal">677</span>
-<span class="normal">678</span>
-<span class="normal">679</span>
-<span class="normal">680</span>
-<span class="normal">681</span>
-<span class="normal">682</span>
-<span class="normal">683</span>
-<span class="normal">684</span>
-<span class="normal">685</span>
-<span class="normal">686</span>
-<span class="normal">687</span>
-<span class="normal">688</span>
-<span class="normal">689</span>
-<span class="normal">690</span>
-<span class="normal">691</span>
-<span class="normal">692</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">692</span>
 <span class="normal">693</span>
 <span class="normal">694</span>
 <span class="normal">695</span>
@@ -4305,7 +4377,28 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
 <span class="normal">838</span>
 <span class="normal">839</span>
 <span class="normal">840</span>
-<span class="normal">841</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LaplaceInference</span><span class="p">(</span><span class="n">InferenceEngine</span><span class="p">):</span>
+<span class="normal">841</span>
+<span class="normal">842</span>
+<span class="normal">843</span>
+<span class="normal">844</span>
+<span class="normal">845</span>
+<span class="normal">846</span>
+<span class="normal">847</span>
+<span class="normal">848</span>
+<span class="normal">849</span>
+<span class="normal">850</span>
+<span class="normal">851</span>
+<span class="normal">852</span>
+<span class="normal">853</span>
+<span class="normal">854</span>
+<span class="normal">855</span>
+<span class="normal">856</span>
+<span class="normal">857</span>
+<span class="normal">858</span>
+<span class="normal">859</span>
+<span class="normal">860</span>
+<span class="normal">861</span>
+<span class="normal">862</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LaplaceInference</span><span class="p">(</span><span class="n">InferenceEngine</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" The Laplace approximate inference class</span>
 
 <span class="sd">    """</span>
@@ -4509,16 +4602,16 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">809</span>
-<span class="normal">810</span>
-<span class="normal">811</span>
-<span class="normal">812</span>
-<span class="normal">813</span>
-<span class="normal">814</span>
-<span class="normal">815</span>
-<span class="normal">816</span>
-<span class="normal">817</span>
-<span class="normal">818</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">830</span>
+<span class="normal">831</span>
+<span class="normal">832</span>
+<span class="normal">833</span>
+<span class="normal">834</span>
+<span class="normal">835</span>
+<span class="normal">836</span>
+<span class="normal">837</span>
+<span class="normal">838</span>
+<span class="normal">839</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Run the Laplace approximation, vmapped over `num_chains` starting points.</span>
 
 <span class="sd">    With several chains, array outputs get a leading chain axis and `distribution` is batched over chains.</span>
@@ -4646,27 +4739,27 @@ the last <code>info</code>, the particle <code>trace</code> and the <code>tuning
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">821</span>
-<span class="normal">822</span>
-<span class="normal">823</span>
-<span class="normal">824</span>
-<span class="normal">825</span>
-<span class="normal">826</span>
-<span class="normal">827</span>
-<span class="normal">828</span>
-<span class="normal">829</span>
-<span class="normal">830</span>
-<span class="normal">831</span>
-<span class="normal">832</span>
-<span class="normal">833</span>
-<span class="normal">834</span>
-<span class="normal">835</span>
-<span class="normal">836</span>
-<span class="normal">837</span>
-<span class="normal">838</span>
-<span class="normal">839</span>
-<span class="normal">840</span>
-<span class="normal">841</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_from_laplace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">laplace_result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">num_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">842</span>
+<span class="normal">843</span>
+<span class="normal">844</span>
+<span class="normal">845</span>
+<span class="normal">846</span>
+<span class="normal">847</span>
+<span class="normal">848</span>
+<span class="normal">849</span>
+<span class="normal">850</span>
+<span class="normal">851</span>
+<span class="normal">852</span>
+<span class="normal">853</span>
+<span class="normal">854</span>
+<span class="normal">855</span>
+<span class="normal">856</span>
+<span class="normal">857</span>
+<span class="normal">858</span>
+<span class="normal">859</span>
+<span class="normal">860</span>
+<span class="normal">861</span>
+<span class="normal">862</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sample_from_laplace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKey</span><span class="p">,</span> <span class="n">laplace_result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">num_draws</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Draw samples from the Laplace approximation, mapped back to the constrained space.</span>
 
 <span class="sd">    Args:</span>

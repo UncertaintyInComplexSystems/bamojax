@@ -666,7 +666,17 @@
 <span class="normal">188</span>
 <span class="normal">189</span>
 <span class="normal">190</span>
-<span class="normal">191</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gibbs_sampler</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gibbs_sampler</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
                   <span class="n">step_fns</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                   <span class="n">step_fn_params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingAlgorithm</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Constructs a Gibbs sampler as a Blackjax SamplingAlgorithm.</span>
@@ -696,6 +706,10 @@
             <span class="n">step_fns</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">normal_random_walk</span>
             <span class="n">num_elem</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">()</span> <span class="k">else</span> <span class="n">jnp</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
             <span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="mf">0.01</span><span class="o">*</span><span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">num_elem</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">step_fns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">step_fn_params</span><span class="p">:</span>
+                <span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># needed for tuning of some Gibbs kernels while others remain fixed (e.g. ESS)</span>
 
         <span class="k">return</span> <span class="n">step_fns</span><span class="p">,</span> <span class="n">step_fn_params</span>
 
@@ -794,7 +808,12 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">logprior_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">substate</span><span class="p">:</span> <span class="n">node</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span><span class="n">position</span><span class="p">)</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">substate</span><span class="p">[</span><span class="n">node</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> 
                 <span class="n">logdensity_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">substate_</span><span class="p">:</span> <span class="n">loglikelihood_fn</span><span class="p">(</span><span class="n">substate_</span><span class="p">)</span> <span class="o">+</span> <span class="n">logprior_fn</span><span class="p">(</span><span class="n">substate_</span><span class="p">)</span>
-                <span class="n">step_kernel</span> <span class="o">=</span> <span class="n">step_fns</span><span class="p">[</span><span class="n">node</span><span class="p">](</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>   
+                <span class="c1"># step_kernel = step_fns[node](logdensity_fn, **step_fn_params[node])   </span>
+                <span class="c1"># below allows us to adjust step kernel parameters for each node, e.g. for tuning of Gibbs kernels</span>
+                <span class="n">prefix</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">'/'</span>
+                <span class="n">overrides</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">):]:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)}</span>
+                <span class="n">overrides</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">overrides</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'_'</span><span class="p">)}</span>
+                <span class="n">step_kernel</span> <span class="o">=</span> <span class="n">step_fns</span><span class="p">[</span><span class="n">node</span><span class="p">](</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">step_fn_params</span><span class="p">[</span><span class="n">node</span><span class="p">],</span> <span class="o">**</span><span class="n">overrides</span><span class="p">})</span>
                 <span class="n">step_substate</span> <span class="o">=</span> <span class="n">step_kernel</span><span class="o">.</span><span class="n">init</span><span class="p">({</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">position</span><span class="p">[</span><span class="n">node</span><span class="p">]})</span>   
 
             <span class="n">key</span><span class="p">,</span> <span class="n">subkey</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>     
@@ -824,6 +843,7 @@
 
     <span class="c1">#</span>
     <span class="n">step_fn</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="s1">'gibbs_step_fn'</span>
+    <span class="n">step_fn</span><span class="o">.</span><span class="n">step_fns</span> <span class="o">=</span> <span class="n">step_fns</span>    <span class="c1"># lets SMCInference(adaptive=True) find the kernel of each node</span>
     <span class="k">return</span> <span class="n">SamplingAlgorithm</span><span class="p">(</span><span class="n">init_fn</span><span class="p">,</span> <span class="n">step_fn</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -914,17 +934,7 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/samplers.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">204</span>
 <span class="normal">205</span>
 <span class="normal">206</span>
 <span class="normal">207</span>
@@ -980,7 +990,18 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 <span class="normal">257</span>
 <span class="normal">258</span>
 <span class="normal">259</span>
-<span class="normal">260</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mcmc_sampler</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mcmc_sampler</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> 
                  <span class="n">mcmc_kernel</span><span class="p">:</span> <span class="n">SamplingAlgorithm</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                  <span class="n">mcmc_parameters</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">""" Constructs an MCMC sampler from a given Blackjax algorithm.</span>
@@ -1018,7 +1039,8 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 
         <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">temperature</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">'temperature'</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-        <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">mcmc_parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
+        <span class="c1"># take out irrelevant kwagrs such as SMC tuner arguments</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">mcmc_parameters</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'_'</span><span class="p">)}}</span>
         <span class="n">position</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="n">loglikelihood_fn_</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">loglikelihood_fn</span><span class="p">()</span>
@@ -1224,18 +1246,7 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/samplers.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">263</span>
-<span class="normal">264</span>
-<span class="normal">265</span>
-<span class="normal">266</span>
-<span class="normal">267</span>
-<span class="normal">268</span>
-<span class="normal">269</span>
-<span class="normal">270</span>
-<span class="normal">271</span>
-<span class="normal">272</span>
-<span class="normal">273</span>
-<span class="normal">274</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">274</span>
 <span class="normal">275</span>
 <span class="normal">276</span>
 <span class="normal">277</span>
@@ -1402,7 +1413,18 @@ as part of the keyword-arguments of step_fn(..., **kwargs), is passed correctly.
 <span class="normal">438</span>
 <span class="normal">439</span>
 <span class="normal">440</span>
-<span class="normal">441</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reversible_jump_mcmc</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Model</span><span class="p">],</span> 
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span>
+<span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reversible_jump_mcmc</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Model</span><span class="p">],</span> 
                          <span class="n">auxiliary_proposal_dist</span><span class="p">:</span> <span class="n">Distribution</span><span class="p">,</span>
                          <span class="n">jump_functions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">],</span>
                          <span class="n">jacobians</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Callable</span><span class="p">],</span>
