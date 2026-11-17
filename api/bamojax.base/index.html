@@ -1682,7 +1682,37 @@ _ = model.add_node('x', observations=...)
 <span class="normal">504</span>
 <span class="normal">505</span>
 <span class="normal">506</span>
-<span class="normal">507</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Model</span><span class="p">:</span>
+<span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span>
+<span class="normal">511</span>
+<span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span>
+<span class="normal">523</span>
+<span class="normal">524</span>
+<span class="normal">525</span>
+<span class="normal">526</span>
+<span class="normal">527</span>
+<span class="normal">528</span>
+<span class="normal">529</span>
+<span class="normal">530</span>
+<span class="normal">531</span>
+<span class="normal">532</span>
+<span class="normal">533</span>
+<span class="normal">534</span>
+<span class="normal">535</span>
+<span class="normal">536</span>
+<span class="normal">537</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Model</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" A Bayesian model is represented as a directed acyclic graph, in which nodes are associated with random variables.</span>
 
 <span class="sd">    Typical use:</span>
@@ -2038,6 +2068,36 @@ _ = model.add_node('x', observations=...)
                 <span class="n">conditionals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conditional</span><span class="p">)</span>
 
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="si">:</span><span class="s1">20s</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conditionals</span><span class="p">)</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">prior</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_distribution_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">dist</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="n">name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">get_args</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="s1">'base_dist'</span><span class="p">):</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'base_dist'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distribution_str</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">base_dist</span><span class="p">),</span> <span class="o">**</span><span class="n">params</span><span class="p">}</span>
+
+        <span class="n">param_str</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">param_str</span><span class="si">}</span><span class="s2">)"</span>
+
+    <span class="c1">#</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">model_str</span> <span class="o">=</span> <span class="s1">''</span>
+        <span class="n">sorted_free_variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node_order</span><span class="p">()</span> <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_stochastic</span><span class="p">()]</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">sorted_free_variables</span><span class="p">:</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">distribution</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">is_root</span><span class="p">():</span>
+                <span class="n">prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distribution_str</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">parent_name_str</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">parents</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+                <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">link_fn</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">!=</span> <span class="s1">'identity'</span><span class="p">:</span>
+                    <span class="n">parent_name_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'f(</span><span class="si">{</span><span class="n">parent_name_str</span><span class="si">}</span><span class="s1">)'</span>
+                <span class="n">prior</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">dist</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">parent_name_str</span><span class="si">}</span><span class="s1">)'</span>
+            <span class="n">model_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="si">:</span><span class="s1">10s</span><span class="si">}</span><span class="s1"> ~  </span><span class="si">{</span><span class="n">prior</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="k">return</span> <span class="n">model_str</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -3419,36 +3479,7 @@ _ = model.add_node('x', observations=...)
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>bamojax/base.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">512</span>
-<span class="normal">513</span>
-<span class="normal">514</span>
-<span class="normal">515</span>
-<span class="normal">516</span>
-<span class="normal">517</span>
-<span class="normal">518</span>
-<span class="normal">519</span>
-<span class="normal">520</span>
-<span class="normal">521</span>
-<span class="normal">522</span>
-<span class="normal">523</span>
-<span class="normal">524</span>
-<span class="normal">525</span>
-<span class="normal">526</span>
-<span class="normal">527</span>
-<span class="normal">528</span>
-<span class="normal">529</span>
-<span class="normal">530</span>
-<span class="normal">531</span>
-<span class="normal">532</span>
-<span class="normal">533</span>
-<span class="normal">534</span>
-<span class="normal">535</span>
-<span class="normal">536</span>
-<span class="normal">537</span>
-<span class="normal">538</span>
-<span class="normal">539</span>
-<span class="normal">540</span>
-<span class="normal">541</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">541</span>
 <span class="normal">542</span>
 <span class="normal">543</span>
 <span class="normal">544</span>
@@ -3532,7 +3563,36 @@ _ = model.add_node('x', observations=...)
 <span class="normal">622</span>
 <span class="normal">623</span>
 <span class="normal">624</span>
-<span class="normal">625</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MetaModel</span><span class="p">():</span>
+<span class="normal">625</span>
+<span class="normal">626</span>
+<span class="normal">627</span>
+<span class="normal">628</span>
+<span class="normal">629</span>
+<span class="normal">630</span>
+<span class="normal">631</span>
+<span class="normal">632</span>
+<span class="normal">633</span>
+<span class="normal">634</span>
+<span class="normal">635</span>
+<span class="normal">636</span>
+<span class="normal">637</span>
+<span class="normal">638</span>
+<span class="normal">639</span>
+<span class="normal">640</span>
+<span class="normal">641</span>
+<span class="normal">642</span>
+<span class="normal">643</span>
+<span class="normal">644</span>
+<span class="normal">645</span>
+<span class="normal">646</span>
+<span class="normal">647</span>
+<span class="normal">648</span>
+<span class="normal">649</span>
+<span class="normal">650</span>
+<span class="normal">651</span>
+<span class="normal">652</span>
+<span class="normal">653</span>
+<span class="normal">654</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MetaModel</span><span class="p">():</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" A meta-model is a collection of Bayesian models, which can be used for reversible jump MCMC.</span>
 <span class="sd">    """</span>
 
