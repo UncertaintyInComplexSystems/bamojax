@@ -507,6 +507,35 @@ class Model:
             print(f'{str(node):20s}: {" ".join(conditionals)} {prior}')
 
     #
+    def _distribution_str(self, dist):
+        if isinstance(dist, type):
+            return dist.__name__
+
+        name = type(dist).__name__
+        params = dist.get_args()
+
+        if hasattr(dist, 'base_dist'):
+            params = {'base_dist': self._distribution_str(dist.base_dist), **params}
+
+        param_str = ", ".join(f"{k}={v}" for k, v in params.items())
+        return f"{name}({param_str})"
+
+    #
+    def __str__(self):
+        model_str = ''
+        sorted_free_variables = [node for node in self.get_node_order() if node.is_stochastic()]
+        for node in sorted_free_variables:
+            dist = node.distribution
+            if node.is_root():
+                prior = self._distribution_str(dist)
+            else:
+                parent_name_str = ", ".join(parent.name for parent in node.parents.values())
+                if node.link_fn.__name__ != 'identity':
+                    parent_name_str = f'f({parent_name_str})'
+                prior = f'{dist.__name__}({parent_name_str})'
+            model_str += f'{str(node):10s} ~  {prior}\n'
+        return model_str
+
 
 #
 class MetaModel():
