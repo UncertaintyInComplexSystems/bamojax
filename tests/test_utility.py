@@ -63,7 +63,7 @@ def test_vectorized_or_loop():
                 + dist.Normal(0, state['sigma']).log_prob(state['alpha']).sum()
                 + dist.Poisson(jnp.exp(state['alpha'][data['g'] - 1] + data['x'] @ state['beta'])).log_prob(data['y']).sum())
     assert jnp.allclose(logdensity(a, state), expected)
-    assert jnp.allclose(lambda s: logdensity(b, s)(state), expected)
+    assert jnp.allclose(jax.jit(lambda s: logdensity(b, s))(state), expected) 
 
 #
 def test_multivariate():
