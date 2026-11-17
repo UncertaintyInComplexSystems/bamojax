@@ -1,3 +1,4 @@
+import jax
 import jax.numpy as jnp
 import jax.random as jrnd
 from bamojax.utility.StanParser import stan_to_bamojax
