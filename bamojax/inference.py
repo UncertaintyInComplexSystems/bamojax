@@ -17,7 +17,7 @@ from bamojax.base import Model
 from bamojax.samplers import mcmc_sampler
 from bamojax.smc_tuning import get_tuner
 
-
+import warnings
 from typing import Callable
 import optax
 
@@ -46,7 +46,7 @@ def run_window_adaptation(model, key: PRNGKey, num_warmup_steps):
     logdensity_fn = lambda state: model.loglikelihood_fn()(state) + model.logprior_fn()(state)
     warmup = window_adaptation(nuts, logdensity_fn)
     key_init, key_warmup = jrnd.split(key)
-    initial_state = model.sample_prior(key_init)
+    initial_state = model.sample_prior(key_init) if model.is_proper() else model.sample_initial()
     (warm_state, warm_parameters), _ = warmup.run(key_warmup, initial_state, num_steps=num_warmup_steps)  
     return warm_state, warm_parameters
 
@@ -65,7 +65,9 @@ def get_model_bijectors(model) -> dict:
     latent_nodes = model.get_latent_nodes()
     bijectors = {}
     for node_name, node in latent_nodes.items():
-        if isinstance(node.distribution, dist.TransformedDistribution):
+        if isinstance(node.distribution, dist.ImproperUniform):
+            transform = dist.biject_to(node.distribution.support)
+        elif isinstance(node.distribution, dist.TransformedDistribution):
             if len(node.distribution.transforms) == 1:
                 transform = node.distribution.transforms[0]
             else:
@@ -90,7 +92,7 @@ class InferenceEngine(ABC):
         self.model = model
         self.num_chains = num_chains
         self.verbose = verbose
-
+        
     #
     @abstractmethod
     def run_single_chain(self, key: PRNGKey):
@@ -107,6 +109,13 @@ class InferenceEngine(ABC):
         return self.run_single_chain(key)
     
     #
+    def initialize(self, key: PRNGKey) -> dict:        
+        # We often initialize from the prior, but this does not work for improper priors.
+        # Models with improper priors use the `sample_initial` function instead.
+        if self.model.is_proper():
+            return self.model.sample_prior(key)
+        return self.model.sample_initial(key)
+
 
 #
 class MCMCInference(InferenceEngine):
@@ -199,7 +208,7 @@ class MCMCInference(InferenceEngine):
             self.mcmc_kernel = adapted_kernel
             initial_state = self.mcmc_kernel.init(warm_state.position)
         else:
-            initial_state = self.mcmc_kernel.init(self.model.sample_prior(key_init))        
+            initial_state = self.mcmc_kernel.init(self.initialize(key_init))        
 
         if self.num_burn > 0:
             num_dense_burn_steps = int(self.num_burn / self.num_thin)
@@ -320,7 +329,7 @@ class SGMCMCInference(InferenceEngine):
         """
  
         key, key_init = jrnd.split(key)
-        initial_state = self.sgmcmc_kernel.init(self.model.sample_prior(key_init))
+        initial_state = self.sgmcmc_kernel.init(self.initialize(key_init))
         step_fn = jax.jit(self.one_step)
 
         if self.num_burn > 0:
@@ -384,6 +393,9 @@ class SMCInference(InferenceEngine):
                  light_info: bool = False,
                  verbose: bool = True):
         super().__init__(model, num_chains, verbose)
+        if not model.is_proper():
+            raise ValueError('SMC requires a model with only proper priors')
+        
         self.mcmc_kernel = mcmc_kernel
         if mcmc_parameters is None:
             mcmc_parameters = {}
@@ -549,7 +561,7 @@ class SMCInference(InferenceEngine):
             self.tuner = get_tuner(self.mcmc_kernel, False, self.mcmc_parameters)
 
         key, key_init, key_tune, key_final, key_smc = jrnd.split(key, 5)
-        positions = jax.vmap(self.model.sample_prior)(jrnd.split(key_init, self.num_particles))
+        positions = jax.vmap(self.initialize)(jrnd.split(key_init, self.num_particles))
         uniform_weights = jnp.ones(self.num_particles) / self.num_particles
         params = self.tuner.init(key_tune, self.model, positions, uniform_weights)
         initial_state = adaptive_tempered.init(positions)
@@ -568,7 +580,12 @@ class SMCInference(InferenceEngine):
                 carry['tuning'] = tree_map(lambda x: jnp.full((self.max_iter, ) + x.shape, jnp.nan, jnp.float64), summary_shape)
 
         carry = jax.lax.while_loop(self.tempering_condition(), smc_cycle, carry)
-        final_state, _ = self.create_final_move_kernel(carry['params']).step(key_final, carry['state'], 1.0)
+        if self.resample_final_state:
+            # Note: this will (deliberately) set all weights to 1/M
+            final_state, _ = self.create_final_move_kernel(carry['params']).step(key_final, carry['state'], 1.0)
+        else:
+            final_state = carry['state']
+
         result = dict(final_state=final_state, n_iter=carry['i'], lml=carry['lml'])
 
         if self.return_trace:
@@ -668,7 +685,7 @@ class VIInference(InferenceEngine):
         
         """
         mfvi = meanfield_vi(self.logdensity_fn, self.optimizer, self.num_gradient_samples)
-        initial_position = self.model.sample_prior(key=jrnd.PRNGKey(0))  # these are overriden by Blackjax
+        initial_position = self.initialize(key=jrnd.PRNGKey(0))  # these are overriden by Blackjax
 
         initial_position_unconstrained = {k: self.bijectors[k]._inverse(v) for k, v in initial_position.items()}
         initial_state = mfvi.init(initial_position_unconstrained)
@@ -785,7 +802,7 @@ class LaplaceInference(InferenceEngine):
         so it can be vmapped over chains.
  
         """
-        constrained_init = jax.tree.map(jnp.asarray, self.model.sample_prior(key))
+        constrained_init = jax.tree.map(jnp.asarray, self.initialize(key))
         z0 = {k: self.bijectors[k]._inverse(v) for k, v in constrained_init.items()}
         z_hat, opt_info = self._minimize(z0)
  
@@ -802,19 +819,25 @@ class LaplaceInference(InferenceEngine):
         _, logdet = jnp.linalg.slogdet(Sigma)
         log_joint_at_mode = -1.0 * flat_obj_fn(z_hat_flat)
         lml = log_joint_at_mode + 1/2*logdet + self.D/2 * jnp.log(2*jnp.pi)
- 
-        return dict(mode=self.forward_bijectors(z_hat),      # mode mapped to the constrained space
+
+        result = dict(mode=self.forward_bijectors(z_hat),      # mode mapped to the constrained space
                     unconstrained_mode=z_hat,
                     flat_mode=z_hat_flat,                    # unconstrained; matches `distribution` and `unravel_fn`
                     covariance=Sigma,                        # unconstrained
                     hessian=H,                               # unconstrained
-                    lml=lml,
                     optimizer_info=opt_info)
+
+        if self.model.is_proper():
+            result['lml'] = lml
+        else:
+            warnings.warn('Model contains improper priors; no marginal likelihood available')
+ 
+        return result
  
     #
     def _decorate(self, fit: dict) -> dict:
         """ Add the non-array outputs: the Gaussian (batched over chains if needed) and the unravel function. """
-        _, unravel_fn = ravel_pytree(self.model.sample_prior(jrnd.PRNGKey(0)))
+        _, unravel_fn = ravel_pytree(self.initialize(jrnd.PRNGKey(0)))
         flat_mode, Sigma = fit['flat_mode'], fit['covariance']
         if self.D == 1:
             distribution = dist.Normal(loc=flat_mode[..., 0], scale=jnp.sqrt(Sigma[..., 0, 0]))
