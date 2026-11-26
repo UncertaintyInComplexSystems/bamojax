@@ -17,7 +17,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
     
     
       
@@ -421,6 +421,100 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RJSMCInference_LOOKDE
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RJSMCInference_LOOKDE">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.rj_move" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rj_move
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.loglikelihoods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        loglikelihoods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.log_target" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        log_target
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.next_temperature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        next_temperature
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.mutate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mutate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        step
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#bamojax.model_search.anchored_rjsmc.get_model_samples" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -467,8 +561,8 @@ as well as the parameters of all models in the search. Only the active model is 
 <p>with beta the SMC temperature. The inactive parameters are used together with kernel density estimation (KDE)
 to create an informed trans-dimensional proposal distribution.</p>
 <p>One iteration = reweight (adaptive temperature) -&gt; resample -&gt; optional within-model MCMC -&gt; RJ move.</p>
-<p>This implementation was ported from its original to bamojax by Claude.AI. It follows the code philosophy of
-Blackjax.</p>
+<p>This implementation was ported from its original at https://github.com/jannavanassen/RJSMC by Claude.AI. 
+It follows the code philosophy of Blackjax.</p>
 
 
 
@@ -1351,14 +1445,14 @@ proportionally to its current particle count.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/inference.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">102</span>
 <span class="normal">103</span>
 <span class="normal">104</span>
 <span class="normal">105</span>
 <span class="normal">106</span>
-<span class="normal">107</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">""" Runs the inference algorithm, optionally vmapped over mutiple chains</span>
 
 <span class="sd">    """</span>
@@ -1366,6 +1460,526 @@ proportionally to its current particle count.</p>
         <span class="n">keys</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_chains</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_single_chain</span><span class="p">)(</span><span class="n">keys</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_single_chain</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE" class="doc doc-heading">
+            <code>RJSMCInference_LOOKDE</code>
+
+
+<a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="bamojax.model_search.anchored_rjsmc.RJSMCInference" href="../#bamojax.model_search.anchored_rjsmc.RJSMCInference">RJSMCInference</a></code></p>
+
+
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>bamojax/model_search/anchored_rjsmc.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">RJSMCInference_LOOKDE</span><span class="p">(</span><span class="n">RJSMCInference</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loo_kde</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+        <span class="n">N</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">key_parent</span><span class="p">,</span> <span class="n">key_noise</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">n_eff</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">aweights</span><span class="o">=</span><span class="n">w</span><span class="p">))</span> <span class="o">*</span> <span class="n">n_eff</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">d</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)))</span>
+        <span class="n">log_norm</span> <span class="o">=</span> <span class="o">-</span><span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">L</span><span class="p">)))</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">d</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="n">whiten</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve_triangular</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">zx</span> <span class="o">=</span> <span class="n">whiten</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">logpdf</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">one_particle</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+                <span class="n">i</span><span class="p">,</span> <span class="n">zy</span> <span class="o">=</span> <span class="n">args</span>
+                <span class="n">sq_dist</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">zx</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">zx</span> <span class="o">@</span> <span class="n">zy</span> <span class="o">+</span> <span class="n">zy</span> <span class="o">@</span> <span class="n">zy</span>
+                <span class="n">log_kernels</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">==</span> <span class="n">i</span><span class="p">,</span> <span class="o">-</span><span class="n">jnp</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">sq_dist</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">logsumexp</span><span class="p">(</span><span class="n">log_kernels</span><span class="p">)</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">one_particle</span><span class="p">,</span> <span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="p">),</span> <span class="n">whiten</span><span class="p">(</span><span class="n">y</span><span class="p">)),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span> <span class="o">+</span> <span class="n">log_norm</span>
+
+        <span class="n">cum_w</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">key_parent</span><span class="p">,</span> <span class="p">(</span><span class="n">N</span><span class="p">,))</span> <span class="o">*</span> <span class="p">(</span><span class="n">cum_w</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">u</span> <span class="o">&lt;</span> <span class="n">cum_w</span> <span class="o">-</span> <span class="n">w</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">u</span> <span class="o">+</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">centre</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">cum_w</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s1">'right'</span><span class="p">),</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">centre</span><span class="p">]</span> <span class="o">+</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key_noise</span><span class="p">,</span> <span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span> <span class="o">@</span> <span class="n">L</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">return</span> <span class="n">y</span><span class="p">,</span> <span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">logpdf</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="c1">#</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rj_move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">""" Anchored jump: propose a model l, draw theta_l from the KDE of model l, accept/reject. """</span>
+        <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">model_index</span>
+        <span class="n">key_mix</span><span class="p">,</span> <span class="n">key_unif</span><span class="p">,</span> <span class="n">key_pick</span><span class="p">,</span> <span class="n">key_kde</span><span class="p">,</span> <span class="n">key_acc</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+        <span class="c1"># model proposal j(k -&gt; l) = (1 - grace) m_l / N + grace / K  (does not depend on k)</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">K</span><span class="p">)</span>
+        <span class="n">explore</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">key_mix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grace</span><span class="p">,</span> <span class="p">(</span><span class="n">N</span><span class="p">,))</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">explore</span><span class="p">,</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">key_unif</span><span class="p">,</span> <span class="p">(</span><span class="n">N</span><span class="p">,),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">k</span><span class="p">[</span><span class="n">jrnd</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">key_pick</span><span class="p">,</span> <span class="p">(</span><span class="n">N</span><span class="p">,),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">)])</span>
+        <span class="n">log_j</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">grace</span><span class="p">)</span> <span class="o">*</span> <span class="n">counts</span> <span class="o">/</span> <span class="n">N</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grace</span> <span class="o">/</span> <span class="n">K</span><span class="p">)</span>
+
+        <span class="n">proposals</span><span class="p">,</span> <span class="n">cur</span><span class="p">,</span> <span class="n">prop</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">key_j</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">positions</span><span class="p">,</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key_kde</span><span class="p">,</span> <span class="n">K</span><span class="p">))):</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">unravel</span> <span class="o">=</span> <span class="n">ravel_pytree</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pos</span><span class="p">))</span>
+            <span class="n">flat</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">ravel_pytree</span><span class="p">(</span><span class="n">p</span><span class="p">)[</span><span class="mi">0</span><span class="p">])(</span><span class="n">pos</span><span class="p">)</span>                 <span class="c1"># (N, d_j)</span>
+            <span class="c1"># kde = gaussian_kde(flat.T, weights=jnp.where(k == j, self.anchor_weight, 1.0))</span>
+            <span class="c1"># new_flat = kde.resample(key_j, (N,)).T</span>
+            <span class="n">new_flat</span><span class="p">,</span> <span class="n">logq_cur</span><span class="p">,</span> <span class="n">logq_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loo_kde</span><span class="p">(</span><span class="n">key_j</span><span class="p">,</span> <span class="n">flat</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">k</span> <span class="o">==</span> <span class="n">j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">anchor_weight</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+            <span class="n">new_pos</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">unravel</span><span class="p">)(</span><span class="n">new_flat</span><span class="p">)</span>
+            <span class="n">proposals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_pos</span><span class="p">)</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_target</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span><span class="p">)</span> <span class="o">-</span> <span class="n">logq_cur</span><span class="p">)</span>
+            <span class="n">prop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_target</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">new_pos</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span><span class="p">)</span> <span class="o">-</span> <span class="n">logq_new</span><span class="p">)</span>
+            <span class="c1"># cur.append(self.log_target(j, pos, state.lmbda) - kde.logpdf(flat.T))</span>
+            <span class="c1"># prop.append(self.log_target(j, new_pos, state.lmbda) - kde.logpdf(new_flat.T))</span>
+        <span class="n">cur</span><span class="p">,</span> <span class="n">prop</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>          <span class="c1"># (N, K)</span>
+
+        <span class="n">log_alpha</span> <span class="o">=</span> <span class="n">_nan_to_neginf</span><span class="p">(</span><span class="n">log_j</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">log_j</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">+</span> <span class="n">_pick</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span> <span class="o">-</span> <span class="n">_pick</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+        <span class="n">accept</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">jrnd</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">key_acc</span><span class="p">,</span> <span class="p">(</span><span class="n">N</span><span class="p">,)))</span> <span class="o">&lt;</span> <span class="n">log_alpha</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">replace</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">accept</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="n">j</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">o</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">N</span><span class="p">,)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">n</span><span class="p">,</span> <span class="n">o</span><span class="p">),</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+
+        <span class="n">positions</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">replace</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">positions</span><span class="p">,</span> <span class="n">proposals</span><span class="p">)))</span>
+        <span class="n">cross</span> <span class="o">=</span> <span class="n">l</span> <span class="o">!=</span> <span class="n">k</span>
+        <span class="n">new_state</span> <span class="o">=</span> <span class="n">RJSMCState</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">accept</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">k</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_state</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cross</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">accept</span> <span class="o">&amp;</span> <span class="n">cross</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.rj_move" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">rj_move</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span></code>
+
+<a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.rj_move" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Anchored jump: propose a model l, draw theta_l from the KDE of model l, accept/reject.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>bamojax/model_search/anchored_rjsmc.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rj_move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Anchored jump: propose a model l, draw theta_l from the KDE of model l, accept/reject. """</span>
+    <span class="n">N</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">model_index</span>
+    <span class="n">key_mix</span><span class="p">,</span> <span class="n">key_unif</span><span class="p">,</span> <span class="n">key_pick</span><span class="p">,</span> <span class="n">key_kde</span><span class="p">,</span> <span class="n">key_acc</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+    <span class="c1"># model proposal j(k -&gt; l) = (1 - grace) m_l / N + grace / K  (does not depend on k)</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">K</span><span class="p">)</span>
+    <span class="n">explore</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">key_mix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grace</span><span class="p">,</span> <span class="p">(</span><span class="n">N</span><span class="p">,))</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">explore</span><span class="p">,</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">key_unif</span><span class="p">,</span> <span class="p">(</span><span class="n">N</span><span class="p">,),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">k</span><span class="p">[</span><span class="n">jrnd</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">key_pick</span><span class="p">,</span> <span class="p">(</span><span class="n">N</span><span class="p">,),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">)])</span>
+    <span class="n">log_j</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">grace</span><span class="p">)</span> <span class="o">*</span> <span class="n">counts</span> <span class="o">/</span> <span class="n">N</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grace</span> <span class="o">/</span> <span class="n">K</span><span class="p">)</span>
+
+    <span class="n">proposals</span><span class="p">,</span> <span class="n">cur</span><span class="p">,</span> <span class="n">prop</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">key_j</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">positions</span><span class="p">,</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key_kde</span><span class="p">,</span> <span class="n">K</span><span class="p">))):</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">unravel</span> <span class="o">=</span> <span class="n">ravel_pytree</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pos</span><span class="p">))</span>
+        <span class="n">flat</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">ravel_pytree</span><span class="p">(</span><span class="n">p</span><span class="p">)[</span><span class="mi">0</span><span class="p">])(</span><span class="n">pos</span><span class="p">)</span>                 <span class="c1"># (N, d_j)</span>
+        <span class="c1"># kde = gaussian_kde(flat.T, weights=jnp.where(k == j, self.anchor_weight, 1.0))</span>
+        <span class="c1"># new_flat = kde.resample(key_j, (N,)).T</span>
+        <span class="n">new_flat</span><span class="p">,</span> <span class="n">logq_cur</span><span class="p">,</span> <span class="n">logq_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loo_kde</span><span class="p">(</span><span class="n">key_j</span><span class="p">,</span> <span class="n">flat</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">k</span> <span class="o">==</span> <span class="n">j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">anchor_weight</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+        <span class="n">new_pos</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">unravel</span><span class="p">)(</span><span class="n">new_flat</span><span class="p">)</span>
+        <span class="n">proposals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_pos</span><span class="p">)</span>
+        <span class="n">cur</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_target</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span><span class="p">)</span> <span class="o">-</span> <span class="n">logq_cur</span><span class="p">)</span>
+        <span class="n">prop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_target</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">new_pos</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span><span class="p">)</span> <span class="o">-</span> <span class="n">logq_new</span><span class="p">)</span>
+        <span class="c1"># cur.append(self.log_target(j, pos, state.lmbda) - kde.logpdf(flat.T))</span>
+        <span class="c1"># prop.append(self.log_target(j, new_pos, state.lmbda) - kde.logpdf(new_flat.T))</span>
+    <span class="n">cur</span><span class="p">,</span> <span class="n">prop</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>          <span class="c1"># (N, K)</span>
+
+    <span class="n">log_alpha</span> <span class="o">=</span> <span class="n">_nan_to_neginf</span><span class="p">(</span><span class="n">log_j</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">log_j</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">+</span> <span class="n">_pick</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span> <span class="o">-</span> <span class="n">_pick</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+    <span class="n">accept</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">jrnd</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">key_acc</span><span class="p">,</span> <span class="p">(</span><span class="n">N</span><span class="p">,)))</span> <span class="o">&lt;</span> <span class="n">log_alpha</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">replace</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">accept</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">l</span> <span class="o">==</span> <span class="n">j</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">o</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">N</span><span class="p">,)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">n</span><span class="p">,</span> <span class="n">o</span><span class="p">),</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+
+    <span class="n">positions</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">replace</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">positions</span><span class="p">,</span> <span class="n">proposals</span><span class="p">)))</span>
+    <span class="n">cross</span> <span class="o">=</span> <span class="n">l</span> <span class="o">!=</span> <span class="n">k</span>
+    <span class="n">new_state</span> <span class="o">=</span> <span class="n">RJSMCState</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">accept</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">k</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_state</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cross</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">accept</span> <span class="o">&amp;</span> <span class="n">cross</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.run" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">run</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></code>
+
+<a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.run" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Runs the inference algorithm, optionally vmapped over mutiple chains</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>bamojax/inference.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">""" Runs the inference algorithm, optionally vmapped over mutiple chains</span>
+
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_chains</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_chains</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_single_chain</span><span class="p">)(</span><span class="n">keys</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_single_chain</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.loglikelihoods" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">loglikelihoods</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span></code>
+
+<a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.loglikelihoods" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>(N, K) matrix: log-likelihood of every block under its own model.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>bamojax/model_search/anchored_rjsmc.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">loglikelihoods</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">positions</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" (N, K) matrix: log-likelihood of every block under its own model. """</span>
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">_nan_to_neginf</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="n">pos</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood_fns</span><span class="p">,</span> <span class="n">positions</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.log_target" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">log_target</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">lmbda</span><span class="p">)</span></code>
+
+<a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.log_target" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Tempered log density of model j for a batch of blocks.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>bamojax/model_search/anchored_rjsmc.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">log_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">lmbda</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Tempered log density of model j for a batch of blocks. """</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">lmbda</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglikelihood_fns</span><span class="p">[</span><span class="n">j</span><span class="p">](</span><span class="n">p</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">logprior_fns</span><span class="p">[</span><span class="n">j</span><span class="p">](</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_nan_to_neginf</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="n">pos</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.next_temperature" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">next_temperature</span><span class="p">(</span><span class="n">loglik</span><span class="p">,</span> <span class="n">lmbda</span><span class="p">)</span></code>
+
+<a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.next_temperature" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Largest increment such that the normalised ESS of every model's block stays &gt;= target_ess.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>bamojax/model_search/anchored_rjsmc.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">next_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loglik</span><span class="p">,</span> <span class="n">lmbda</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" Largest increment such that the normalised ESS of every model's block stays &gt;= target_ess. """</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">min_ess</span><span class="p">(</span><span class="n">delta</span><span class="p">):</span>
+        <span class="n">lw</span> <span class="o">=</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">loglik</span>
+        <span class="n">log_ess</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">logsumexp</span><span class="p">(</span><span class="n">lw</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">logsumexp</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">lw</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_ess</span><span class="p">))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">bisect</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
+        <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">bounds</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">lo</span> <span class="o">+</span> <span class="n">hi</span><span class="p">)</span>
+        <span class="n">ok</span> <span class="o">=</span> <span class="n">min_ess</span><span class="p">(</span><span class="n">mid</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_ess</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ok</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">lo</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ok</span><span class="p">,</span> <span class="n">hi</span><span class="p">,</span> <span class="n">mid</span><span class="p">)</span>
+
+    <span class="n">lo</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">fori_loop</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">bisect</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">lmbda</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">min_ess</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">lmbda</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_ess</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">lmbda</span><span class="p">,</span> <span class="n">lo</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.mutate" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">mutate</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">lmbda</span><span class="p">)</span></code>
+
+<a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.mutate" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>num_mutations within-model MCMC steps on every block, each at the current temperature.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>bamojax/model_search/anchored_rjsmc.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mutate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">lmbda</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" num_mutations within-model MCMC steps on every block, each at the current temperature. """</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mutate_model</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernels</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">one_particle</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">body</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+                <span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="n">lmbda</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">kernel</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_mutations</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">position</span>
+
+        <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">one_particle</span><span class="p">)(</span><span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">),</span> <span class="n">pos</span><span class="p">)</span>
+
+    <span class="n">keys</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">mutate_model</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">keys</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">pos</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">positions</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.step" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">step</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span></code>
+
+<a href="#bamojax.model_search.anchored_rjsmc.RJSMCInference_LOOKDE.step" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>One RJSMC iteration. Returns the new state, the log evidence increment and jump statistics.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>bamojax/model_search/anchored_rjsmc.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">""" One RJSMC iteration. Returns the new state, the log evidence increment and jump statistics. """</span>
+    <span class="n">key_rs</span><span class="p">,</span> <span class="n">key_mut</span><span class="p">,</span> <span class="n">key_rj</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">loglik</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglikelihoods</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_temperature</span><span class="p">(</span><span class="n">loglik</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span><span class="p">)</span>
+    <span class="n">log_w</span> <span class="o">=</span> <span class="n">_nan_to_neginf</span><span class="p">(</span><span class="n">delta</span> <span class="o">*</span> <span class="n">_pick</span><span class="p">(</span><span class="n">loglik</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">model_index</span><span class="p">))</span>
+    <span class="n">lml_increment</span> <span class="o">=</span> <span class="n">logsumexp</span><span class="p">(</span><span class="n">log_w</span><span class="p">)</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">systematic</span><span class="p">(</span><span class="n">key_rs</span><span class="p">,</span> <span class="n">jax</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">log_w</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">state</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
+    <span class="n">lmbda</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span> <span class="o">+</span> <span class="n">delta</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mutate</span><span class="p">(</span><span class="n">key_mut</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">lmbda</span><span class="p">)</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">RJSMCState</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">model_index</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">lmbda</span><span class="p">)</span>
+    <span class="n">state</span><span class="p">,</span> <span class="n">n_attempted</span><span class="p">,</span> <span class="n">n_accepted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rj_move</span><span class="p">(</span><span class="n">key_rj</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">lml_increment</span><span class="p">,</span> <span class="n">n_attempted</span><span class="p">,</span> <span class="n">n_accepted</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1397,11 +2011,11 @@ proportionally to its current particle count.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>bamojax/model_search/anchored_rjsmc.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">232</span>
-<span class="normal">233</span>
-<span class="normal">234</span>
-<span class="normal">235</span>
-<span class="normal">236</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_model_samples</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">model_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_model_samples</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">model_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">""" Posterior draws of one model: the blocks of the particles for which that model is active. """</span>
     <span class="n">state</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">'final_state'</span><span class="p">]</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">model_index</span> <span class="o">==</span> <span class="n">model_index</span>
