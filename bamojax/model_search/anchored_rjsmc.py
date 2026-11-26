@@ -12,8 +12,8 @@ to create an informed trans-dimensional proposal distribution.
     
 One iteration = reweight (adaptive temperature) -> resample -> optional within-model MCMC -> RJ move.
 
-This implementation was ported from its original to bamojax by Claude.AI. It follows the code philosophy of
-Blackjax.
+This implementation was ported from its original at https://github.com/jannavanassen/RJSMC by Claude.AI. 
+It follows the code philosophy of Blackjax.
 
 """
 
@@ -229,8 +229,80 @@ class RJSMCInference(InferenceEngine):
     #
 
 #
+
+
+
+
+class RJSMCInference_LOOKDE(RJSMCInference):
+    def loo_kde(self, key, x, w):
+        N, d = x.shape
+        key_parent, key_noise = jrnd.split(key)
+        n_eff = jnp.sum(w)**2 / jnp.sum(w**2)
+        L = jnp.linalg.cholesky(jnp.atleast_2d(jnp.cov(x.T, aweights=w)) * n_eff**(-2 / (d + 4)))
+        log_norm = -jnp.sum(jnp.log(jnp.diag(L))) - 0.5 * d * jnp.log(2 * jnp.pi)
+        whiten = lambda v: jax.scipy.linalg.solve_triangular(L, v.T, lower=True).T
+        zx = whiten(x)
+
+        def logpdf(y):
+            def one_particle(args):
+                i, zy = args
+                sq_dist = jnp.sum(zx**2, axis=1) - 2 * zx @ zy + zy @ zy
+                log_kernels = jnp.where(jnp.arange(N) == i, -jnp.inf, jnp.log(w) - 0.5 * sq_dist)
+                return logsumexp(log_kernels) - jnp.log(jnp.sum(w) - w[i])
+            return jax.lax.map(one_particle, (jnp.arange(N), whiten(y)), batch_size=1024) + log_norm
+
+        cum_w = jnp.cumsum(w)
+        u = jrnd.uniform(key_parent, (N,)) * (cum_w[-1] - w)
+        u = jnp.where(u < cum_w - w, u, u + w)
+        centre = jnp.minimum(jnp.searchsorted(cum_w, u, side='right'), N - 1)
+        y = x[centre] + jrnd.normal(key_noise, (N, d)) @ L.T
+        return y, logpdf(x), logpdf(y)
+
+    #
+    def rj_move(self, key, state):
+        """ Anchored jump: propose a model l, draw theta_l from the KDE of model l, accept/reject. """
+        N, K, k = self.N, self.K, state.model_index
+        key_mix, key_unif, key_pick, key_kde, key_acc = jrnd.split(key, 5)
+
+        # model proposal j(k -> l) = (1 - grace) m_l / N + grace / K  (does not depend on k)
+        counts = jnp.bincount(k, length=K)
+        explore = jrnd.bernoulli(key_mix, self.grace, (N,))
+        l = jnp.where(explore, jrnd.randint(key_unif, (N,), 0, K), k[jrnd.randint(key_pick, (N,), 0, N)])
+        log_j = jnp.log((1 - self.grace) * counts / N + self.grace / K)
+
+        proposals, cur, prop = [], [], []
+        for j, (pos, key_j) in enumerate(zip(state.positions, jrnd.split(key_kde, K))):
+            _, unravel = ravel_pytree(jax.tree.map(lambda x: x[0], pos))
+            flat = jax.vmap(lambda p: ravel_pytree(p)[0])(pos)                 # (N, d_j)
+            # kde = gaussian_kde(flat.T, weights=jnp.where(k == j, self.anchor_weight, 1.0))
+            # new_flat = kde.resample(key_j, (N,)).T
+            new_flat, logq_cur, logq_new = self.loo_kde(key_j, flat, jnp.where(k == j, self.anchor_weight, 1.0))
+            new_pos = jax.vmap(unravel)(new_flat)
+            proposals.append(new_pos)
+            cur.append(self.log_target(j, pos, state.lmbda) - logq_cur)
+            prop.append(self.log_target(j, new_pos, state.lmbda) - logq_new)
+            # cur.append(self.log_target(j, pos, state.lmbda) - kde.logpdf(flat.T))
+            # prop.append(self.log_target(j, new_pos, state.lmbda) - kde.logpdf(new_flat.T))
+        cur, prop = jnp.stack(cur, axis=1), jnp.stack(prop, axis=1)          # (N, K)
+
+        log_alpha = _nan_to_neginf(log_j[k] - log_j[l] + _pick(prop, l) - _pick(cur, k))
+        accept = jnp.log(jrnd.uniform(key_acc, (N,))) < log_alpha
+
+        def replace(j, old, new):
+            mask = accept & (l == j)
+            return jax.tree.map(lambda o, n: jnp.where(mask.reshape((N,) + (1,) * (o.ndim - 1)), n, o), old, new)
+
+        positions = tuple(replace(j, old, new) for j, (old, new) in enumerate(zip(state.positions, proposals)))
+        cross = l != k
+        new_state = RJSMCState(positions, jnp.where(accept, l, k), state.lmbda)
+        return new_state, jnp.sum(cross), jnp.sum(accept & cross)
+
+    #
+#
 def get_model_samples(result: dict, model_index: int) -> dict:
     """ Posterior draws of one model: the blocks of the particles for which that model is active. """
     state = result['final_state']
     mask = state.model_index == model_index
     return jax.tree.map(lambda x: x[mask], state.positions[model_index])
+
+

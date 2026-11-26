@@ -5,7 +5,7 @@ import jax.numpy as jnp
 import jax.random as jrnd
 from typing import Tuple, Callable
 
-from numpyro.distributions import Distribution, TransformedDistribution
+from numpyro.distributions import Distribution, TransformedDistribution, ImproperUniform, Uniform, biject_to
 from numpyro.distributions.transforms import Transform as Bijector
 
 
@@ -339,7 +339,7 @@ class Model:
         
         """
 
-        draw = self.sample_prior(key=jrnd.PRNGKey(0)) 
+        draw = self.sample_initial(key=jrnd.PRNGKey(0)) 
         size = jnp.sum(jnp.array([jnp.size(v) for v in draw.values()]))
         return size
     
@@ -380,6 +380,14 @@ class Model:
         return order
     
     #
+    def is_proper(self) -> bool:
+        """ Checks whether all latent variables have a proper prior. This is needed for marginal likelihood estimation methods, including SMC.
+        
+        
+        """
+        return not any(isinstance(node.distribution, ImproperUniform) for node in self.get_latent_nodes().values())
+
+    #
     def sample_prior(self, key) -> dict:
         r""" Samples from the (hierarchical) prior distribution of the model.
 
@@ -389,15 +397,40 @@ class Model:
             A state dictionary with one random value for each node.
         
         """
+
+        if not self.is_proper():
+            raise ValueError(f'The model has improper priors from which we cannot sample.')
+ 
+        return self.sample_initial(key)
+
+    #
+    def sample_initial(self, key) -> dict:
+        r""" For models with improper priors we sample from U(-2, 2) for those priors instead.
+        This breaks marginal likelihood estimators (but they are meaningless for IPs anyway), 
+        for which we should sample from the prior instead.
+
+        Args: 
+            key: PRNGKey
+
+        Returns:
+            A dictionary with a sampled value for each latent variable of the model.
+        
+        """
+
         state = dict()
         sorted_free_variables = [node for node in self.get_node_order() if node.is_stochastic() and not node.is_observed()]
         for node in sorted_free_variables:
             key, subkey = jrnd.split(key)
             if node.is_root(): 
-                dist = node.get_distribution()               
+                dist = node.get_distribution()                     
             else:
                 dist = node.get_distribution(state)
-            state[node.name] = dist.sample(key=subkey, sample_shape=node.shape)   
+            if isinstance(dist, ImproperUniform):
+                bijector = biject_to
+                unconstrained_shape = bijector.inverse_shape(node.shape + dist.shape())
+                state[node.name] = bijector(jrnd.uniform(subkey, unconstrained_shape, minval=-2.0, maxval=2.0))
+            else:
+                state[node.name] = dist.sample(key=subkey, sample_shape=node.shape)   
         return state
 
     #
@@ -608,6 +641,14 @@ class MetaModel():
         
         #
         self.model_loglikelihood_fns = [make_loglikelihood_fn(i) for i in range(self.M)]
+
+    #
+    def is_proper(self) -> bool:
+        r""" Checks whether all internal models are proper.
+        
+        """
+
+        return all(model.is_proper() for model in self.model_list)
 
     #
     def sample_prior(self, key) -> dict:

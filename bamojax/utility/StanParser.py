@@ -609,11 +609,33 @@ class StanTranslator:
         return self.nodes[name]
 
     #
+    def flat_prior(self, name: str):
+        r""" Adds the node of a parameter without a `~` statement: Stan's implicit, improper flat prior on its support.
+
+        """
+        type_, bounds, shape = self.parameters[name]
+        lower, upper = [None if b not in bounds else self.evaluate(bounds[b], self.data) for b in ['lower', 'upper']]
+        if type_ in CONSTRAINTS:
+            support = CONSTRAINTS[type_]
+        elif lower is None and upper is None:
+            support = constraints.real
+        elif upper is None:
+            support = constraints.greater_than(lower)
+        elif lower is None:
+            support = constraints.less_than(upper)
+        else:
+            support = constraints.interval(lower, upper)
+        num_independent = len(shape) - support.event_dim
+        distribution = dist.ImproperUniform(support, (), shape[num_independent:])
+        return self.model.add_node(name, distribution=distribution, shape=shape[:num_independent])
+
+    #
     def build(self, name: str) -> Model:
+        self.model = Model(name)
         for parameter in self.parameters:
             if parameter not in self.sampling:
-                raise UnsupportedStanFeature(f"parameter '{parameter}' without a ~ statement (improper flat prior)")
-        self.model = Model(name)
+                # raise UnsupportedStanFeature(f"parameter '{parameter}' without a ~ statement (improper flat prior)")
+                self.nodes[parameter] = self.flat_prior(parameter)        
         for variable in self.sampling:
             self.node(variable)
         return self.model
